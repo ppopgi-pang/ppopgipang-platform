@@ -1,0 +1,76 @@
+# -------------------------------------------------------
+# Node.js & Turborepo Monorepo 기본 설정
+# -------------------------------------------------------
+
+# node_modules (루트 및 모든 하위 워크스페이스)
+node_modules/
+**/node_modules/
+
+# 환경 변수 파일
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+**/.env
+
+# 빌드 산출물
+dist/
+build/
+out/
+.next/
+.cache/
+coverage/
+tmp/
+temp/
+
+# Turborepo 캐시 및 로그
+.turbo/
+.turborepo/
+turbo.log
+
+# Vite / React 관련
+vite.config.js.timestamp*
+vite.config.ts.timestamp*
+vite.config.mjs.timestamp*
+.vite/
+
+# NestJS 관련
+**/dist/
+**/*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS 관련
+.DS_Store
+Thumbs.db
+
+# IDE/에디터 관련
+.vscode/
+.idea/
+*.swp
+
+# 테스트 및 커버리지
+coverage/
+*.lcov
+
+# Optional lockfiles (하나만 유지)
+yarn.lock
+pnpm-lock.yaml
+
+# Docker
+docker-compose.override.yml
+*.pid
+*.seed
+
+# Misc
+*.tgz
+*.zip
+*.bak
+*.tmp
