@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DatabaseType } from 'typeorm';
 import { UsersModule } from './users/users.module';
 import { StoresModule } from './stores/stores.module';
 import { ReviewsModule } from './reviews/reviews.module';
