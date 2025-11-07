@@ -1,4 +1,7 @@
 {
+  "dependencies": {
+    "@nestjs/mapped-types": "*"
+  },
   "name": "ppopgipang-platform",
   "version": "1.0.0",
   "main": "index.js",
@@ -17,6 +20,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "tsconfig-paths": "^4.2.0",
     "turbo": "^2.6.0"
   }
 }
