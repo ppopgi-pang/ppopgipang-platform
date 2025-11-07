@@ -1,9 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES2021",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2021"],
     "strict": true,
-    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
-      "@ppopgipang/*": ["packages/*/src"]
+      "@ppopgipang/*": ["packages/*/dist"]
     }
   }
 }
