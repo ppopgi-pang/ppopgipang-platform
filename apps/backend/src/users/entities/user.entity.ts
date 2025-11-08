@@ -23,6 +23,9 @@ export class User {
     @Column({ default: false })
     isAdmin: boolean;
 
+    @Column({ type: 'varchar', nullable: true })
+    refreshToken?: string;
+
     @OneToMany(() => Review, (reviews) => reviews.user)
     reviews: Review[];
 
