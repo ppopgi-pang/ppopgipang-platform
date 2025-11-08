@@ -24,7 +24,17 @@ async function bootstrap() {
     .setTitle('PpopgiPang API')
     .setDescription('뽑기팡 백엔드 REST API 명세서')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        in: 'header',
+        description: 'JWT Access Token 입력 (예: Bearer eyJhbGci...)',
+      },
+      'access-token',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

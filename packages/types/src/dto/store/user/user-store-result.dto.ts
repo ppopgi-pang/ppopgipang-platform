@@ -1,5 +1,5 @@
 export namespace UserStoreResult {
-    export class inBoundSearchDto {
+    export class InBoundSearchDto {
         success: boolean;
         data: {}[];
         meta: {};

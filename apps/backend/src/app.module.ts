@@ -17,6 +17,10 @@ import { TradeBoard } from './trades/entities/trade-board.entity';
 import { TradeChatMessage } from './trades/entities/trade-chat-message.entity';
 import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
 import { ReviewBoard } from './reviews/entities/review-board.entity';
+import { CommonsModule } from './commons/commons.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +34,9 @@ import { ReviewBoard } from './reviews/entities/review-board.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
+        KAKAO_CLIENT_ID: Joi.string().required(),
+        KAKAO_REDIRECT_URI: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
       })
     }),
 
@@ -51,6 +58,11 @@ import { ReviewBoard } from './reviews/entities/review-board.entity';
       inject: [ConfigService]
     }),
 
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), '../../public'),
+      serveRoot: '/public/'
+    }),
+
     UsersModule,
 
     StoresModule,
@@ -60,6 +72,10 @@ import { ReviewBoard } from './reviews/entities/review-board.entity';
     ProposalsModule,
 
     TradesModule,
+
+    CommonsModule,
+
+    AuthModule,
   ],
   controllers: [],
   providers: [],
