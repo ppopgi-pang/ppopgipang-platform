@@ -2,8 +2,9 @@ import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ReviewInput } from '@ppopgipang/types';
-import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('[Review] 리뷰(후기)')
 @Controller('v1/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
