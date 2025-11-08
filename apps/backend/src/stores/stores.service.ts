@@ -70,4 +70,47 @@ export class StoresService {
     async createStoreType(dto: StoreTypeInput.CreateStoreTypeDto) {
         return await this.storeTypeRepository.save(dto);
     }
+
+    /**
+     * (사용자) 가게 목록 반경 검색
+     * @param latitude 
+     * @param longitude 
+     * @param radius 
+     * @param page 
+     * @param size 
+     * @param keyword 
+     * @returns 
+     */
+    async findNearByStores(latitude: number, longitude: number, radius = 3000, page = 1, size = 20, keyword?: string) {
+        const qb = this.storeRepository.createQueryBuilder('s')
+        .addSelect(
+            `ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(s.longitude, s.latitude))`,
+            'distance'
+        )
+        .where(`ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(s.longitude, s.latitude)) <= :radius`, {
+            latitude,
+            longitude,
+            radius
+        })
+        .setParameters({ latitude, longitude, radius })
+
+        if (keyword) {
+            qb.andWhere('s.name LIKE :keyword', { keyword: `%${keyword}%`});
+        }
+
+        const total = await qb.getCount();
+
+        const { entities, raw } = await qb
+        .orderBy('distance', 'ASC')
+        .offset((page - 1) * size)
+        .limit(size)
+        .getRawAndEntities();
+
+        const data = entities.map((store, i) => ({
+            ...store,
+            distance: Math.round(raw[i].distance),
+        }));
+
+        return new UserStoreResult.FindNearByDto(true, data, { count: total });
+    }
 }
