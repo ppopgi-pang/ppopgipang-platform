@@ -8,6 +8,9 @@ export class Store {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ length: 255 })
+    name: string;
+
     @Column({ length: 255, nullable: true })
     address: string;
 
