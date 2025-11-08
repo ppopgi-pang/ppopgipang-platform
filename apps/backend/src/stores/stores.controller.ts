@@ -39,7 +39,7 @@ export class StoresController {
    */
   @Post()
   createStore(
-    @Body() dto: AdminStoreInput.createStoreDto
+    @Body() dto: AdminStoreInput.CreateStoreDto
   ) {
     return this.storesService.createStore(dto);
   }
@@ -51,7 +51,7 @@ export class StoresController {
    */
   @Post('type')
   createStoreType(
-    @Body() dto: StoreTypeInput.createStoreTypeDto
+    @Body() dto: StoreTypeInput.CreateStoreTypeDto
   ) {
     return this.storesService.createStoreType(dto);
   }

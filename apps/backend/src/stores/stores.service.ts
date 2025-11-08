@@ -20,7 +20,7 @@ export class StoresService {
      * @param dto
      * @returns 
      */
-    async createStore(dto: AdminStoreInput.createStoreDto) {
+    async createStore(dto: AdminStoreInput.CreateStoreDto) {
         const storeType = await this.storeTypeRepository.findOneBy({ id: dto.typeId });
         if (!storeType) throw new NotFoundException('존재하지 않는 가게 타입(카테고리)입니다.');
         return await this.storeRepository.save(dto);
@@ -59,7 +59,7 @@ export class StoresService {
 
         const [data, total] = await qb.getManyAndCount();
 
-        return new UserStoreResult.inBoundSearchDto(true, data, { count : total});
+        return new UserStoreResult.InBoundSearchDto(true, data, { count : total});
     }
 
     /**
@@ -67,7 +67,7 @@ export class StoresService {
      * @param dto 
      * @returns 
      */
-    async createStoreType(dto: StoreTypeInput.createStoreTypeDto) {
+    async createStoreType(dto: StoreTypeInput.CreateStoreTypeDto) {
         return await this.storeTypeRepository.save(dto);
     }
 }
