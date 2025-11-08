@@ -12,7 +12,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@ppopgipang/*": ["packages/*/dist"]
+      "@ppopgipang/*": ["../*/dist"]
     }
   }
 }
