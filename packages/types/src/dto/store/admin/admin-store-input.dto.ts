@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString } from "class-validator";
 
-export namespace AdminStore {
-    export class createDto {
+export namespace AdminStoreInput {
+    export class CreateStoreDto {
         @ApiProperty({ example: '홍대 뽑기방', description: '매장 이름' })
         @IsNotEmpty()
         @IsString()

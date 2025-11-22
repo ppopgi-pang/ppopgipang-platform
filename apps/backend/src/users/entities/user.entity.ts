@@ -11,14 +11,20 @@ export class User {
     @Column({ length: 50, unique: true })
     email: string;
 
-    @Column({ length: 100 })
-    password: string;
+    @Column()
+    kakaoId: string;
 
     @Column({ length: 30 })
     nickname: string;
 
+    @Column()
+    profileImage: string;
+
     @Column({ default: false })
     isAdmin: boolean;
+
+    @Column({ type: 'varchar', nullable: true })
+    refreshToken?: string;
 
     @OneToMany(() => Review, (reviews) => reviews.user)
     reviews: Review[];
