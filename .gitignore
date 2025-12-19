@@ -74,3 +74,5 @@ docker-compose.override.yml
 *.zip
 *.bak
 *.tmp
+
+*/.env
