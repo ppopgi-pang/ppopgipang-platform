@@ -4,6 +4,7 @@ import { Store } from './entities/store.entity';
 import { Repository } from 'typeorm';
 import { AdminStoreInput, StoreTypeInput, UserStoreResult } from '@ppopgipang/types';
 import { StoreType } from './entities/store-type.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 
 
 @Injectable()
@@ -12,8 +13,26 @@ export class StoresService {
         @InjectRepository(Store)
         private readonly storeRepository: Repository<Store>,
         @InjectRepository(StoreType)
-        private readonly storeTypeRepository: Repository<StoreType>
+        private readonly storeTypeRepository: Repository<StoreType>,
+        @InjectRepository(Review)
+        private readonly reviewRepository: Repository<Review>
     ) {}
+
+    async findStoreDetail(id: number) {
+        const review = await this.reviewRepository.find({
+            where: { id },
+            take: 5,
+            order: { createdAt: 'DESC' }
+        });
+        if (!review) throw new NotFoundException('존재하지 않는 리뷰입니다.');
+        
+        const store = await this.storeRepository.findOneBy({ id });
+
+        if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
+        
+        
+        console.log(review);
+    }
     
     /**
      * (어드민) 가게 생성 메서드

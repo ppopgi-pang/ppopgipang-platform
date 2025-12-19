@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { AdminStoreInput, StoreTypeInput } from '@ppopgipang/types';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,16 @@ import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
+  /**
+   * (사용자) 가게 목록 - 반경 검색
+   * @param latitude 
+   * @param longitude 
+   * @param radius 
+   * @param page 
+   * @param size 
+   * @param keyword 
+   * @returns 
+   */
   @Get('nearby')
   @ApiOperation({
       summary: '(사용자) 가게 목록 - 반경 검색'
@@ -18,7 +28,6 @@ export class StoresController {
   @ApiQuery({ name: 'page', required: false, description: '페이지' })
   @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수' })
   @ApiQuery({ name: 'keyword', required: false, description: '검색 키워드' })
-
   findNearByStores(
     @Query('latitude') latitude: number,
     @Query('longitude') longitude: number,
@@ -80,6 +89,13 @@ export class StoresController {
   ) {
     return this.storesService.createStore(dto);
   }
+
+  // @Get(':id')
+  // findOneReview(
+  //   @Param('id') id: number
+  // ) {
+  //   return this.storesService.findOneReview(id);
+  // }
 
   /**
    * (어드민) 가게 타입(카테고리) 생성 API
