@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { Response } from "express";
 
 @ApiTags('[Auth] 인증')
 @Controller('v1/auth')
@@ -20,18 +21,21 @@ export class AuthController {
 
     @Get('kakao/callback')
     @UseGuards(AuthGuard('kakao'))
-    kakaoCallback(@Req() req: any) {
-        return this.authService.validateOauthLogin(req.user);
+    async kakaoCallback(@Req() req: any, @Res() res: Response) {
+        const result = await this.authService.validateOauthLogin(req.user);
+        const { accessToken, refreshToken } = result;
+
+        return res.redirect(`http://localhost:5173/auth/kakao/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
     }
 
     @Post('refresh')
     @ApiOperation({ summary: 'Access Token 재발급' })
     @ApiBody({
         schema: {
-        type: 'object',
-        properties: {
-            refreshToken: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIs...' },
-        },
+            type: 'object',
+            properties: {
+                refreshToken: { type: 'string', example: 'eyJhbGciOiJIUzI1NiIs...' },
+            },
         },
     })
     async refreshToken(
@@ -54,7 +58,7 @@ export class AuthController {
             return {
                 accessToken: newAccessToken,
             }
-        } catch(e) {
+        } catch (e) {
             throw new UnauthorizedException('refreshToken이 만료되었거나 유효하지 않습니다.');
         }
     }

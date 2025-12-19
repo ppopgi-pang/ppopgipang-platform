@@ -11,7 +11,11 @@
 import { Route as rootRouteImport } from './../../../pages/__root'
 import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
+import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
+import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
+import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
+import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -22,37 +26,87 @@ const Header_layoutRouteRoute = Header_layoutRouteRouteImport.update({
   id: '/_header_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Header_layoutProfileIndexRoute =
+  Header_layoutProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => Header_layoutRouteRoute,
+  } as any)
 const Header_layoutmapIndexRoute = Header_layoutmapIndexRouteImport.update({
   id: '/(map)/',
   path: '/',
   getParentRoute: () => Header_layoutRouteRoute,
 } as any)
+const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
+  id: '/auth/kakao/callback/',
+  path: '/auth/kakao/callback/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/admin': typeof AdminIndexRoute
+  '/login': typeof LoginIndexRoute
   '/': typeof Header_layoutmapIndexRoute
+  '/profile': typeof Header_layoutProfileIndexRoute
+  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/admin': typeof AdminIndexRoute
+  '/login': typeof LoginIndexRoute
   '/': typeof Header_layoutmapIndexRoute
+  '/profile': typeof Header_layoutProfileIndexRoute
+  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/admin/': typeof AdminIndexRoute
+  '/login/': typeof LoginIndexRoute
   '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
+  '/_header_layout/profile/': typeof Header_layoutProfileIndexRoute
+  '/auth/kakao/callback/': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/about' | '/'
+  fullPaths:
+    | '/about'
+    | '/admin'
+    | '/login'
+    | '/'
+    | '/profile'
+    | '/auth/kakao/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/'
-  id: '__root__' | '/_header_layout' | '/about' | '/_header_layout/(map)/'
+  to: '/about' | '/admin' | '/login' | '/' | '/profile' | '/auth/kakao/callback'
+  id:
+    | '__root__'
+    | '/_header_layout'
+    | '/about'
+    | '/admin/'
+    | '/login/'
+    | '/_header_layout/(map)/'
+    | '/_header_layout/profile/'
+    | '/auth/kakao/callback/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
+  AuthKakaoCallbackIndexRoute: typeof AuthKakaoCallbackIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -71,6 +125,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Header_layoutRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_header_layout/profile/': {
+      id: '/_header_layout/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof Header_layoutProfileIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
     '/_header_layout/(map)/': {
       id: '/_header_layout/(map)/'
       path: '/'
@@ -78,15 +153,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Header_layoutmapIndexRouteImport
       parentRoute: typeof Header_layoutRouteRoute
     }
+    '/auth/kakao/callback/': {
+      id: '/auth/kakao/callback/'
+      path: '/auth/kakao/callback'
+      fullPath: '/auth/kakao/callback'
+      preLoaderRoute: typeof AuthKakaoCallbackIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface Header_layoutRouteRouteChildren {
   Header_layoutmapIndexRoute: typeof Header_layoutmapIndexRoute
+  Header_layoutProfileIndexRoute: typeof Header_layoutProfileIndexRoute
 }
 
 const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
   Header_layoutmapIndexRoute: Header_layoutmapIndexRoute,
+  Header_layoutProfileIndexRoute: Header_layoutProfileIndexRoute,
 }
 
 const Header_layoutRouteRouteWithChildren =
@@ -95,6 +179,9 @@ const Header_layoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
+  AuthKakaoCallbackIndexRoute: AuthKakaoCallbackIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

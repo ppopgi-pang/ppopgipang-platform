@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Righteous&display=swap");
 
 @theme {
     /* Sky Blue Spectrum */
@@ -76,4 +77,188 @@
     --color-gray-700: #374151;
     --color-gray-800: #1f2937;
     --color-gray-900: #111827;
+}
+
+:root {
+    --header-height: 68px;
+    --bottom-nav-height: 72px;
+    --page-safe-bottom: calc(var(--bottom-nav-height) + 18px);
+    --glass-bg: rgba(255, 255, 255, 0.58);
+    --glass-bg-strong: rgba(255, 255, 255, 0.78);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+    --brand-gradient: linear-gradient(135deg, #b7f0ff 0%, #7cd2ff 45%, #60a5fa 100%);
+    --brand-highlight: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+}
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    body {
+        font-family: "Gowun Dodum", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        color: var(--color-text-primary);
+        background:
+            radial-gradient(120% 140% at 10% -10%, rgba(125, 211, 252, 0.35) 0%, rgba(255, 255, 255, 0) 50%),
+            radial-gradient(120% 120% at 90% 0%, rgba(251, 191, 36, 0.25) 0%, rgba(255, 255, 255, 0) 45%),
+            radial-gradient(120% 120% at 20% 95%, rgba(14, 165, 233, 0.2) 0%, rgba(255, 255, 255, 0) 55%),
+            linear-gradient(180deg, #f8fbff 0%, #eef8ff 45%, #f4fbff 100%);
+        background-attachment: fixed;
+    }
+
+    input,
+    button,
+    textarea,
+    select {
+        font-family: inherit;
+    }
+}
+
+@layer components {
+    .glass-panel {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--glass-shadow);
+        backdrop-filter: blur(22px) saturate(170%);
+    }
+
+    .glass-panel-strong {
+        background: var(--glass-bg-strong);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 26px 70px rgba(15, 23, 42, 0.16);
+        backdrop-filter: blur(24px) saturate(180%);
+    }
+
+    .glass-pill {
+        border-radius: 999px;
+    }
+
+    .liquid-button {
+        color: #0b2135;
+        border-radius: 999px;
+        background: var(--brand-gradient);
+        box-shadow:
+            0 14px 30px rgba(14, 165, 233, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+    }
+
+    .liquid-button:hover {
+        transform: translateY(-1px) scale(1.01);
+        filter: brightness(1.03);
+        box-shadow:
+            0 18px 38px rgba(14, 165, 233, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    .liquid-button:active {
+        transform: translateY(0);
+        box-shadow:
+            0 10px 22px rgba(14, 165, 233, 0.26),
+            inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .liquid-outline {
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: #0f172a;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        transition: border-color 220ms ease, background 220ms ease, transform 220ms ease;
+    }
+
+    .liquid-outline:hover {
+        border-color: rgba(56, 189, 248, 0.6);
+        background: rgba(255, 255, 255, 0.85);
+        transform: translateY(-1px);
+    }
+
+    .liquid-chip {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        backdrop-filter: blur(18px);
+    }
+}
+
+@layer utilities {
+    .animate-fade-up {
+        animation: fade-up 520ms ease forwards;
+    }
+
+    .animate-pop {
+        animation: pop-in 420ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-shimmer {
+        animation: shimmer 3s ease-in-out infinite;
+        background-size: 180% 180%;
+    }
+}
+
+@keyframes fade-up {
+    0% {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pop-in {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .animate-pop,
+    .animate-float,
+    .animate-shimmer {
+        animation: none !important;
+    }
 }
