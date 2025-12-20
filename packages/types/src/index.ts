@@ -5,3 +5,4 @@ export * from './dto/common/file/file-result.dto';
 export * from './dto/auth/auth-result.dto';
 export * from './dto/review/user/review-input.dto';
 export * from './dto/review/user/review-result.dto';
+export * from './dto/user/user-result.dto';

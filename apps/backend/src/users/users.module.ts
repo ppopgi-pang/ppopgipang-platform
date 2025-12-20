@@ -6,11 +6,11 @@ import { User } from './entities/user.entity';
 
 @Module({
   imports: [
-      TypeOrmModule.forFeature([
-        User
-      ])
-    ],
+    TypeOrmModule.forFeature([
+      User
+    ])
+  ],
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule { }

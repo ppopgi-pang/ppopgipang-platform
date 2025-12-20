@@ -1,73 +1,41 @@
+import type {
+    AdminStoreInput,
+    FileResult,
+    ReviewInput,
+    ReviewResult,
+    StoreTypeInput,
+    UserStoreResult,
+} from "@ppopgipang/types";
 import { apiClient } from "../lib/axios";
 
-export interface User {
-    email: string;
-    username: string;
-    profileImage: string;
-}
+export type Store = UserStoreResult.StoreDto;
+export type Review = ReviewResult.ReviewDto;
+export type StoreDetailResponse = UserStoreResult.StoreDetailDto;
+export type StoreResponse = UserStoreResult.InBoundSearchDto | UserStoreResult.FindNearByDto;
+export type CreateStoreDto = AdminStoreInput.CreateStoreDto;
+export type CreateStoreTypeDto = StoreTypeInput.CreateStoreTypeDto;
+export type ReviewCreateRequest = ReviewInput.CreateReviewDto;
+export type FileUploadResponse = FileResult.UploadDto;
 
-export interface Review {
-    id: number;
-    rating: number;
-    content: string;
-    images?: string[];
-    user: User;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface StoreDetailResponse {
-    store: Store;
-    reviews: Review[];
-}
-
-export interface StoreDetail extends Store {
-    // Legacy support or if we want to merge them manually
-    reviews?: Review[];
-}
-
-export interface Store {
-    id: number;
-    name: string;
-    address: string;
-    latitude: string | number;
-    longitude: string | number;
-    phone?: string | null;
-    averageRating?: number;
-    distance?: number;
-    type?: {
-        id: number;
-        name: string;
-    };
-}
-
-export interface StoreResponse {
-    success: boolean;
-    data: Store[];
-    meta: {
-        count: number;
-    };
-}
-
-export interface NearbyParams {
+export type NearbyParams = {
     latitude: number;
     longitude: number;
     radius?: number;
     page?: number;
     size?: number;
     keyword?: string;
-}
+};
 
-export interface InBoundsParams {
+export type InBoundsParams = {
     north: number;
     south: number;
     east: number;
     west: number;
     keyword?: string;
-}
+};
 
-export const getNearbyStores = async (params: NearbyParams): Promise<StoreResponse> => {
-    const { data } = await apiClient.get<StoreResponse>("/stores/nearby", {
+export const getNearbyStores = async (params: NearbyParams): Promise<UserStoreResult.FindNearByDto> => {
+    const { data } = await apiClient.get<UserStoreResult.FindNearByDto>("/stores/nearby", {
         params: {
             latitude: params.latitude,
             longitude: params.longitude,
@@ -80,8 +48,8 @@ export const getNearbyStores = async (params: NearbyParams): Promise<StoreRespon
     return data;
 };
 
-export const getStoresInBounds = async (params: InBoundsParams): Promise<StoreResponse> => {
-    const { data } = await apiClient.get<StoreResponse>("/stores/in-bounds", {
+export const getStoresInBounds = async (params: InBoundsParams): Promise<UserStoreResult.InBoundSearchDto> => {
+    const { data } = await apiClient.get<UserStoreResult.InBoundSearchDto>("/stores/in-bounds", {
         params: {
             north: params.north,
             south: params.south,
@@ -92,19 +60,6 @@ export const getStoresInBounds = async (params: InBoundsParams): Promise<StoreRe
     });
     return data;
 };
-export interface CreateStoreDto {
-    name: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    phone: string;
-    typeId: number;
-}
-
-export interface CreateStoreTypeDto {
-    name: string;
-    description: string;
-}
 
 export const createStore = async (data: CreateStoreDto): Promise<void> => {
     await apiClient.post("/stores", data);
@@ -114,18 +69,6 @@ export const createStoreType = async (data: CreateStoreTypeDto): Promise<void> =
     await apiClient.post("/stores/type", data);
 };
 
-
-export interface ReviewCreateRequest {
-    storeId: number;
-    rating: number;
-    content: string;
-    images?: string[];
-    boardId: number; // Seems required by API based on user request example
-}
-
-export interface FileUploadResponse {
-    fileName: string;
-}
 
 export const uploadFile = async (file: File): Promise<FileUploadResponse> => {
     const formData = new FormData();

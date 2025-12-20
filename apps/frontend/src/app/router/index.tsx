@@ -39,9 +39,18 @@ const RootLayout = () => {
 
 	return (
 		<TanstackQueryProvider>
-				<Outlet />
-				<TanStackRouterDevtools />
+			<div className="app-shell">
+				<div className="app-frame">
+					<Outlet />
+				</div>
+			</div>
+			<TanStackRouterDevtools />
 		</TanstackQueryProvider>
 	);
 };
-export const Route = createRootRoute({ component: RootLayout });
+import { NotFoundPage } from "@/pages/not-found";
+
+export const Route = createRootRoute({
+	component: RootLayout,
+	notFoundComponent: NotFoundPage,
+});

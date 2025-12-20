@@ -7,9 +7,16 @@ export namespace UserStoreResult {
         address: string;
         latitude: number;
         longitude: number;
-        phone: string;
+        phone?: string | null;
+        averageRating?: number;
+        distance?: number;
+        type?: {
+            id: number;
+            name: string;
+            description?: string | null;
+        };
 
-        constructor(id: number, name: string, address: string, latitude: number, longitude: number, phone: string) {
+        constructor(id: number, name: string, address: string, latitude: number, longitude: number, phone?: string | null) {
             this.id = id;
             this.name = name;
             this.address = address;
@@ -20,9 +27,9 @@ export namespace UserStoreResult {
     }
     export class InBoundSearchDto {
         success: boolean;
-        data: object[];
-        meta: object;
-        constructor(success: boolean, data: object[], meta: object) {
+        data: StoreDto[];
+        meta: { count: number };
+        constructor(success: boolean, data: StoreDto[], meta: { count: number }) {
             this.success = success;
             this.data = data;
             this.meta = meta;
@@ -31,10 +38,10 @@ export namespace UserStoreResult {
 
     export class FindNearByDto {
         success: boolean;
-        data: object[];
-        meta: object;
+        data: StoreDto[];
+        meta: { count: number };
 
-        constructor(success: boolean, data: object[], meta: object) {
+        constructor(success: boolean, data: StoreDto[], meta: { count: number }) {
             this.success = success;
             this.data = data;
             this.meta = meta;
