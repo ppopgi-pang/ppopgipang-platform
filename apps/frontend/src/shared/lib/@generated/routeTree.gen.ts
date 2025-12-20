@@ -13,6 +13,7 @@ import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
+import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
 import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
 import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
@@ -36,6 +37,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
+  id: '/stores/$storeId',
+  path: '/stores/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Header_layoutProfileIndexRoute =
   Header_layoutProfileIndexRouteImport.update({
     id: '/profile/',
@@ -55,6 +61,7 @@ const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/': typeof Header_layoutmapIndexRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/': typeof Header_layoutmapIndexRoute
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
   '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
@@ -83,17 +92,26 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/stores/$storeId'
     | '/admin'
     | '/login'
     | '/'
     | '/profile'
     | '/auth/kakao/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/admin' | '/login' | '/' | '/profile' | '/auth/kakao/callback'
+  to:
+    | '/about'
+    | '/stores/$storeId'
+    | '/admin'
+    | '/login'
+    | '/'
+    | '/profile'
+    | '/auth/kakao/callback'
   id:
     | '__root__'
     | '/_header_layout'
     | '/about'
+    | '/stores/$storeId'
     | '/admin/'
     | '/login/'
     | '/_header_layout/(map)/'
@@ -104,6 +122,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
   AuthKakaoCallbackIndexRoute: typeof AuthKakaoCallbackIndexRoute
@@ -137,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stores/$storeId': {
+      id: '/stores/$storeId'
+      path: '/stores/$storeId'
+      fullPath: '/stores/$storeId'
+      preLoaderRoute: typeof StoresStoreIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_header_layout/profile/': {
@@ -179,6 +205,7 @@ const Header_layoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
   AuthKakaoCallbackIndexRoute: AuthKakaoCallbackIndexRoute,

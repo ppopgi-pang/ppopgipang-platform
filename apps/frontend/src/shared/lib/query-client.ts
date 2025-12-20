@@ -18,7 +18,7 @@ const classifyError = (error: unknown) => {
     }
 
     const status = error.response?.status;
-    const code = error.response?.data?.code;
+
     const errorMessage = error.response?.data?.message;
 
     // 401: 인증 오류 - 재시도 불가

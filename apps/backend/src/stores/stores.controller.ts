@@ -90,12 +90,20 @@ export class StoresController {
     return this.storesService.createStore(dto);
   }
 
-  // @Get(':id')
-  // findOneReview(
-  //   @Param('id') id: number
-  // ) {
-  //   return this.storesService.findOneReview(id);
-  // }
+  /**
+   * (사용자) 가게 상세 정보 API
+   * @param dto 
+   * @returns 
+   */
+  @Get(':id')
+  @ApiOperation({
+    summary: '(사용자) 가게 상세 정보 API'
+  })
+  findOneReview(
+    @Param('id') id: number
+  ) {
+    return this.storesService.findStoreDetail(id);
+  }
 
   /**
    * (어드민) 가게 타입(카테고리) 생성 API

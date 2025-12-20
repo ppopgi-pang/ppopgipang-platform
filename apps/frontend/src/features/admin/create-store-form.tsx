@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { createStore } from '@/shared/api/stores';
 import { useGeolocation } from '@/shared/hooks/use-geolocation';

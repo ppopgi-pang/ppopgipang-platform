@@ -61,7 +61,7 @@ import { AuthModule } from './auth/auth.module';
 
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), '../../public'),
-      serveRoot: '/public/'
+      serveRoot: '/public/',
     }),
 
     UsersModule,
@@ -81,4 +81,4 @@ import { AuthModule } from './auth/auth.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

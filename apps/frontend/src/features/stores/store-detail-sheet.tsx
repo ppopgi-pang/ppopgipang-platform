@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import type { Store } from "../../shared/api/stores";
 
 interface StoreDetailSheetProps {
@@ -7,6 +8,7 @@ interface StoreDetailSheetProps {
 }
 
 const StoreDetailSheet = forwardRef<HTMLDivElement, StoreDetailSheetProps>(({ store, onClose }, ref) => {
+    const navigate = useNavigate();
     if (!store) return null;
 
     return (
@@ -54,15 +56,17 @@ const StoreDetailSheet = forwardRef<HTMLDivElement, StoreDetailSheetProps>(({ st
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-6 flex gap-3">
-                <button className="flex-1 py-3 liquid-button font-semibold">
-                    길찾기
-                </button>
-                <button className="flex-1 py-3 liquid-outline font-semibold">
-                    상세보기
-                </button>
-            </div>
+            <button className="flex-1 py-3 liquid-button font-semibold">
+                길찾기
+            </button>
+            <button
+                onClick={() => navigate({ to: '/stores/$storeId', params: { storeId: store.id.toString() } })}
+                className="flex-1 py-3 liquid-outline font-semibold"
+            >
+                상세보기
+            </button>
         </div>
+
     );
 });
 
