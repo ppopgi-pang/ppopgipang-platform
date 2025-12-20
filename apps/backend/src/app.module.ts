@@ -16,7 +16,7 @@ import { Trade } from './trades/entities/trade.entity';
 import { TradeBoard } from './trades/entities/trade-board.entity';
 import { TradeChatMessage } from './trades/entities/trade-chat-message.entity';
 import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
-import { ReviewBoard } from './reviews/entities/review-board.entity';
+
 import { CommonsModule } from './commons/commons.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -52,7 +52,7 @@ import { AuthModule } from './auth/auth.module';
         entities: [
           User, Store, StoreType, Review, Proposal, Trade,
           TradeBoard, TradeChatMessage, TradeChatRoom,
-          ReviewBoard
+
         ],
         synchronize: true
       }),

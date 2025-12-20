@@ -24,9 +24,6 @@ export namespace ReviewInput {
         @IsNumber()
         storeId: number;
 
-        @ApiProperty({ description: '게시판 ID' })
-        @IsNotEmpty()
-        @IsNumber()
-        boardId: number;
+
     }
 }

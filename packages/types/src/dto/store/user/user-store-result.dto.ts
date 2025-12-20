@@ -48,6 +48,18 @@ export namespace UserStoreResult {
         }
     }
 
+    export class SearchDto {
+        success: boolean;
+        data: StoreDto[];
+        meta: { count: number };
+
+        constructor(success: boolean, data: StoreDto[], meta: { count: number }) {
+            this.success = success;
+            this.data = data;
+            this.meta = meta;
+        }
+    }
+
     export class StoreDetailDto {
         reviews: ReviewResult.ReviewDto[];
         store: StoreDto;

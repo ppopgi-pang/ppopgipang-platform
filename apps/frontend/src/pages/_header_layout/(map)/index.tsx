@@ -3,10 +3,12 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useGeolocation } from '@/shared/hooks/use-geolocation'
 import { useQuery } from '@tanstack/react-query'
-import { getNearbyStores, getStoresInBounds, type Store } from '@/shared/api/stores'
+import { getNearbyStores, getStoresInBounds, searchStore, type Store } from '@/shared/api/stores'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import StoreDetailSheet from '@/features/stores/store-detail-sheet'
 import StoreListSheet from '@/features/stores/store-list-sheet'
+import SearchResultList from '@/features/search/search-result-list'
+import { useDebounce } from '@/shared/hooks/use-debounce'
 
 export const Route = createFileRoute('/_header_layout/(map)/')({
   component: MapPage,
@@ -15,22 +17,29 @@ export const Route = createFileRoute('/_header_layout/(map)/')({
 function MapPage() {
   const { coordinates, loaded } = useGeolocation();
   const [center, setCenter] = useState(coordinates);
+  const [level, setLevel] = useState(3);
   const [bounds, setBounds] = useState<{ n: number, s: number, e: number, w: number } | null>(null);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [sheetNode, setSheetNode] = useState<HTMLDivElement | null>(null);
   const [sheetBottomOffset, setSheetBottomOffset] = useState<number | null>(null);
 
+  // Search State
+  const [keyword, setKeyword] = useState('');
+  const debouncedKeyword = useDebounce(keyword, 300); // 300ms debounce
+  // const [searchResults, setSearchResults] = useState<Store[]>([]); // Removed
+  // const [totalSearchCount, setTotalSearchCount] = useState(0); // Removed
+
   // Initial center sync with geolocation
   useEffect(() => {
     if (loaded) {
       setCenter(coordinates);
     }
-  }, [loaded]); // Only update when loaded status changes to true (initial load)
+  }, [loaded, coordinates]);
 
   // Fetch stores in bounds
   const { data: storesData } = useQuery({
-    queryKey: ['stores', bounds, center], // Add center to dependency if bounds is null
+    queryKey: ['stores', bounds, center],
     queryFn: () => {
       if (!bounds) return getNearbyStores({ latitude: center.lat, longitude: center.lng });
 
@@ -44,11 +53,22 @@ function MapPage() {
     enabled: true,
   });
 
+  // Search API (Live Search)
+  const { data: searchResponse, refetch: searchRefetch } = useQuery({
+    queryKey: ['search', debouncedKeyword],
+    queryFn: () => {
+      if (!debouncedKeyword) return null;
+      return searchStore(debouncedKeyword, 1, 100);
+    },
+    enabled: !!debouncedKeyword,
+  });
+
+  const searchResults = searchResponse?.data || [];
+  const totalSearchCount = searchResponse?.meta?.count || 0;
+
   // Handlers
   const handleCenterChanged = useCallback(() => {
-    // const level = map.getLevel();
-    // const latlng = map.getCenter();
-    // setCenter({ lat: latlng.getLat(), lng: latlng.getLng() });
+    // Optional: track center
   }, []);
 
   const handleBoundsChanged = useCallback((map: kakao.maps.Map) => {
@@ -63,6 +83,11 @@ function MapPage() {
       w: sw.getLng()
     });
   }, []);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    handleBoundsChanged(mapRef.current);
+  }, [center, handleBoundsChanged]);
 
   const updateSheetBottomOffset = useCallback(() => {
     if (!sheetNode || typeof window === 'undefined') return;
@@ -102,6 +127,7 @@ function MapPage() {
   }, [handleBoundsChanged]);
 
   const handleZoomChanged = useCallback((map: kakao.maps.Map) => {
+    setLevel(map.getLevel());
     handleBoundsChanged(map);
   }, [handleBoundsChanged]);
 
@@ -116,45 +142,97 @@ function MapPage() {
     }
   }, [coordinates, handleBoundsChanged]);
 
+  const handleStoreClick = (store: Store, nextLevel = 3) => {
+    const nextCenter = { lat: Number(store.latitude), lng: Number(store.longitude) };
+    setSelectedStore(store);
+    setCenter(nextCenter);
+    setLevel(nextLevel);
+
+    if (mapRef.current) {
+      const map = mapRef.current;
+      map.setCenter(new kakao.maps.LatLng(nextCenter.lat, nextCenter.lng));
+      handleBoundsChanged(map);
+    }
+  };
+
+  const handleSearch = () => {
+    if (keyword.trim()) {
+      setSelectedStore(null);
+      searchRefetch();
+    }
+  };
+
+  const handleSearchResultClick = (store: Store) => {
+    setKeyword(''); // Clears query, hides list
+    handleStoreClick(store);
+  };
+
   const hasSheet = Boolean(selectedStore) || (storesData?.data?.length ?? 0) > 0;
   const buttonBottomClass = hasSheet
     ? 'bottom-[calc(42vh+var(--page-safe-bottom))]'
     : 'bottom-[calc(var(--page-safe-bottom)+8px)]';
 
   return <div className='w-full h-screen relative'>
-    <div className='absolute top-4 w-full h-12 z-20 px-4'>
-      <SearchBar />
+    <div className='absolute top-4 w-full z-20 px-4'>
+      <SearchBar
+        value={keyword}
+        onChange={setKeyword}
+        onSearch={handleSearch}
+      />
+      {searchResults.length > 0 && keyword && ( // Only show if keyword exists
+        <div className="mt-2">
+          <SearchResultList
+            results={searchResults}
+            totalCount={totalSearchCount}
+            onClick={handleSearchResultClick}
+          />
+        </div>
+      )}
     </div>
 
-    <Map // 지도를 표시할 Container
+    <Map
       id="map"
       center={center}
       style={{
         width: "100%",
         height: "100%",
       }}
-      level={3} // 지도의 확대 레벨
+      level={level}
       onCenterChanged={handleCenterChanged}
       onDragEnd={handleDragEnd}
       onZoomChanged={handleZoomChanged}
       onCreate={handleMapCreate}
-      onClick={() => setSelectedStore(null)} // Close sheet on map click
+      onClick={() => {
+        setSelectedStore(null);
+        setKeyword(''); // Clear search on map click if desired, or just list closes via UI logic
+        // If we want to hide results on map click:
+        // Since results depend on keyword, clearing keyword hides them.
+      }}
     >
-      {storesData?.data?.map((store) => (
+      {selectedStore ? (
         <MapMarker
-          key={store.id}
-          position={{ lat: +store.latitude, lng: +store.longitude }}
-          title={store.name}
-          onClick={() => setSelectedStore(store)} // Open sheet on marker click
+          position={{
+            lat: Number(selectedStore.latitude),
+            lng: Number(selectedStore.longitude),
+          }}
+          title={selectedStore.name}
         />
-      ))}
+      ) : (
+        storesData?.data?.map((store) => (
+          <MapMarker
+            key={store.id}
+            position={{ lat: Number(store.latitude), lng: Number(store.longitude) }}
+            title={store.name}
+            onClick={() => handleStoreClick(store, 1)}
+          />
+        ))
+      )}
 
-      {/* Current Location Marker (Blue Dot representation) */}
       {loaded && (
         <MapMarker
           position={coordinates}
           image={{
-            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // Replace with better user location icon if available
+            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
             size: { width: 20, height: 20 },
           }}
           title="Current Location"
@@ -185,7 +263,7 @@ function MapPage() {
       <StoreListSheet
         ref={setSheetNode}
         stores={storesData?.data || []}
-        onStoreClick={setSelectedStore}
+        onStoreClick={handleStoreClick}
       />
     )}
 

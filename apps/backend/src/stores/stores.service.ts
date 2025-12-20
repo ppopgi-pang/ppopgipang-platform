@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { AdminStoreInput, AuthResult, ReviewResult, StoreTypeInput, UserStoreResult } from '@ppopgipang/types';
 import { StoreType } from './entities/store-type.entity';
 import { Review } from 'src/reviews/entities/review.entity';
@@ -154,5 +154,19 @@ export class StoresService {
         }));
 
         return new UserStoreResult.FindNearByDto(true, data, { count: total });
+    }
+
+    /**
+     * 가게 검색
+     */
+    async searchStore(keyword: string, page: number, size: number) {
+        const [stores, total] = await this.storeRepository.findAndCount({
+            where: { name: Like(`%${keyword}%`) },
+            take: size,
+            skip: (page - 1) * size,
+            order: { name: 'ASC' }
+        });
+
+        return new UserStoreResult.SearchDto(true, stores, { count: total });
     }
 }

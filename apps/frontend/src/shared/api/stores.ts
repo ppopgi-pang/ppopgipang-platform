@@ -12,6 +12,7 @@ export type Store = UserStoreResult.StoreDto;
 export type Review = ReviewResult.ReviewDto;
 export type StoreDetailResponse = UserStoreResult.StoreDetailDto;
 export type StoreResponse = UserStoreResult.InBoundSearchDto | UserStoreResult.FindNearByDto;
+export type SearchResponse = UserStoreResult.SearchDto;
 export type CreateStoreDto = AdminStoreInput.CreateStoreDto;
 export type CreateStoreTypeDto = StoreTypeInput.CreateStoreTypeDto;
 export type ReviewCreateRequest = ReviewInput.CreateReviewDto;
@@ -57,6 +58,13 @@ export const getStoresInBounds = async (params: InBoundsParams): Promise<UserSto
             west: params.west,
             keyword: params.keyword,
         },
+    });
+    return data;
+};
+
+export const searchStore = async (keyword: string, page = 1, size = 20): Promise<UserStoreResult.SearchDto> => {
+    const { data } = await apiClient.get<UserStoreResult.SearchDto>("/stores/search", {
+        params: { keyword, page, size }
     });
     return data;
 };

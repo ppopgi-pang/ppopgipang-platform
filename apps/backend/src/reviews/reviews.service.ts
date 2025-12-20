@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
-import { ReviewBoard } from './entities/review-board.entity';
+
 import { ReviewInput } from '@ppopgipang/types';
 import { Store } from 'src/stores/entities/store.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -14,28 +14,26 @@ export class ReviewsService {
     constructor(
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
-        @InjectRepository(ReviewBoard)
-        private readonly reviewBoardRepository: Repository<ReviewBoard>,
+
         @InjectRepository(Store)
         private readonly storeRepository: Repository<Store>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-    ) {}
+    ) { }
 
 
     async createReview(dto: ReviewInput.CreateReviewDto, userId: number) {
         const user = await this.userRepository.findOneBy({ 'id': userId });
         if (!user) throw new BadRequestException('요청한 유저가 존재하지 않습니다.');
-        const store = await this.storeRepository.findOneBy({'id': dto.storeId});
+        const store = await this.storeRepository.findOneBy({ 'id': dto.storeId });
         if (!store) throw new BadRequestException('요청한 가게가 존재하지 않습니다.');
-        const reviewBoard = await this.reviewBoardRepository.findOneBy({ 'id': dto.boardId });
-        if (!reviewBoard) throw new BadRequestException('요청한 게시판이 존재하지 않습니다.');
+
         const newReview = this.reviewRepository.create({
             rating: dto.rating,
             content: dto.content,
             images: dto.images,
             store,
-            board: reviewBoard,
+
             user
         });
 
@@ -50,7 +48,7 @@ export class ReviewsService {
                 );
             }
         }
-        
+
         return await this.reviewRepository.save(newReview);
     }
 }

@@ -66,7 +66,7 @@ export default function ReviewWriteModal({ storeId, isOpen, onClose }: ReviewWri
                 rating,
                 content,
                 images: uploadedFileName ? [uploadedFileName] : [],
-                boardId: 1, // Defaulting to 1 as per user request example
+
             });
         } catch (error) {
             console.error("Submit error", error);

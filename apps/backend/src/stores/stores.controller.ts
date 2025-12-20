@@ -6,7 +6,7 @@ import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 @ApiTags('[Store] 가게')
 @Controller('v1/stores')
 export class StoresController {
-  constructor(private readonly storesService: StoresService) {}
+  constructor(private readonly storesService: StoresService) { }
 
   /**
    * (사용자) 가게 목록 - 반경 검색
@@ -20,7 +20,7 @@ export class StoresController {
    */
   @Get('nearby')
   @ApiOperation({
-      summary: '(사용자) 가게 목록 - 반경 검색'
+    summary: '(사용자) 가게 목록 - 반경 검색'
   })
   @ApiQuery({ name: 'latitude', required: true, description: '위도' })
   @ApiQuery({ name: 'longitude', required: true, description: '경도' })
@@ -73,7 +73,7 @@ export class StoresController {
   ) {
     return this.storesService.searchInBounds(north, south, east, west, keyword);
   }
-  
+
   /**
    * (어드민) 가게 생성 API
    * @param dto 
@@ -88,6 +88,24 @@ export class StoresController {
     @Body() dto: AdminStoreInput.CreateStoreDto
   ) {
     return this.storesService.createStore(dto);
+  }
+
+  /**
+   * (사용자) 가게 검색 API
+   */
+  @Get('search')
+  @ApiOperation({
+    summary: '(사용자) 가게 검색 API'
+  })
+  @ApiQuery({ name: 'keyword', required: true, description: '검색 키워드' })
+  @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
+  @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수', example: 20 })
+  searchStore(
+    @Query('keyword') keyword: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = 20
+  ) {
+    return this.storesService.searchStore(keyword, page, size);
   }
 
   /**
@@ -121,5 +139,5 @@ export class StoresController {
     return this.storesService.createStoreType(dto);
   }
 
-  
+
 }
