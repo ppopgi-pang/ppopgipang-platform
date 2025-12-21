@@ -3,8 +3,11 @@ set -euo pipefail
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 COMPOSE_FILE="$ROOT_DIR/docker-compose.yml"
-UPSTREAM_FILE="$ROOT_DIR/docker/nginx/upstream.conf"
 ACTIVE_FILE="$ROOT_DIR/deploy/active_backend"
+NGINX_SITE_FILE="${NGINX_SITE_FILE:-/etc/nginx/sites-available/ppopgipang}"
+NGINX_RELOAD_CMD="${NGINX_RELOAD_CMD:-sudo nginx -s reload}"
+BLUE_PORT="${BLUE_PORT:-3001}"
+GREEN_PORT="${GREEN_PORT:-3002}"
 
 mkdir -p "$ROOT_DIR/deploy"
 
@@ -51,13 +54,19 @@ if [[ "$READY" != "yes" ]]; then
   exit 1
 fi
 
-cat > "$UPSTREAM_FILE" <<EOF2
-upstream backend {
-  server backend-${NEW}:3000;
-}
-EOF2
+if [[ "$NEW" == "blue" ]]; then
+  NEW_PORT="$BLUE_PORT"
+else
+  NEW_PORT="$GREEN_PORT"
+fi
 
-docker compose -f "$COMPOSE_FILE" exec -T nginx nginx -s reload
+if [[ -f "$NGINX_SITE_FILE" ]]; then
+  sudo sed -E -i.bak "s|proxy_pass http://127\\.0\\.0\\.1:[0-9]+;|proxy_pass http://127.0.0.1:${NEW_PORT};|g" "$NGINX_SITE_FILE"
+  $NGINX_RELOAD_CMD
+else
+  echo "Nginx site file not found: $NGINX_SITE_FILE"
+  echo "Skipping nginx reload"
+fi
 
 echo "$NEW" > "$ACTIVE_FILE"
 

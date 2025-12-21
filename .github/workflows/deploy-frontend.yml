@@ -40,7 +40,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
-          port: 22
+          port: ${{ secrets.VM_PORT || 22 }}
           script: |
             set -euo pipefail
             APP_DIR=${{ secrets.VM_APP_DIR }}
@@ -76,4 +76,3 @@ jobs:
               exit 1
             fi
             ln -sfn "$APP_DIR/deploy/frontend/releases/${{ github.sha }}" "$APP_DIR/deploy/frontend/current"
-            docker compose -f "$APP_DIR/docker-compose.yml" exec -T nginx nginx -s reload

@@ -59,8 +59,8 @@ jobs:
 
             cd "$APP_DIR"
             git fetch --all --prune
-            git checkout main
-            git pull --ff-only origin main
+            git checkout dev
+            git pull --ff-only origin dev
 
             docker compose up -d
 
