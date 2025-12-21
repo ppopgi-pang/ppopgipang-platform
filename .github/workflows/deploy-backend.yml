@@ -3,13 +3,6 @@ name: Deploy Backend (Blue/Green)
 on:
   push:
     branches: ["dev"]
-    paths:
-      - "apps/backend/**"
-      - "packages/**"
-      - "docker/backend.Dockerfile"
-      - "scripts/deploy-bluegreen.sh"
-      - "docker-compose.yml"
-      - ".github/workflows/deploy-backend.yml"
   workflow_dispatch:
 
 concurrency:

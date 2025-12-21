@@ -3,10 +3,6 @@ name: Deploy Frontend (SCP)
 on:
   push:
     branches: ["dev"]
-    paths:
-      - "apps/frontend/**"
-      - "packages/**"
-      - ".github/workflows/deploy-frontend.yml"
   workflow_dispatch:
 
 concurrency:
