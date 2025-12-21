@@ -218,7 +218,7 @@ function MapPage() {
           title={selectedStore.name}
         />
       ) : (
-        storesData?.data?.map((store) => (
+        storesData?.data?.map((store: Store) => (
           <MapMarker
             key={store.id}
             position={{ lat: Number(store.latitude), lng: Number(store.longitude) }}

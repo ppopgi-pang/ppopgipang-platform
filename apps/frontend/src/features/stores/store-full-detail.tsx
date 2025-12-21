@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getStoreDetail } from "../../shared/api/stores";
+import { getStoreDetail, type Review } from "../../shared/api/stores";
 import ReviewCard from "./review-card";
 import ReviewWriteModal from "./review-write-modal";
 
@@ -98,7 +98,7 @@ export default function StoreFullDetail({ storeId }: StoreFullDetailProps) {
 
                 <div className="space-y-4">
                     {reviews && reviews.length > 0 ? (
-                        reviews.map(review => (
+                        reviews.map((review: Review) => (
                             <ReviewCard key={review.id} review={review} />
                         ))
                     ) : (

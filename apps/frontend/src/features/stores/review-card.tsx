@@ -51,7 +51,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
 
             {images && images.length > 0 && (
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    {images.map((img, idx) => (
+                    {images.map((img: string, idx: number) => (
                         <img
                             key={idx}
                             src={img}
