@@ -36,6 +36,7 @@ import { AuthModule } from './auth/auth.module';
         DB_DATABASE: Joi.string().required(),
         KAKAO_CLIENT_ID: Joi.string().required(),
         KAKAO_REDIRECT_URI: Joi.string().required(),
+        FRONTEND_ORIGIN: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
       })

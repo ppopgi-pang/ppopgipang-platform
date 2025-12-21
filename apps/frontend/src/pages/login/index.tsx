@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { API_V1_BASE_URL } from "@/shared/lib/api-config";
 
-const KAKAO_CLIENT_ID = "7f3836bbb2b4ee4a2cf5aea56e668850";
+const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID ?? "";
 
 const getKakaoLoginUrl = () => {
+  if (!KAKAO_CLIENT_ID) {
+    console.error("Missing VITE_KAKAO_CLIENT_ID");
+    return "#";
+  }
   const redirectUri = `${API_V1_BASE_URL}/auth/kakao/callback`;
   const authorizeParams = new URLSearchParams({
     client_id: KAKAO_CLIENT_ID,

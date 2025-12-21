@@ -38,6 +38,7 @@ jobs:
         run: npm run build -w apps/frontend
         env:
           VITE_REACT_APP_KAKAOMAP_KEY: ${{ secrets.VITE_REACT_APP_KAKAOMAP_KEY }}
+          VITE_KAKAO_CLIENT_ID: ${{ secrets.VITE_KAKAO_CLIENT_ID }}
           VITE_API_ORIGIN: https://ppopgi.me
 
       - name: Prepare web root

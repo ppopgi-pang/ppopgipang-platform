@@ -10,6 +10,7 @@ import { Response } from "express";
 @Controller('v1/auth')
 export class AuthController {
     private JWT_REFRESH_SECRET: string;
+    private FRONTEND_ORIGIN: string;
     constructor(
         private readonly authService: AuthService,
         private readonly jwtService: JwtService,
@@ -17,6 +18,7 @@ export class AuthController {
 
     ) {
         this.JWT_REFRESH_SECRET = this.configService.getOrThrow<string>('JWT_REFRESH_SECRET');
+        this.FRONTEND_ORIGIN = this.configService.getOrThrow<string>('FRONTEND_ORIGIN');
     }
 
     @Get('kakao/callback')
@@ -25,7 +27,8 @@ export class AuthController {
         const result = await this.authService.validateOauthLogin(req.user);
         const { accessToken, refreshToken } = result;
 
-        return res.redirect(`http://localhost:5173/auth/kakao/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
+        const redirectBase = this.FRONTEND_ORIGIN.replace(/\/$/, "");
+        return res.redirect(`${redirectBase}/auth/kakao/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
     }
 
     @Post('refresh')
