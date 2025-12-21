@@ -11,7 +11,7 @@ FROM deps AS build
 COPY . .
 RUN npm run build -w @ppopgipang/types
 RUN npm run build -w apps/backend
-RUN npm prune --omit=dev
+RUN npm prune --omit=dev --workspaces --include-workspace-root
 
 FROM node:20-alpine
 WORKDIR /app
