@@ -1,5 +1,7 @@
+import { API_V1_BASE_URL } from "../lib/api-config";
+
 export const refreshAuthToken = async (refreshToken: string) => {
-    const response = await fetch("http://localhost:3000/api/v1/auth/refresh", {
+    const response = await fetch(`${API_V1_BASE_URL}/auth/refresh`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

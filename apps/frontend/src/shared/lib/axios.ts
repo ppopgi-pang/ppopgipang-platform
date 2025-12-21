@@ -1,9 +1,10 @@
 import axios from "axios";
 import { tokenManager } from "./token-manager";
 import { refreshAuthToken } from "../api/auth";
+import { API_V1_BASE_URL } from "./api-config";
 
 export const apiClient = axios.create({
-    baseURL: "http://localhost:3000/api/v1",
+    baseURL: API_V1_BASE_URL,
     headers: {
         "Content-Type": "application/json",
     },

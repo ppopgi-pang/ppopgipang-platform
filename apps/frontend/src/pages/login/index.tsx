@@ -1,8 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { API_V1_BASE_URL } from "@/shared/lib/api-config";
+
+const KAKAO_CLIENT_ID = "7f3836bbb2b4ee4a2cf5aea56e668850";
+
+const getKakaoLoginUrl = () => {
+  const redirectUri = `${API_V1_BASE_URL}/auth/kakao/callback`;
+  const authorizeParams = new URLSearchParams({
+    client_id: KAKAO_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    through_account: "true",
+  });
+  const authorizeUrl = `https://kauth.kakao.com/oauth/authorize?${authorizeParams.toString()}`;
+  const loginParams = new URLSearchParams({ continue: authorizeUrl });
+  return `https://accounts.kakao.com/login/?${loginParams.toString()}#login`;
+};
 
 const LoginPage = () => {
   const handleKakaoLogin = () => {
-    window.location.href = "https://accounts.kakao.com/login/?continue=https%3A%2F%2Fkauth.kakao.com%2Foauth%2Fauthorize%3Fclient_id%3D7f3836bbb2b4ee4a2cf5aea56e668850%26redirect_uri%3Dhttp%253A%252F%252Flocalhost%253A3000%252Fapi%252Fv1%252Fauth%252Fkakao%252Fcallback%26response_type%3Dcode%26through_account%3Dtrue%26auth_tran_id%3Dfw3PKShSYe5KXeL_YXCudqElO7mOHRtZdfPZpYMEChcGLgAAAZpjKhfl#login";
+    window.location.href = getKakaoLoginUrl();
   };
 
   return (
