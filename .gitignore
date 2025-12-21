@@ -71,6 +71,10 @@ pnpm-lock.yaml
 docker-compose.override.yml
 *.pid
 *.seed
+docker/backend.env
+
+# Deploy artifacts
+deploy/
 
 # Misc
 *.tgz

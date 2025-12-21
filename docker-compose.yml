@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  backend-blue:
+    image: ppopgipang-backend:blue
+    container_name: ppopgipang-backend-blue
+    env_file:
+      - ./docker/backend.env
+    environment:
+      - SERVER_PORT=3000
+    command: ["node", "dist/main.js"]
+    expose:
+      - "3000"
+    ports:
+      - "127.0.0.1:3001:3000"
+    restart: always
+    networks:
+      - ppopgipang
+
+  backend-green:
+    image: ppopgipang-backend:green
+    container_name: ppopgipang-backend-green
+    env_file:
+      - ./docker/backend.env
+    environment:
+      - SERVER_PORT=3000
+    command: ["node", "dist/main.js"]
+    expose:
+      - "3000"
+    ports:
+      - "127.0.0.1:3002:3000"
+    restart: always
+    networks:
+      - ppopgipang
+
+networks:
+  ppopgipang:
+    driver: bridge
