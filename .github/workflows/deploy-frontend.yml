@@ -37,7 +37,7 @@ jobs:
         run: npm run build -w apps/frontend
         env:
           VITE_REACT_APP_KAKAOMAP_KEY: ${{ secrets.VITE_REACT_APP_KAKAOMAP_KEY }}
-          VITE_API_ORIGIN: http://ppopgi.me
+          VITE_API_ORIGIN: https://ppopgi.me
 
       - name: Prepare web root
         uses: appleboy/ssh-action@v1.0.3
