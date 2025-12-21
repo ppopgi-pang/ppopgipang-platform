@@ -9,6 +9,7 @@ RUN npm ci
 
 FROM deps AS build
 COPY . .
+RUN npm run build -w @ppopgipang/types
 RUN npm run build -w apps/backend
 RUN npm prune --omit=dev
 
