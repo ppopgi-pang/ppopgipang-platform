@@ -49,6 +49,7 @@ jobs:
             sudo mkdir -p /var/www/frontend
             sudo chown -R ${{ secrets.VM_USER }}:${{ secrets.VM_USER }} /var/www/frontend
             sudo chmod -R 755 /var/www/frontend
+            rm -rf /var/www/frontend/*
 
       - name: Upload build
         uses: appleboy/scp-action@v0.1.7
@@ -57,6 +58,7 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_PORT || 22 }}
-          source: "apps/frontend/dist/*"
+          source: "apps/frontend/dist/**"
           target: "/var/www/frontend"
+          strip_components: 3
           overwrite: true
