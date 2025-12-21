@@ -7,6 +7,7 @@ on:
       - "apps/backend/**"
       - "packages/**"
       - "docker/**"
+      - ".github/workflows/deploy-backend.yml"
       - "*"
       - ".*"
   workflow_dispatch:
