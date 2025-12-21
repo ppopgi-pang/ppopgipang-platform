@@ -23,7 +23,6 @@ services:
       - ./docker/backend.env
     environment:
       - SERVER_PORT=3000
-    command: ["node", "dist/main.js"]
     expose:
       - "3000"
     ports:
