@@ -62,7 +62,5 @@ jobs:
             git checkout dev
             git pull --ff-only origin dev
 
-            docker compose up -d
-
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
             BACKEND_IMAGE="${{ secrets.DOCKERHUB_REPO }}" BACKEND_TAG="${{ github.sha }}" ./scripts/deploy-bluegreen.sh
