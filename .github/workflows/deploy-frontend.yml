@@ -37,7 +37,7 @@ jobs:
         env:
           VITE_REACT_APP_KAKAOMAP_KEY: ${{ secrets.VITE_REACT_APP_KAKAOMAP_KEY }}
 
-      - name: Prepare release directory
+      - name: Prepare web root
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
@@ -46,12 +46,9 @@ jobs:
           port: ${{ secrets.VM_PORT || 22 }}
           script: |
             set -euo pipefail
-            APP_DIR=${{ secrets.VM_APP_DIR }}
-            if [ -z "$APP_DIR" ]; then
-              echo "VM_APP_DIR is not set"
-              exit 1
-            fi
-            mkdir -p "$APP_DIR/deploy/frontend/releases/${{ github.sha }}"
+            sudo mkdir -p /var/www/frontend
+            sudo chown -R ${{ secrets.VM_USER }}:${{ secrets.VM_USER }} /var/www/frontend
+            sudo chmod -R 755 /var/www/frontend
 
       - name: Upload build
         uses: appleboy/scp-action@v0.1.7
@@ -61,21 +58,5 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: ${{ secrets.VM_PORT || 22 }}
           source: "apps/frontend/dist/*"
-          target: "${{ secrets.VM_APP_DIR }}/deploy/frontend/releases/${{ github.sha }}"
+          target: "/var/www/frontend"
           overwrite: true
-
-      - name: Switch release
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
-          port: ${{ secrets.VM_PORT || 22 }}
-          script: |
-            set -euo pipefail
-            APP_DIR=${{ secrets.VM_APP_DIR }}
-            if [ -z "$APP_DIR" ]; then
-              echo "VM_APP_DIR is not set"
-              exit 1
-            fi
-            ln -sfn "$APP_DIR/deploy/frontend/releases/${{ github.sha }}" "$APP_DIR/deploy/frontend/current"
