@@ -13,7 +13,6 @@ import { StoreType } from './stores/entities/store-type.entity';
 import { Review } from './reviews/entities/review.entity';
 import { Proposal } from './proposals/entities/proposal.entity';
 import { Trade } from './trades/entities/trade.entity';
-import { TradeBoard } from './trades/entities/trade-board.entity';
 import { TradeChatMessage } from './trades/entities/trade-chat-message.entity';
 import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
 
@@ -52,7 +51,7 @@ import { AuthModule } from './auth/auth.module';
         database: ConfigService.getOrThrow<string>('DB_DATABASE'),
         entities: [
           User, Store, StoreType, Review, Proposal, Trade,
-          TradeBoard, TradeChatMessage, TradeChatRoom,
+          TradeChatMessage, TradeChatRoom,
 
         ],
         synchronize: true

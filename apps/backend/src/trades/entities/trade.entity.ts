@@ -1,7 +1,6 @@
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TradeChatRoom } from "./trade-chat-room.entity";
-import { TradeBoard } from "./trade-board.entity";
 
 @Entity('trades')
 export class Trade {
@@ -38,6 +37,4 @@ export class Trade {
     @OneToMany(() => TradeChatRoom, (room) => room.tradePost)
     chatRooms: TradeChatRoom[];
 
-    @ManyToOne(() => TradeBoard, (board) => board.posts)
-    board: TradeBoard;
 }

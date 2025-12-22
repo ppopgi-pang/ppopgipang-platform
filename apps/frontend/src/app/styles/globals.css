@@ -105,10 +105,15 @@
     }
 
     html,
-    body,
-    #root {
+    body {
         height: 100dvh;
         overflow: hidden;
+    }
+
+    #root {
+        height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     body {
@@ -170,7 +175,6 @@
         .app-frame {
             width: min(100%, var(--app-max-width));
             background: var(--app-background);
-            transform: translateZ(0);
         }
     }
 

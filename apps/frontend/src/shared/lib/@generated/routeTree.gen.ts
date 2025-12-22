@@ -14,9 +14,13 @@ import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
 import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
+import { Route as Header_layoutTradesNewRouteImport } from './../../../pages/_header_layout/trades/new'
 import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
+import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../pages/_header_layout/trades/$tradeId/index'
+import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -42,6 +46,12 @@ const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   path: '/stores/$storeId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Header_layoutTradesIndexRoute =
+  Header_layoutTradesIndexRouteImport.update({
+    id: '/trades/',
+    path: '/trades/',
+    getParentRoute: () => Header_layoutRouteRoute,
+  } as any)
 const Header_layoutProfileIndexRoute =
   Header_layoutProfileIndexRouteImport.update({
     id: '/profile/',
@@ -53,19 +63,40 @@ const Header_layoutmapIndexRoute = Header_layoutmapIndexRouteImport.update({
   path: '/',
   getParentRoute: () => Header_layoutRouteRoute,
 } as any)
+const Header_layoutTradesNewRoute = Header_layoutTradesNewRouteImport.update({
+  id: '/trades/new',
+  path: '/trades/new',
+  getParentRoute: () => Header_layoutRouteRoute,
+} as any)
 const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
   id: '/auth/kakao/callback/',
   path: '/auth/kakao/callback/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Header_layoutTradesTradeIdIndexRoute =
+  Header_layoutTradesTradeIdIndexRouteImport.update({
+    id: '/trades/$tradeId/',
+    path: '/trades/$tradeId/',
+    getParentRoute: () => Header_layoutRouteRoute,
+  } as any)
+const Header_layoutTradesTradeIdEditRoute =
+  Header_layoutTradesTradeIdEditRouteImport.update({
+    id: '/trades/$tradeId/edit',
+    path: '/trades/$tradeId/edit',
+    getParentRoute: () => Header_layoutRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
+  '/trades/new': typeof Header_layoutTradesNewRoute
   '/': typeof Header_layoutmapIndexRoute
   '/profile': typeof Header_layoutProfileIndexRoute
+  '/trades': typeof Header_layoutTradesIndexRoute
+  '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
+  '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
   '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRoutesByTo {
@@ -73,8 +104,12 @@ export interface FileRoutesByTo {
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
+  '/trades/new': typeof Header_layoutTradesNewRoute
   '/': typeof Header_layoutmapIndexRoute
   '/profile': typeof Header_layoutProfileIndexRoute
+  '/trades': typeof Header_layoutTradesIndexRoute
+  '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
+  '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
   '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRoutesById {
@@ -84,8 +119,12 @@ export interface FileRoutesById {
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
+  '/_header_layout/trades/new': typeof Header_layoutTradesNewRoute
   '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
   '/_header_layout/profile/': typeof Header_layoutProfileIndexRoute
+  '/_header_layout/trades/': typeof Header_layoutTradesIndexRoute
+  '/_header_layout/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
+  '/_header_layout/trades/$tradeId/': typeof Header_layoutTradesTradeIdIndexRoute
   '/auth/kakao/callback/': typeof AuthKakaoCallbackIndexRoute
 }
 export interface FileRouteTypes {
@@ -95,8 +134,12 @@ export interface FileRouteTypes {
     | '/stores/$storeId'
     | '/admin'
     | '/login'
+    | '/trades/new'
     | '/'
     | '/profile'
+    | '/trades'
+    | '/trades/$tradeId/edit'
+    | '/trades/$tradeId'
     | '/auth/kakao/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -104,8 +147,12 @@ export interface FileRouteTypes {
     | '/stores/$storeId'
     | '/admin'
     | '/login'
+    | '/trades/new'
     | '/'
     | '/profile'
+    | '/trades'
+    | '/trades/$tradeId/edit'
+    | '/trades/$tradeId'
     | '/auth/kakao/callback'
   id:
     | '__root__'
@@ -114,8 +161,12 @@ export interface FileRouteTypes {
     | '/stores/$storeId'
     | '/admin/'
     | '/login/'
+    | '/_header_layout/trades/new'
     | '/_header_layout/(map)/'
     | '/_header_layout/profile/'
+    | '/_header_layout/trades/'
+    | '/_header_layout/trades/$tradeId/edit'
+    | '/_header_layout/trades/$tradeId/'
     | '/auth/kakao/callback/'
   fileRoutesById: FileRoutesById
 }
@@ -165,6 +216,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoresStoreIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_header_layout/trades/': {
+      id: '/_header_layout/trades/'
+      path: '/trades'
+      fullPath: '/trades'
+      preLoaderRoute: typeof Header_layoutTradesIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
     '/_header_layout/profile/': {
       id: '/_header_layout/profile/'
       path: '/profile'
@@ -179,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Header_layoutmapIndexRouteImport
       parentRoute: typeof Header_layoutRouteRoute
     }
+    '/_header_layout/trades/new': {
+      id: '/_header_layout/trades/new'
+      path: '/trades/new'
+      fullPath: '/trades/new'
+      preLoaderRoute: typeof Header_layoutTradesNewRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
     '/auth/kakao/callback/': {
       id: '/auth/kakao/callback/'
       path: '/auth/kakao/callback'
@@ -186,17 +251,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthKakaoCallbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_header_layout/trades/$tradeId/': {
+      id: '/_header_layout/trades/$tradeId/'
+      path: '/trades/$tradeId'
+      fullPath: '/trades/$tradeId'
+      preLoaderRoute: typeof Header_layoutTradesTradeIdIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
+    '/_header_layout/trades/$tradeId/edit': {
+      id: '/_header_layout/trades/$tradeId/edit'
+      path: '/trades/$tradeId/edit'
+      fullPath: '/trades/$tradeId/edit'
+      preLoaderRoute: typeof Header_layoutTradesTradeIdEditRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
   }
 }
 
 interface Header_layoutRouteRouteChildren {
+  Header_layoutTradesNewRoute: typeof Header_layoutTradesNewRoute
   Header_layoutmapIndexRoute: typeof Header_layoutmapIndexRoute
   Header_layoutProfileIndexRoute: typeof Header_layoutProfileIndexRoute
+  Header_layoutTradesIndexRoute: typeof Header_layoutTradesIndexRoute
+  Header_layoutTradesTradeIdEditRoute: typeof Header_layoutTradesTradeIdEditRoute
+  Header_layoutTradesTradeIdIndexRoute: typeof Header_layoutTradesTradeIdIndexRoute
 }
 
 const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
+  Header_layoutTradesNewRoute: Header_layoutTradesNewRoute,
   Header_layoutmapIndexRoute: Header_layoutmapIndexRoute,
   Header_layoutProfileIndexRoute: Header_layoutProfileIndexRoute,
+  Header_layoutTradesIndexRoute: Header_layoutTradesIndexRoute,
+  Header_layoutTradesTradeIdEditRoute: Header_layoutTradesTradeIdEditRoute,
+  Header_layoutTradesTradeIdIndexRoute: Header_layoutTradesTradeIdIndexRoute,
 }
 
 const Header_layoutRouteRouteWithChildren =

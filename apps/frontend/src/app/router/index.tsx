@@ -15,6 +15,12 @@ const RootLayout = () => {
 	const location = useLocation();
 
 	useLayoutEffect(() => {
+		const root = document.getElementById("root");
+		if (root) {
+			root.scrollTop = 0;
+			root.scrollLeft = 0;
+			return;
+		}
 		window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 	}, [location.pathname]);
 

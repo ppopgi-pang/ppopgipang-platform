@@ -9,6 +9,7 @@ node_modules/
 public/review/**
 public/temp/**
 
+
 # 환경 변수 파일
 .env
 .env.local
