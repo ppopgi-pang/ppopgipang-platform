@@ -1,4 +1,4 @@
-import type { TradeInput, TradeResult } from "@ppopgipang/types";
+import type { TradeChatInput, TradeChatResult, TradeInput, TradeResult } from "@ppopgipang/types";
 import { apiClient } from "../lib/axios";
 
 export const createTrade = async (dto: TradeInput.CreateTradeDto): Promise<number> => {
@@ -25,3 +25,25 @@ export const updateTrade = async (id: number, dto: TradeInput.UpdateTradeDto): P
 export const deleteTrade = async (id: number): Promise<void> => {
     await apiClient.delete(`/trades/${id}`);
 };
+
+export const createChatRoom = async (dto: TradeChatInput.CreateTradeChatRoomDto): Promise<TradeChatResult.TradeChatRoomDto> => {
+    const { data } = await apiClient.post<TradeChatResult.TradeChatRoomDto>("/trades/chat-room", dto);
+    return data;
+};
+
+export const leaveChatRoom = async (id: number): Promise<void> => {
+    await apiClient.delete(`/trades/chat-room/${id}`);
+};
+
+export const createChatMessage = async (dto: TradeChatInput.CreateTradeChatMessageDto): Promise<TradeChatResult.TradeChatMessageDto> => {
+    const { data } = await apiClient.post<TradeChatResult.TradeChatMessageDto>("/trades/chat-room/message", dto);
+    return data;
+};
+
+export const findAllChatMessages = async (chatRoomId: number, page: number = 1, size: number = 20): Promise<TradeChatResult.TradeChatMessageListDto> => {
+    const { data } = await apiClient.get<TradeChatResult.TradeChatMessageListDto>(`/trades/chat-room/${chatRoomId}/messages`, {
+        params: { page, size }
+    });
+    return data;
+};
+

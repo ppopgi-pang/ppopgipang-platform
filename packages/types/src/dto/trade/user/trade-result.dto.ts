@@ -10,10 +10,12 @@ export namespace TradeResult {
         type: 'sale' | 'exchange';
         status: 'active' | 'completed' | 'cancelled';
         user: UserResult.UserInfo;
+        chatRoomExists: boolean;
+        chatRoomId: number | null;
         createdAt: Date;
         updatedAt: Date;
 
-        constructor(trade: any) {
+        constructor(trade: any, chatRoom?: { exists: boolean; id: number | null }) {
             this.id = trade.id;
             this.title = trade.title;
             this.description = trade.description;
@@ -22,6 +24,8 @@ export namespace TradeResult {
             this.type = trade.type;
             this.status = trade.status;
             this.user = new UserResult.UserInfo(trade.user);
+            this.chatRoomExists = chatRoom?.exists ?? false;
+            this.chatRoomId = chatRoom?.id ?? null;
             this.createdAt = trade.createdAt;
             this.updatedAt = trade.updatedAt;
         }

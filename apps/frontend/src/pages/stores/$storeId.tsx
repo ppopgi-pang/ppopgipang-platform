@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
-import StoreFullDetail from '../../features/stores/store-full-detail';
+import { createFileRoute } from "@tanstack/react-router";
+import StoreFullDetail from "@/features/stores/store-full-detail";
 
-export const Route = createFileRoute('/stores/$storeId')({
-    component: StoreDetailRoute
+export const Route = createFileRoute("/stores/$storeId")({
+	component: StoreDetailPage,
 });
 
-function StoreDetailRoute() {
-    const { storeId } = Route.useParams();
-    return <StoreFullDetail storeId={Number(storeId)} />;
+function StoreDetailPage() {
+	const { storeId } = Route.useParams();
+	return <StoreFullDetail storeId={Number(storeId)} />;
 }

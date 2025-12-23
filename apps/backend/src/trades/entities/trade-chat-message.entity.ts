@@ -1,13 +1,14 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { TradeChatRoom } from "./trade-chat-room.entity";
+import { User } from "src/users/entities/user.entity";
 
 @Entity('trade_chat_message')
 export class TradeChatMessage {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    senderId: number;
+    @ManyToOne(() => User)
+    sender: User;
 
     @Column({ type: 'text' })
     message: string;

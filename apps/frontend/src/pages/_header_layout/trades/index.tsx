@@ -92,14 +92,16 @@ function TradesPage() {
 
             <div ref={loadMoreRef} className="h-10" />
 
-            <Link
-                to="/trades/new"
-                className="fixed bottom-[calc(var(--page-safe-bottom)+12px)] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/40 transition-all hover:scale-105 active:scale-95"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-            </Link>
+            <div className="fixed bottom-[calc(var(--page-safe-bottom)+12px)] left-1/2 z-40 w-full max-w-[var(--app-max-width)] -translate-x-1/2 px-5 flex justify-end">
+                <Link
+                    to="/trades/new"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/40 transition-all hover:scale-105 active:scale-95"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                </Link>
+            </div>
         </div>
     );
 }

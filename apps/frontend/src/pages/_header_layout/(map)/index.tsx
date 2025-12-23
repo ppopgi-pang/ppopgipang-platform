@@ -1,271 +1,244 @@
-import SearchBar from '@/shared/ui/search-bar/search-bar.ui'
-import { createFileRoute } from '@tanstack/react-router'
-import { Map, MapMarker } from 'react-kakao-maps-sdk'
-import { useGeolocation } from '@/shared/hooks/use-geolocation'
-import { useQuery } from '@tanstack/react-query'
-import { getNearbyStores, getStoresInBounds, searchStore, type Store } from '@/shared/api/stores'
-import { useEffect, useState, useCallback, useRef } from 'react'
-import StoreDetailSheet from '@/features/stores/store-detail-sheet'
-import StoreListSheet from '@/features/stores/store-list-sheet'
-import SearchResultList from '@/features/search/search-result-list'
-import { useDebounce } from '@/shared/hooks/use-debounce'
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
+import {
+	getNearbyStores,
+	getStoresInBounds,
+	searchStore,
+	type Store,
+} from "@/shared/api/stores";
+import { useDebounce } from "@/shared/hooks/use-debounce";
+import { useGeolocation } from "@/shared/hooks/use-geolocation";
+import SearchResultList from "@/features/search/search-result-list";
+import StoreDetailSheet from "@/features/stores/store-detail-sheet";
+import StoreListSheet from "@/features/stores/store-list-sheet";
+import SearchBar from "@/shared/ui/search-bar/search-bar.ui";
 
-export const Route = createFileRoute('/_header_layout/(map)/')({
-  component: MapPage,
-})
+type Bounds = { n: number; s: number; e: number; w: number };
+
+export const Route = createFileRoute("/_header_layout/(map)/")({
+	component: MapPage,
+});
 
 function MapPage() {
-  const { coordinates, loaded } = useGeolocation();
-  const [center, setCenter] = useState(coordinates);
-  const [level, setLevel] = useState(3);
-  const [bounds, setBounds] = useState<{ n: number, s: number, e: number, w: number } | null>(null);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  const mapRef = useRef<kakao.maps.Map | null>(null);
-  const [sheetNode, setSheetNode] = useState<HTMLDivElement | null>(null);
-  const [sheetBottomOffset, setSheetBottomOffset] = useState<number | null>(null);
+	const { coordinates, loaded } = useGeolocation();
+	const [center, setCenter] = useState(coordinates);
+	const [level, setLevel] = useState(3);
+	const [bounds, setBounds] = useState<Bounds | null>(null);
+	const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+	const [sheetNode, setSheetNode] = useState<HTMLDivElement | null>(null);
+	const [sheetBottomOffset, setSheetBottomOffset] = useState<number | null>(null);
+	const [keyword, setKeyword] = useState("");
+	const normalizedKeyword = keyword.trim();
+	const debouncedKeyword = useDebounce(normalizedKeyword, 300);
+	const mapRef = useRef<kakao.maps.Map | null>(null);
 
-  // Search State
-  const [keyword, setKeyword] = useState('');
-  const debouncedKeyword = useDebounce(keyword, 300); // 300ms debounce
-  // const [searchResults, setSearchResults] = useState<Store[]>([]); // Removed
-  // const [totalSearchCount, setTotalSearchCount] = useState(0); // Removed
+	useEffect(() => {
+		if (!loaded) return;
+		setCenter(coordinates);
+	}, [coordinates, loaded]);
 
-  // Initial center sync with geolocation
-  useEffect(() => {
-    if (loaded) {
-      setCenter(coordinates);
-    }
-  }, [loaded, coordinates]);
+	const storesQuery = useQuery({
+		queryKey: ["stores", bounds, center],
+		queryFn: () =>
+			bounds
+				? getStoresInBounds({
+						north: bounds.n,
+						south: bounds.s,
+						east: bounds.e,
+						west: bounds.w,
+				  })
+				: getNearbyStores({ latitude: center.lat, longitude: center.lng }),
+	});
 
-  // Fetch stores in bounds
-  const { data: storesData } = useQuery({
-    queryKey: ['stores', bounds, center],
-    queryFn: () => {
-      if (!bounds) return getNearbyStores({ latitude: center.lat, longitude: center.lng });
+	const searchQuery = useQuery({
+		queryKey: ["search", debouncedKeyword],
+		queryFn: () => searchStore(debouncedKeyword, 1, 100),
+		enabled: Boolean(debouncedKeyword),
+	});
 
-      return getStoresInBounds({
-        north: bounds.n,
-        south: bounds.s,
-        east: bounds.e,
-        west: bounds.w
-      });
-    },
-    enabled: true,
-  });
+	const searchResults = searchQuery.data?.data ?? [];
+	const totalSearchCount = searchQuery.data?.meta?.count ?? 0;
 
-  // Search API (Live Search)
-  const { data: searchResponse, refetch: searchRefetch } = useQuery({
-    queryKey: ['search', debouncedKeyword],
-    queryFn: () => {
-      if (!debouncedKeyword) return null;
-      return searchStore(debouncedKeyword, 1, 100);
-    },
-    enabled: !!debouncedKeyword,
-  });
+	const handleBoundsChanged = useCallback((map: kakao.maps.Map) => {
+		const nextBounds = map.getBounds();
+		const sw = nextBounds.getSouthWest();
+		const ne = nextBounds.getNorthEast();
 
-  const searchResults = searchResponse?.data || [];
-  const totalSearchCount = searchResponse?.meta?.count || 0;
+		setBounds({
+			n: ne.getLat(),
+			s: sw.getLat(),
+			e: ne.getLng(),
+			w: sw.getLng(),
+		});
+	}, []);
 
-  // Handlers
-  const handleCenterChanged = useCallback(() => {
-    // Optional: track center
-  }, []);
+	useEffect(() => {
+		if (!mapRef.current) return;
+		handleBoundsChanged(mapRef.current);
+	}, [center, handleBoundsChanged]);
 
-  const handleBoundsChanged = useCallback((map: kakao.maps.Map) => {
-    const bounds = map.getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
+	const updateSheetBottomOffset = useCallback(() => {
+		if (!sheetNode || typeof window === "undefined") return;
+		const rect = sheetNode.getBoundingClientRect();
+		const nextOffset = Math.max(12, window.innerHeight - rect.top + 12);
+		setSheetBottomOffset(nextOffset);
+	}, [sheetNode]);
 
-    setBounds({
-      n: ne.getLat(),
-      s: sw.getLat(),
-      e: ne.getLng(),
-      w: sw.getLng()
-    });
-  }, []);
+	useEffect(() => {
+		if (!sheetNode || typeof window === "undefined") {
+			setSheetBottomOffset(null);
+			return;
+		}
 
-  useEffect(() => {
-    if (!mapRef.current) return;
-    handleBoundsChanged(mapRef.current);
-  }, [center, handleBoundsChanged]);
+		updateSheetBottomOffset();
+		const resizeObserver =
+			typeof ResizeObserver !== "undefined"
+				? new ResizeObserver(updateSheetBottomOffset)
+				: null;
 
-  const updateSheetBottomOffset = useCallback(() => {
-    if (!sheetNode || typeof window === 'undefined') return;
-    const rect = sheetNode.getBoundingClientRect();
-    const nextOffset = Math.max(12, window.innerHeight - rect.top + 12);
-    setSheetBottomOffset(nextOffset);
-  }, [sheetNode]);
+		resizeObserver?.observe(sheetNode);
+		window.addEventListener("resize", updateSheetBottomOffset);
 
-  useEffect(() => {
-    if (!sheetNode || typeof window === 'undefined') {
-      setSheetBottomOffset(null);
-      return;
-    }
+		return () => {
+			resizeObserver?.disconnect();
+			window.removeEventListener("resize", updateSheetBottomOffset);
+		};
+	}, [sheetNode, updateSheetBottomOffset]);
 
-    updateSheetBottomOffset();
-    const resizeObserver = typeof ResizeObserver !== 'undefined'
-      ? new ResizeObserver(updateSheetBottomOffset)
-      : null;
+	const handleMapCreate = useCallback(
+		(map: kakao.maps.Map) => {
+			mapRef.current = map;
+			handleBoundsChanged(map);
+		},
+		[handleBoundsChanged],
+	);
 
-    resizeObserver?.observe(sheetNode);
-    window.addEventListener('resize', updateSheetBottomOffset);
+	const handleZoomChanged = useCallback(
+		(map: kakao.maps.Map) => {
+			setLevel(map.getLevel());
+			handleBoundsChanged(map);
+		},
+		[handleBoundsChanged],
+	);
 
-    return () => {
-      resizeObserver?.disconnect();
-      window.removeEventListener('resize', updateSheetBottomOffset);
-    };
-  }, [sheetNode, updateSheetBottomOffset]);
+	const handleMoveToCurrentLocation = useCallback(() => {
+		const nextCenter = { lat: coordinates.lat, lng: coordinates.lng };
+		setCenter(nextCenter);
 
-  // Map lifecycle events
-  const handleMapCreate = useCallback((map: kakao.maps.Map) => {
-    mapRef.current = map;
-    handleBoundsChanged(map);
-  }, [handleBoundsChanged]);
+		if (mapRef.current) {
+			mapRef.current.setCenter(new kakao.maps.LatLng(nextCenter.lat, nextCenter.lng));
+			handleBoundsChanged(mapRef.current);
+		}
+	}, [coordinates, handleBoundsChanged]);
 
-  const handleDragEnd = useCallback((map: kakao.maps.Map) => {
-    handleBoundsChanged(map);
-  }, [handleBoundsChanged]);
+	const handleStoreClick = (store: Store, nextLevel = 3) => {
+		const nextCenter = { lat: Number(store.latitude), lng: Number(store.longitude) };
+		setSelectedStore(store);
+		setCenter(nextCenter);
+		setLevel(nextLevel);
 
-  const handleZoomChanged = useCallback((map: kakao.maps.Map) => {
-    setLevel(map.getLevel());
-    handleBoundsChanged(map);
-  }, [handleBoundsChanged]);
+		if (mapRef.current) {
+			const map = mapRef.current;
+			map.setCenter(new kakao.maps.LatLng(nextCenter.lat, nextCenter.lng));
+			handleBoundsChanged(map);
+		}
+	};
 
-  const handleMoveToCurrentLocation = useCallback(() => {
-    const nextCenter = { lat: coordinates.lat, lng: coordinates.lng };
-    setCenter(nextCenter);
+	const handleSearchSubmit = () => {
+		if (!normalizedKeyword) return;
+		setSelectedStore(null);
+	};
 
-    if (mapRef.current) {
-      const map = mapRef.current;
-      map.setCenter(new kakao.maps.LatLng(nextCenter.lat, nextCenter.lng));
-      handleBoundsChanged(map);
-    }
-  }, [coordinates, handleBoundsChanged]);
+	const handleSearchResultClick = (store: Store) => {
+		setKeyword("");
+		handleStoreClick(store);
+	};
 
-  const handleStoreClick = (store: Store, nextLevel = 3) => {
-    const nextCenter = { lat: Number(store.latitude), lng: Number(store.longitude) };
-    setSelectedStore(store);
-    setCenter(nextCenter);
-    setLevel(nextLevel);
+	const stores = storesQuery.data?.data || [];
+	const hasSheet = Boolean(selectedStore) || stores.length > 0;
+	const buttonBottomClass = hasSheet
+		? "bottom-[calc(42vh+var(--page-safe-bottom))]"
+		: "bottom-[calc(var(--page-safe-bottom)+8px)]";
 
-    if (mapRef.current) {
-      const map = mapRef.current;
-      map.setCenter(new kakao.maps.LatLng(nextCenter.lat, nextCenter.lng));
-      handleBoundsChanged(map);
-    }
-  };
+	return (
+		<div className="w-full h-screen relative">
+			<div className="absolute top-4 w-full z-20 px-4">
+				<SearchBar value={keyword} onChange={setKeyword} onSearch={handleSearchSubmit} />
+				{searchResults.length > 0 && keyword && (
+					<div className="mt-2">
+						<SearchResultList
+							results={searchResults}
+							totalCount={totalSearchCount}
+							onClick={handleSearchResultClick}
+						/>
+					</div>
+				)}
+			</div>
 
-  const handleSearch = () => {
-    if (keyword.trim()) {
-      setSelectedStore(null);
-      searchRefetch();
-    }
-  };
+			<Map
+				id="map"
+				center={center}
+				style={{ width: "100%", height: "100%" }}
+				level={level}
+				onCreate={handleMapCreate}
+				onDragEnd={(map) => handleBoundsChanged(map)}
+				onZoomChanged={handleZoomChanged}
+				onClick={() => {
+					setSelectedStore(null);
+					setKeyword("");
+				}}
+			>
+				{selectedStore ? (
+					<MapMarker
+						position={{
+							lat: Number(selectedStore.latitude),
+							lng: Number(selectedStore.longitude),
+						}}
+						title={selectedStore.name}
+					/>
+				) : (
+					stores.map((store) => (
+						<MapMarker
+							key={store.id}
+							position={{ lat: Number(store.latitude), lng: Number(store.longitude) }}
+							title={store.name}
+							onClick={() => handleStoreClick(store, 1)}
+						/>
+					))
+				)}
 
-  const handleSearchResultClick = (store: Store) => {
-    setKeyword(''); // Clears query, hides list
-    handleStoreClick(store);
-  };
+				{loaded && (
+					<MapMarker
+						position={coordinates}
+						image={{
+							src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+							size: { width: 20, height: 20 },
+						}}
+						title="Current Location"
+					/>
+				)}
+			</Map>
 
-  const hasSheet = Boolean(selectedStore) || (storesData?.data?.length ?? 0) > 0;
-  const buttonBottomClass = hasSheet
-    ? 'bottom-[calc(42vh+var(--page-safe-bottom))]'
-    : 'bottom-[calc(var(--page-safe-bottom)+8px)]';
+			<div
+				className={`fixed left-1/2 z-40 w-full max-w-[var(--app-max-width)] -translate-x-1/2 px-5 flex justify-end ${buttonBottomClass}`}
+				style={sheetBottomOffset !== null ? { bottom: `${sheetBottomOffset}px` } : undefined}
+			>
+				<button
+					className="glass-panel glass-pill w-12 h-12 flex items-center justify-center text-lg transition-all duration-300 animate-float"
+					onClick={handleMoveToCurrentLocation}
+					aria-label="현재 위치로 이동"
+				>
+					<div className="w-6 h-6 flex items-center justify-center">📍</div>
+				</button>
+			</div>
 
-  return <div className='w-full h-screen relative'>
-    <div className='absolute top-4 w-full z-20 px-4'>
-      <SearchBar
-        value={keyword}
-        onChange={setKeyword}
-        onSearch={handleSearch}
-      />
-      {searchResults.length > 0 && keyword && ( // Only show if keyword exists
-        <div className="mt-2">
-          <SearchResultList
-            results={searchResults}
-            totalCount={totalSearchCount}
-            onClick={handleSearchResultClick}
-          />
-        </div>
-      )}
-    </div>
-
-    <Map
-      id="map"
-      center={center}
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-      level={level}
-      onCenterChanged={handleCenterChanged}
-      onDragEnd={handleDragEnd}
-      onZoomChanged={handleZoomChanged}
-      onCreate={handleMapCreate}
-      onClick={() => {
-        setSelectedStore(null);
-        setKeyword(''); // Clear search on map click if desired, or just list closes via UI logic
-        // If we want to hide results on map click:
-        // Since results depend on keyword, clearing keyword hides them.
-      }}
-    >
-      {selectedStore ? (
-        <MapMarker
-          position={{
-            lat: Number(selectedStore.latitude),
-            lng: Number(selectedStore.longitude),
-          }}
-          title={selectedStore.name}
-        />
-      ) : (
-        storesData?.data?.map((store: Store) => (
-          <MapMarker
-            key={store.id}
-            position={{ lat: Number(store.latitude), lng: Number(store.longitude) }}
-            title={store.name}
-            onClick={() => handleStoreClick(store, 1)}
-          />
-        ))
-      )}
-
-      {loaded && (
-        <MapMarker
-          position={coordinates}
-          image={{
-            src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-            size: { width: 20, height: 20 },
-          }}
-          title="Current Location"
-        />
-      )}
-    </Map>
-
-    {/* Current Location Button */}
-    <button
-      className={`fixed right-5 z-40 glass-panel glass-pill w-12 h-12 flex items-center justify-center text-lg transition-all duration-300 animate-float ${buttonBottomClass}`}
-      style={sheetBottomOffset !== null ? { bottom: `${sheetBottomOffset}px` } : undefined}
-      onClick={handleMoveToCurrentLocation}
-      aria-label="현재 위치로 이동"
-    >
-      <div className="w-6 h-6 flex items-center justify-center">
-        📍
-      </div>
-    </button>
-
-    {/* Store Sheets */}
-    {selectedStore ? (
-      <StoreDetailSheet
-        ref={setSheetNode}
-        store={selectedStore}
-        onClose={() => setSelectedStore(null)}
-      />
-    ) : (
-      <StoreListSheet
-        ref={setSheetNode}
-        stores={storesData?.data || []}
-        onStoreClick={handleStoreClick}
-      />
-    )}
-
-  </div>
+			{selectedStore ? (
+				<StoreDetailSheet ref={setSheetNode} store={selectedStore} onClose={() => setSelectedStore(null)} />
+			) : (
+				<StoreListSheet ref={setSheetNode} stores={stores} onStoreClick={handleStoreClick} />
+			)}
+		</div>
+	);
 }

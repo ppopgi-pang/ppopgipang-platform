@@ -59,25 +59,33 @@ function TradeEditPage() {
         const files = e.target.files;
         if (!files || files.length === 0) return;
         setUploading(true);
-        try {
-            const newImagesList: string[] = [...(formData.images || [])];
-            for (let i = 0; i < files.length; i++) {
-                const { fileName } = await uploadFile(files[i]);
-                newImagesList.push(fileName);
-                setNewImages(prev => new Set(prev).add(fileName));
-            }
-            setFormData({ ...formData, images: newImagesList });
-        } catch (error) {
-            alert('이미지 업로드에 실패했습니다.');
-        } finally {
-            setUploading(false);
-        }
-    };
+		try {
+			const newImagesList: string[] = [...(formData.images || [])];
+			for (let i = 0; i < files.length; i++) {
+				const { fileName } = await uploadFile(files[i]);
+				newImagesList.push(fileName);
+				setNewImages((prev) => new Set(prev).add(fileName));
+			}
+			setFormData({ ...formData, images: newImagesList });
+		} catch {
+			alert('이미지 업로드에 실패했습니다.');
+		} finally {
+			setUploading(false);
+		}
+	};
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        updateMutation.mutate(formData);
-    };
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		updateMutation.mutate(formData);
+	};
+
+	const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setFormData({ ...formData, type: e.target.value as TradeInput.UpdateTradeDto["type"] });
+	};
+
+	const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setFormData({ ...formData, status: e.target.value as TradeInput.UpdateTradeDto["status"] });
+	};
 
     if (isFetching) return <div className="flex justify-center py-20 text-sky-500">읽어오는 중...</div>;
 
@@ -131,14 +139,14 @@ function TradeEditPage() {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-semibold text-slate-700">거래 방식</label>
-                        <select className="h-12 rounded-2xl border border-slate-200/70 bg-slate-50/80 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-200/70" value={formData.type} onChange={(e) => setFormData({ ...formData, type: e.target.value as any })}>
+                        <select className="h-12 rounded-2xl border border-slate-200/70 bg-slate-50/80 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-200/70" value={formData.type} onChange={handleTypeChange}>
                             <option value="sale">판매하기</option>
                             <option value="exchange">교환하기</option>
                         </select>
                     </div>
                     <div className="flex flex-col gap-2">
                         <label className="text-sm font-semibold text-slate-700">상태</label>
-                        <select className="h-12 rounded-2xl border border-slate-200/70 bg-slate-50/80 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-200/70" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}>
+                        <select className="h-12 rounded-2xl border border-slate-200/70 bg-slate-50/80 px-4 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-200/70" value={formData.status} onChange={handleStatusChange}>
                             <option value="active">거래진행중</option>
                             <option value="completed">거래완료</option>
                             <option value="cancelled">취소됨</option>

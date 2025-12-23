@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getStoreDetail, type Review } from "../../shared/api/stores";
+import { getStoreDetail, type Review } from "@/shared/api/stores";
 import ReviewCard from "./review-card";
 import ReviewWriteModal from "./review-write-modal";
 
@@ -116,7 +116,7 @@ export default function StoreFullDetail({ storeId }: StoreFullDetailProps) {
             </div>
 
             {/* Find Route Floating Button (Optional) */}
-            <div className="fixed bottom-6 left-5 right-5 z-20">
+            <div className="fixed bottom-6 left-1/2 z-20 w-full max-w-[var(--app-max-width)] -translate-x-1/2 px-5">
                 <button className="w-full py-3.5 liquid-button shadow-lg shadow-sky-500/30 text-white font-bold rounded-xl active:scale-[0.98] transition-transform">
                     길찾기
                 </button>

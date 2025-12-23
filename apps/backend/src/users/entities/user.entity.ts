@@ -3,6 +3,8 @@ import { Review } from "src/reviews/entities/review.entity";
 import { Trade } from "src/trades/entities/trade.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
+
+
 @Entity('users')
 export class User {
     @PrimaryGeneratedColumn()

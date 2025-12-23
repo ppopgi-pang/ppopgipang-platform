@@ -35,20 +35,20 @@ function TradeNewPage() {
         if (!files || files.length === 0) return;
 
         setUploading(true);
-        try {
-            const newImages: string[] = [...(formData.images || [])];
-            for (let i = 0; i < files.length; i++) {
-                const { fileName } = await uploadFile(files[i]);
-                // Backend returns just the filename, frontend needs to prefix with preview URL
-                newImages.push(fileName);
-            }
-            setFormData({ ...formData, images: newImages });
-        } catch (error) {
-            alert('이미지 업로드에 실패했습니다.');
-        } finally {
-            setUploading(false);
-        }
-    };
+		try {
+			const newImages: string[] = [...(formData.images || [])];
+			for (let i = 0; i < files.length; i++) {
+				const { fileName } = await uploadFile(files[i]);
+				// Backend returns just the filename, frontend needs to prefix with preview URL
+				newImages.push(fileName);
+			}
+			setFormData({ ...formData, images: newImages });
+		} catch {
+			alert('이미지 업로드에 실패했습니다.');
+		} finally {
+			setUploading(false);
+		}
+	};
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

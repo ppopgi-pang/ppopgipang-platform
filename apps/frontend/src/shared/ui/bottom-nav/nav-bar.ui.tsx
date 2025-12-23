@@ -37,17 +37,16 @@ export default function NavBar() {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill={isActive ? "currentColor" : "none"}
+          fillOpacity={isActive ? 0.12 : undefined}
           stroke="currentColor"
-          strokeWidth={isActive ? 2 : 1.5}
+          strokeWidth={isActive ? 2 : 1.8}
           strokeLinecap="round"
           strokeLinejoin="round"
           className="w-6 h-6"
         >
-          <path d="M9 22V12h6v10M2 10.13l9.29-6.9a1 1 0 011.42 0L22 10.13" />
-          {/* Simple House/Map icon replacement or Map specific */}
-          <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z" />
-          <path d="M8 2v16" />
-          <path d="M16 6v16" />
+          <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6" />
+          <line x1="9" y1="3" x2="9" y2="18" />
+          <line x1="15" y1="6" x2="15" y2="21" />
         </svg>
       ),
     },

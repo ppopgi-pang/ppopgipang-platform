@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createReview, uploadFile } from "../../shared/api/stores";
+import type { FileResult, ReviewInput, ReviewResult } from "@ppopgipang/types";
+import { createReview, uploadFile } from "@/shared/api/stores";
 
 interface ReviewWriteModalProps {
     storeId: number;
@@ -17,16 +18,19 @@ export default function ReviewWriteModal({ storeId, isOpen, onClose }: ReviewWri
 
     const queryClient = useQueryClient();
 
-    const uploadMutation = useMutation({
+    const uploadMutation = useMutation<FileResult.UploadDto, Error, File>({
         mutationFn: uploadFile,
     });
 
-    const createReviewMutation = useMutation({
+    const createReviewMutation = useMutation<
+        ReviewResult.ReviewDto,
+        Error,
+        ReviewInput.CreateReviewDto
+    >({
         mutationFn: createReview,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['store', storeId] });
+            queryClient.invalidateQueries({ queryKey: ["store", storeId] });
             onClose();
-            // Reset form
             setRating(5);
             setContent("");
             setImageFile(null);
@@ -36,7 +40,7 @@ export default function ReviewWriteModal({ storeId, isOpen, onClose }: ReviewWri
         onError: (error) => {
             console.error(error);
             alert("리뷰 등록에 실패했습니다.");
-        }
+        },
     });
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +70,6 @@ export default function ReviewWriteModal({ storeId, isOpen, onClose }: ReviewWri
                 rating,
                 content,
                 images: uploadedFileName ? [uploadedFileName] : [],
-
             });
         } catch (error) {
             console.error("Submit error", error);

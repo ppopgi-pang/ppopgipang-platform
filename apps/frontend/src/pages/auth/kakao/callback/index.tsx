@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { tokenManager } from "../../../../shared/lib/token-manager";
 import { z } from "zod";
+import { tokenManager } from "@/shared/lib/token-manager";
 
 const kakaoCallbackSearchSchema = z.object({
     accessToken: z.string(),

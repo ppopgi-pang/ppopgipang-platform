@@ -5,7 +5,7 @@ import { Like, Repository } from 'typeorm';
 import { TradeChatRoom } from './entities/trade-chat-room.entity';
 import { TradeChatMessage } from './entities/trade-chat-message.entity';
 import { User } from 'src/users/entities/user.entity';
-import { TradeInput, TradeResult } from '@ppopgipang/types';
+import { TradeChatInput, TradeChatResult, TradeInput, TradeResult } from '@ppopgipang/types';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 import { rename } from 'fs/promises';
@@ -46,7 +46,7 @@ export class TradesService {
         return (await this.tradeRepository.save(trade)).id;
     }
 
-    async findOneTrade(id: number): Promise<TradeResult.TradeDetailDto> {
+    async findOneTrade(id: number, userId?: number): Promise<TradeResult.TradeDetailDto> {
         const trade = await this.tradeRepository.findOne({
             where: { id },
             relations: ['user']
@@ -56,7 +56,27 @@ export class TradesService {
             throw new NotFoundException(`해당 거래를 찾을 수 없습니다. : ${id}`);
         }
 
-        return new TradeResult.TradeDetailDto(trade);
+        let chatRoomExists = false;
+        let chatRoomId: number | null = null;
+
+        if (userId) {
+            const chatRoom = await this.tradeChatRoomRepository.findOne({
+                where: {
+                    tradePost: { id },
+                    buyerId: userId
+                }
+            });
+
+            if (chatRoom) {
+                chatRoomExists = true;
+                chatRoomId = chatRoom.id;
+            }
+        }
+
+        return new TradeResult.TradeDetailDto(trade, {
+            exists: chatRoomExists,
+            id: chatRoomId
+        });
     }
 
     async searchTrade(keyword: string, page: number, size: number): Promise<TradeResult.SearchDto> {
@@ -137,5 +157,116 @@ export class TradesService {
                 console.error(`Failed to move image ${name}:`, e);
             }
         }));
+    }
+
+    async createChatRoom(buyerId: number, createDto: TradeChatInput.CreateTradeChatRoomDto): Promise<TradeChatResult.TradeChatRoomDto> {
+        const { tradeId } = createDto;
+        const trade = await this.tradeRepository.findOne({
+            where: { id: tradeId },
+            relations: ['user']
+        });
+
+        if (!trade) {
+            throw new NotFoundException(`해당 거래를 찾을 수 없습니다. : ${tradeId}`);
+        }
+
+        const existingChatRoom = await this.tradeChatRoomRepository.findOne({
+            where: {
+                tradePost: { id: tradeId },
+                buyerId
+            },
+            relations: ['tradePost']
+        });
+
+        if (existingChatRoom) {
+            return new TradeChatResult.TradeChatRoomDto(existingChatRoom);
+        }
+
+        const chatRoom = this.tradeChatRoomRepository.create({
+            tradePost: trade,
+            sellerId: trade.user.id,
+            buyerId
+        });
+
+        const savedChatRoom = await this.tradeChatRoomRepository.save(chatRoom);
+        return new TradeChatResult.TradeChatRoomDto(savedChatRoom);
+    }
+
+    async leaveChatRoom(chatRoomId: number, userId: number): Promise<void> {
+        const chatRoom = await this.tradeChatRoomRepository.findOne({
+            where: { id: chatRoomId }
+        });
+
+        if (!chatRoom) {
+            throw new NotFoundException(`채팅방을 찾을 수 없습니다. : ${chatRoomId}`);
+        }
+
+        // Check if the user is either the seller or the buyer
+        if (chatRoom.sellerId !== userId && chatRoom.buyerId !== userId) {
+            throw new ForbiddenException('채팅방에 참여한 사용자만 나갈 수 있습니다.');
+        }
+
+        // Delete all messages in the chat room first
+        await this.tradeChatMessageRepository.delete({ room: { id: chatRoomId } });
+
+        // Delete the chat room
+        await this.tradeChatRoomRepository.delete(chatRoomId);
+    }
+
+    async createChatMessage(senderId: number, createDto: TradeChatInput.CreateTradeChatMessageDto): Promise<TradeChatResult.TradeChatMessageDto> {
+        const { chatRoomId, message } = createDto;
+
+        const chatRoom = await this.tradeChatRoomRepository.findOne({
+            where: { id: chatRoomId }
+        });
+
+        if (!chatRoom) {
+            throw new NotFoundException(`채팅방을 찾을 수 없습니다. : ${chatRoomId}`);
+        }
+
+        // Check if the sender is part of the chat room
+        if (chatRoom.sellerId !== senderId && chatRoom.buyerId !== senderId) {
+            throw new ForbiddenException('채팅방에 참여한 사용자만 메시지를 보낼 수 있습니다.');
+        }
+
+        const sender = await this.userRepository.findOne({ where: { id: senderId } });
+        if (!sender) {
+            throw new NotFoundException(`유저를 찾을 수 없습니다. : ${senderId}`);
+        }
+
+        const chatMessage = this.tradeChatMessageRepository.create({
+            room: chatRoom,
+            sender,
+            message
+        });
+
+        const savedMessage = await this.tradeChatMessageRepository.save(chatMessage);
+        return new TradeChatResult.TradeChatMessageDto(savedMessage);
+    }
+
+    async findAllChatMessages(userId: number, chatRoomId: number, page: number, size: number): Promise<TradeChatResult.TradeChatMessageListDto> {
+        const chatRoom = await this.tradeChatRoomRepository.findOne({
+            where: { id: chatRoomId }
+        });
+
+        if (!chatRoom) {
+            throw new NotFoundException(`채팅방을 찾을 수 없습니다. : ${chatRoomId}`);
+        }
+
+        // Check if the user is either the seller or the buyer
+        if (chatRoom.sellerId !== userId && chatRoom.buyerId !== userId) {
+            throw new ForbiddenException('채팅방에 참여한 사용자만 메시지를 조회할 수 있습니다.');
+        }
+
+        const [messages, total] = await this.tradeChatMessageRepository.findAndCount({
+            where: { room: { id: chatRoomId } },
+            relations: ['sender', 'room'],
+            take: size,
+            skip: (page - 1) * size,
+            order: { sentAt: 'DESC' }
+        });
+
+        const dtos = messages.map(msg => new TradeChatResult.TradeChatMessageDto(msg));
+        return new TradeChatResult.TradeChatMessageListDto(dtos, total);
     }
 }

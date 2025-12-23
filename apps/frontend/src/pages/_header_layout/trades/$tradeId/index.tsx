@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { getTradeDetail, deleteTrade } from '@/shared/api/trades';
+import { getTradeDetail, deleteTrade, createChatRoom } from '@/shared/api/trades';
 import { getMyProfile } from '@/shared/api/users';
 import { TRADE_IMAGE_BASE_URL } from '@/shared/lib/api-config';
 
@@ -37,9 +37,24 @@ function TradeDetailPage() {
         }
     });
 
+    const createChatRoomMutation = useMutation({
+        mutationFn: () => createChatRoom({ tradeId: Number(tradeId) }),
+        onSuccess: (data) => {
+            navigate({
+                to: '/trades/$tradeId/chat-room/$chatRoomId',
+                params: { tradeId, chatRoomId: data.id.toString() },
+            });
+        },
+        onError: (err) => {
+            console.error(err);
+            alert('채팅방 생성에 실패했습니다.');
+        }
+    });
+
     const isOwner = me && trade && (me.id === trade.user.id || me.isAdmin);
     const images = useMemo(() => trade?.images ?? [], [trade]);
     const hasMultipleImages = images.length > 1;
+    const hasChatRoom = Boolean(trade?.chatRoomId);
 
     const goPrev = () => {
         if (!hasMultipleImages) return;
@@ -49,6 +64,21 @@ function TradeDetailPage() {
     const goNext = () => {
         if (!hasMultipleImages) return;
         setActiveIndex((prev) => (prev + 1) % images.length);
+    };
+
+    const handleChat = () => {
+        if (!me) {
+            alert('로그인이 필요합니다.');
+            return;
+        }
+        if (hasChatRoom) {
+            navigate({
+                to: '/trades/$tradeId/chat-room/$chatRoomId',
+                params: { tradeId, chatRoomId: trade!.chatRoomId!.toString() },
+            });
+            return;
+        }
+        createChatRoomMutation.mutate();
     };
 
     if (isLoading) return <div className="flex justify-center py-20"><div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" /></div>;
@@ -154,9 +184,17 @@ function TradeDetailPage() {
                             {trade.price ? `${trade.price.toLocaleString()}원` : '가격 제안'}
                         </div>
                     </div>
-                    <button className="liquid-button h-11 rounded-2xl px-6 text-sm font-bold text-slate-900 shadow-lg shadow-sky-500/30 active:scale-95 transition-transform">
-                        채팅하기
+                    {/* Enable self-chat for testing */}
+                    {/* {!isOwner && ( */}
+                    <button
+                        onClick={handleChat}
+                        disabled={createChatRoomMutation.isPending}
+                        className="liquid-button h-11 rounded-2xl px-6 text-sm font-bold text-slate-900 shadow-lg shadow-sky-500/30 active:scale-95 transition-transform disabled:opacity-50"
+                    >
+                        {createChatRoomMutation.isPending ? '생성 중...' : hasChatRoom ? '채팅 이어하기' : '채팅하기'}
                     </button>
+                    {/* )} */}
+
                 </div>
             </div>
 

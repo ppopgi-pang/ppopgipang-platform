@@ -8,6 +8,8 @@ import { ReviewResult } from './dto/review/user/review-result.dto';
 import { UserResult } from './dto/user/user-result.dto';
 import { TradeInput } from './dto/trade/user/trade-input.dto';
 import { TradeResult } from './dto/trade/user/trade-result.dto';
+import { TradeChatInput } from './dto/trade-chat/trade-chat-input.dto';
+import { TradeChatResult } from './dto/trade-chat/trade-chat-result.dto';
 
 export {
     AdminStoreInput,
@@ -19,5 +21,7 @@ export {
     ReviewResult,
     UserResult,
     TradeInput,
-    TradeResult
+    TradeResult,
+    TradeChatInput,
+    TradeChatResult
 };
