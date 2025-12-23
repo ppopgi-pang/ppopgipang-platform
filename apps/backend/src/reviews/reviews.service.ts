@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 
@@ -19,6 +20,7 @@ export class ReviewsService {
         private readonly storeRepository: Repository<Store>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+        private readonly configService: ConfigService,
     ) { }
 
 
@@ -37,14 +39,15 @@ export class ReviewsService {
             user
         });
 
-        const reviewFolder = join('../../public', 'review');
-        const tempFolder = join('../../public', 'temp');
+        const publicUploadDir = this.configService.getOrThrow<string>('PUBLIC_UPLOAD_DIR');
+        const reviewFolder = join(publicUploadDir, 'review');
+        const tempFolder = join(publicUploadDir, 'temp');
 
         if (dto.images) {
             for (let name of dto.images) {
                 await rename(
-                    join(process.cwd(), tempFolder, name),
-                    join(process.cwd(), reviewFolder, name)
+                    join(tempFolder, name),
+                    join(reviewFolder, name)
                 );
             }
         }

@@ -38,6 +38,7 @@ import { AuthModule } from './auth/auth.module';
         FRONTEND_ORIGIN: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
+        PUBLIC_UPLOAD_DIR: Joi.string().required(),
       })
     }),
 
@@ -59,9 +60,13 @@ import { AuthModule } from './auth/auth.module';
       inject: [ConfigService]
     }),
 
-    ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), '../../public'),
-      serveRoot: '/public/',
+    ServeStaticModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => [{
+        rootPath: configService.getOrThrow('PUBLIC_UPLOAD_DIR'),
+        serveRoot: '/public/',
+      }],
+      inject: [ConfigService],
     }),
 
     UsersModule,
