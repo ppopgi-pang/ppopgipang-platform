@@ -4,11 +4,15 @@ import { TradeChatRoom } from '@/features/trades/components/trade-chat-room';
 import { getMyProfile } from '@/shared/api/users';
 
 export const Route = createFileRoute('/_header_layout/trades/$tradeId/chat-room/$chatRoomId')({
+    validateSearch: (search: Record<string, unknown>) => ({
+        from: search.from === 'chats' || search.from === 'trade' ? search.from : undefined,
+    }),
     component: TradeChatRoomPage,
 });
 
 function TradeChatRoomPage() {
     const { tradeId, chatRoomId } = Route.useParams();
+    const { from } = Route.useSearch();
     const navigate = useNavigate();
 
     const { data: me, isLoading } = useQuery({
@@ -18,6 +22,10 @@ function TradeChatRoomPage() {
     });
 
     const handleClose = () => {
+        if (from === 'chats') {
+            navigate({ to: '/trades/chats' });
+            return;
+        }
         navigate({ to: '/trades/$tradeId', params: { tradeId } });
     };
 

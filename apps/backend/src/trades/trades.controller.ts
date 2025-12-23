@@ -57,6 +57,19 @@ export class TradesController {
   }
 
   /**
+   * (사용자) 내 채팅방 목록 조회
+   */
+  @Get('chat-room')
+  @ApiBearerAuth('access-token')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: '(사용자) 내 채팅방 목록 조회' })
+  getMyChatRooms(
+    @Req() req: any
+  ) {
+    return this.tradesService.getMyTradeChatRooms(req.user.userId);
+  }
+
+  /**
    * (사용자) 채팅방 나가기
    */
   @Delete('chat-room/:id')

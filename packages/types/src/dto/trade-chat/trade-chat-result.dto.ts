@@ -8,13 +8,19 @@ export namespace TradeChatResult {
         buyerId: number;
         tradeId: number;
         createdAt: Date;
+        seller?: UserResult.UserInfo;
+        buyer?: UserResult.UserInfo;
 
-        constructor(chatRoom: any) {
+        constructor(chatRoom: any, users?: { seller?: any; buyer?: any }) {
             this.id = chatRoom.id;
             this.sellerId = chatRoom.sellerId;
             this.buyerId = chatRoom.buyerId;
             this.tradeId = chatRoom.tradePost ? chatRoom.tradePost.id : chatRoom.tradeId;
             this.createdAt = chatRoom.createdAt;
+            const seller = users?.seller ?? chatRoom.seller;
+            const buyer = users?.buyer ?? chatRoom.buyer;
+            this.seller = seller ? new UserResult.UserInfo(seller) : undefined;
+            this.buyer = buyer ? new UserResult.UserInfo(buyer) : undefined;
         }
     }
 
@@ -34,15 +40,36 @@ export namespace TradeChatResult {
         }
     }
 
-    export class TradeChatMessageListDto {
-        list: TradeChatMessageDto[];
+    export class TradeChatRoomWithLastMessageDto {
+        room: TradeChatRoomDto;
+        lastMessage: TradeChatMessageDto | null;
+
+        constructor(room: TradeChatRoomDto, lastMessage: TradeChatMessageDto | null) {
+            this.room = room;
+            this.lastMessage = lastMessage;
+        }
+    }
+
+    export class TradeChatRoomListDto {
+        list: TradeChatRoomWithLastMessageDto[];
         count: number;
 
-        constructor(list: TradeChatMessageDto[], count: number) {
+        constructor(list: TradeChatRoomWithLastMessageDto[], count: number) {
             this.list = list;
             this.count = count;
         }
     }
-}
 
+    export class TradeChatMessageListDto {
+        list: TradeChatMessageDto[];
+        count: number;
+        room?: TradeChatRoomDto;
+
+        constructor(list: TradeChatMessageDto[], count: number, room?: TradeChatRoomDto) {
+            this.list = list;
+            this.count = count;
+            this.room = room;
+        }
+    }
+}
 

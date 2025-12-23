@@ -43,6 +43,7 @@ function TradeDetailPage() {
             navigate({
                 to: '/trades/$tradeId/chat-room/$chatRoomId',
                 params: { tradeId, chatRoomId: data.id.toString() },
+                search: { from: 'trade' },
             });
         },
         onError: (err) => {
@@ -75,6 +76,7 @@ function TradeDetailPage() {
             navigate({
                 to: '/trades/$tradeId/chat-room/$chatRoomId',
                 params: { tradeId, chatRoomId: trade!.chatRoomId!.toString() },
+                search: { from: 'trade' },
             });
             return;
         }

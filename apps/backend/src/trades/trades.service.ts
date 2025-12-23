@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Trade } from './entities/trade.entity';
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { TradeChatRoom } from './entities/trade-chat-room.entity';
 import { TradeChatMessage } from './entities/trade-chat-message.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -179,7 +179,11 @@ export class TradesService {
         });
 
         if (existingChatRoom) {
-            return new TradeChatResult.TradeChatRoomDto(existingChatRoom);
+            const [seller, buyer] = await Promise.all([
+                this.userRepository.findOne({ where: { id: existingChatRoom.sellerId } }),
+                this.userRepository.findOne({ where: { id: existingChatRoom.buyerId } })
+            ]);
+            return new TradeChatResult.TradeChatRoomDto(existingChatRoom, { seller, buyer });
         }
 
         const chatRoom = this.tradeChatRoomRepository.create({
@@ -188,8 +192,9 @@ export class TradesService {
             buyerId
         });
 
+        const buyer = await this.userRepository.findOne({ where: { id: buyerId } });
         const savedChatRoom = await this.tradeChatRoomRepository.save(chatRoom);
-        return new TradeChatResult.TradeChatRoomDto(savedChatRoom);
+        return new TradeChatResult.TradeChatRoomDto(savedChatRoom, { seller: trade.user, buyer });
     }
 
     async leaveChatRoom(chatRoomId: number, userId: number): Promise<void> {
@@ -246,7 +251,8 @@ export class TradesService {
 
     async findAllChatMessages(userId: number, chatRoomId: number, page: number, size: number): Promise<TradeChatResult.TradeChatMessageListDto> {
         const chatRoom = await this.tradeChatRoomRepository.findOne({
-            where: { id: chatRoomId }
+            where: { id: chatRoomId },
+            relations: ['tradePost']
         });
 
         if (!chatRoom) {
@@ -267,6 +273,51 @@ export class TradesService {
         });
 
         const dtos = messages.map(msg => new TradeChatResult.TradeChatMessageDto(msg));
-        return new TradeChatResult.TradeChatMessageListDto(dtos, total);
+        const userMap = await this.getUsersByIds([chatRoom.sellerId, chatRoom.buyerId]);
+        const roomDto = new TradeChatResult.TradeChatRoomDto(chatRoom, {
+            seller: userMap.get(chatRoom.sellerId),
+            buyer: userMap.get(chatRoom.buyerId)
+        });
+        return new TradeChatResult.TradeChatMessageListDto(dtos, total, roomDto);
+    }
+
+    async getMyTradeChatRooms(userId: number): Promise<TradeChatResult.TradeChatRoomListDto> {
+        const chatRooms = await this.tradeChatRoomRepository.find({
+            where: [
+                { sellerId: userId },
+                { buyerId: userId }
+            ],
+            relations: ['tradePost'],
+            order: { createdAt: 'DESC' }
+        });
+
+        const userMap = await this.getUsersByIds(chatRooms.flatMap((room) => [room.sellerId, room.buyerId]));
+        const roomDtos = await Promise.all(chatRooms.map(async (room) => {
+            const lastMessage = await this.tradeChatMessageRepository.findOne({
+                where: { room: { id: room.id } },
+                relations: ['sender', 'room'],
+                order: { sentAt: 'DESC' }
+            });
+
+            return new TradeChatResult.TradeChatRoomWithLastMessageDto(
+                new TradeChatResult.TradeChatRoomDto(room, {
+                    seller: userMap.get(room.sellerId),
+                    buyer: userMap.get(room.buyerId)
+                }),
+                lastMessage ? new TradeChatResult.TradeChatMessageDto(lastMessage) : null
+            );
+        }));
+
+        return new TradeChatResult.TradeChatRoomListDto(roomDtos, chatRooms.length);
+    }
+
+    private async getUsersByIds(userIds: number[]): Promise<Map<number, User>> {
+        const uniqueIds = Array.from(new Set(userIds)).filter((id) => typeof id === 'number');
+        if (uniqueIds.length === 0) {
+            return new Map();
+        }
+
+        const users = await this.userRepository.findBy({ id: In(uniqueIds) });
+        return new Map(users.map((user) => [user.id, user]));
     }
 }

@@ -40,6 +40,11 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
         }
     }, [messageList]);
 
+    const avatarLabel = (nickname?: string) => {
+        const trimmed = nickname?.trim();
+        return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
+    };
+
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
         if (!message.trim()) return;
@@ -89,18 +94,34 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
                                 return (
                                     <div
                                         key={msg.id}
-                                        className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                                        className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}
                                     >
-                                        <div
-                                            className={`max-w-[75%] px-4 py-2.5 text-sm shadow-sm ${isMe
-                                                ? 'bg-sky-500 text-white rounded-2xl rounded-tr-sm'
-                                                : 'bg-white text-slate-700 rounded-2xl rounded-tl-sm border border-slate-100'
-                                                }`}
-                                        >
-                                            {msg.message}
+                                        <div className={`mb-1 text-xs font-medium ${isMe ? 'text-slate-500' : 'text-slate-600'}`}>
+                                            {msg.sender.nickname}
                                         </div>
-                                        <div className={`text-[10px] text-slate-400 mt-auto mb-1 mx-1 ${isMe ? 'order-first' : ''}`}>
-                                            {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        <div className={`flex items-end gap-2 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                            <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-[11px] font-semibold text-slate-600">
+                                                {msg.sender.profileImage ? (
+                                                    <img
+                                                        src={msg.sender.profileImage}
+                                                        alt={msg.sender.nickname ?? '프로필'}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span>{avatarLabel(msg.sender.nickname)}</span>
+                                                )}
+                                            </div>
+                                            <div
+                                                className={`max-w-[75%] px-4 py-2.5 text-sm shadow-sm ${isMe
+                                                    ? 'bg-sky-500 text-white rounded-2xl rounded-tr-sm'
+                                                    : 'bg-white text-slate-700 rounded-2xl rounded-tl-sm border border-slate-100'
+                                                    }`}
+                                            >
+                                                {msg.message}
+                                            </div>
+                                            <div className="text-[10px] text-slate-400">
+                                                {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
                                         </div>
                                     </div>
                                 );

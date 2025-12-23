@@ -19,6 +19,7 @@ import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
 import { Route as Header_layoutTradesNewRouteImport } from './../../../pages/_header_layout/trades/new'
 import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
+import { Route as Header_layoutTradesChatsIndexRouteImport } from './../../../pages/_header_layout/trades/chats/index'
 import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../pages/_header_layout/trades/$tradeId/index'
 import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
 import { Route as Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport } from './../../../pages/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
@@ -74,6 +75,12 @@ const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
   path: '/auth/kakao/callback/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Header_layoutTradesChatsIndexRoute =
+  Header_layoutTradesChatsIndexRouteImport.update({
+    id: '/trades/chats/',
+    path: '/trades/chats/',
+    getParentRoute: () => Header_layoutRouteRoute,
+  } as any)
 const Header_layoutTradesTradeIdIndexRoute =
   Header_layoutTradesTradeIdIndexRouteImport.update({
     id: '/trades/$tradeId/',
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/trades': typeof Header_layoutTradesIndexRoute
   '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
+  '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
   '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
   '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
@@ -118,6 +126,7 @@ export interface FileRoutesByTo {
   '/trades': typeof Header_layoutTradesIndexRoute
   '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
+  '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
   '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
   '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
@@ -134,6 +143,7 @@ export interface FileRoutesById {
   '/_header_layout/trades/': typeof Header_layoutTradesIndexRoute
   '/_header_layout/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/_header_layout/trades/$tradeId/': typeof Header_layoutTradesTradeIdIndexRoute
+  '/_header_layout/trades/chats/': typeof Header_layoutTradesChatsIndexRoute
   '/auth/kakao/callback/': typeof AuthKakaoCallbackIndexRoute
   '/_header_layout/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/trades/$tradeId/edit'
     | '/trades/$tradeId'
+    | '/trades/chats'
     | '/auth/kakao/callback'
     | '/trades/$tradeId/chat-room/$chatRoomId'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/trades'
     | '/trades/$tradeId/edit'
     | '/trades/$tradeId'
+    | '/trades/chats'
     | '/auth/kakao/callback'
     | '/trades/$tradeId/chat-room/$chatRoomId'
   id:
@@ -179,6 +191,7 @@ export interface FileRouteTypes {
     | '/_header_layout/trades/'
     | '/_header_layout/trades/$tradeId/edit'
     | '/_header_layout/trades/$tradeId/'
+    | '/_header_layout/trades/chats/'
     | '/auth/kakao/callback/'
     | '/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
   fileRoutesById: FileRoutesById
@@ -264,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthKakaoCallbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_header_layout/trades/chats/': {
+      id: '/_header_layout/trades/chats/'
+      path: '/trades/chats'
+      fullPath: '/trades/chats'
+      preLoaderRoute: typeof Header_layoutTradesChatsIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
     '/_header_layout/trades/$tradeId/': {
       id: '/_header_layout/trades/$tradeId/'
       path: '/trades/$tradeId'
@@ -295,6 +315,7 @@ interface Header_layoutRouteRouteChildren {
   Header_layoutTradesIndexRoute: typeof Header_layoutTradesIndexRoute
   Header_layoutTradesTradeIdEditRoute: typeof Header_layoutTradesTradeIdEditRoute
   Header_layoutTradesTradeIdIndexRoute: typeof Header_layoutTradesTradeIdIndexRoute
+  Header_layoutTradesChatsIndexRoute: typeof Header_layoutTradesChatsIndexRoute
   Header_layoutTradesTradeIdChatRoomChatRoomIdRoute: typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 
@@ -305,6 +326,7 @@ const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
   Header_layoutTradesIndexRoute: Header_layoutTradesIndexRoute,
   Header_layoutTradesTradeIdEditRoute: Header_layoutTradesTradeIdEditRoute,
   Header_layoutTradesTradeIdIndexRoute: Header_layoutTradesTradeIdIndexRoute,
+  Header_layoutTradesChatsIndexRoute: Header_layoutTradesChatsIndexRoute,
   Header_layoutTradesTradeIdChatRoomChatRoomIdRoute:
     Header_layoutTradesTradeIdChatRoomChatRoomIdRoute,
 }

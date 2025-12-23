@@ -47,3 +47,8 @@ export const findAllChatMessages = async (chatRoomId: number, page: number = 1, 
     return data;
 };
 
+export const getMyChatRooms = async (): Promise<TradeChatResult.TradeChatRoomListDto> => {
+    const { data } = await apiClient.get<TradeChatResult.TradeChatRoomListDto>("/trades/chat-room");
+    return data;
+};
+
