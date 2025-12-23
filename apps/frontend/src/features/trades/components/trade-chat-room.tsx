@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createChatMessage, findAllChatMessages, leaveChatRoom } from '@/shared/api/trades';
+import { TradeInfoFloating } from './trade-info-floating';
 
 interface TradeChatRoomProps {
     chatRoomId: number;
@@ -45,6 +46,12 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
         return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
     };
 
+    const chatTitle = (tradeTitle?: string, buyerName?: string) => {
+        const title = tradeTitle?.trim() || '물품';
+        const name = buyerName?.trim() || '구매자';
+        return `${title} - ${name}`;
+    };
+
     const handleSend = (e: React.FormEvent) => {
         e.preventDefault();
         if (!message.trim()) return;
@@ -58,11 +65,11 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
     };
 
     return (
-        <div className="fixed inset-y-0 left-1/2 z-[100] w-full max-w-[var(--app-max-width)] -translate-x-1/2">
+        <div className="fixed inset-y-0 left-0 right-0 z-[100] w-full lg:left-1/2 lg:right-auto lg:max-w-[var(--app-max-width)] lg:-translate-x-1/2">
             <div className="flex h-full flex-col bg-slate-50">
                 {/* Header */}
-                <div className="flex items-center justify-between border-b border-slate-200/60 bg-white px-4 py-3 shadow-sm pt-[max(12px,env(safe-area-inset-top))]">
-                    <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between border-b border-slate-200/60 bg-white px-4 py-3 shadow-sm pt-[max(12px,env(safe-area-inset-top))] shrink-0 z-20 relative">
+                    <div className="flex items-center gap-3 min-w-0">
                         <button
                             onClick={onClose}
                             className="rounded-full p-1 -ml-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
@@ -71,7 +78,22 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <div className="font-bold text-lg text-slate-800">채팅</div>
+                        <div className="flex items-center gap-2 min-w-0">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+                                {messageList?.room?.buyer?.profileImage ? (
+                                    <img
+                                        src={messageList.room.buyer.profileImage}
+                                        alt={messageList.room.buyer.nickname ?? '구매자 프로필'}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <span>{avatarLabel(messageList?.room?.buyer?.nickname)}</span>
+                                )}
+                            </div>
+                            <div className="truncate font-bold text-base text-slate-800">
+                                {chatTitle(messageList?.room?.trade?.title, messageList?.room?.buyer?.nickname)}
+                            </div>
+                        </div>
                     </div>
                     <button
                         onClick={handleLeave}
@@ -80,6 +102,14 @@ export function TradeChatRoom({ chatRoomId, currentUserId, onClose }: TradeChatR
                         나가기
                     </button>
                 </div>
+
+                {/* Product Info Floating */}
+                {messageList?.room?.trade && (
+                    <TradeInfoFloating
+                        trade={messageList.room.trade}
+                        chatRoomId={chatRoomId}
+                    />
+                )}
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" ref={scrollRef}>

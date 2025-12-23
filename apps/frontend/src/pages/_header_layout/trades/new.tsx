@@ -1,10 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createTrade } from '@/shared/api/trades';
 import { uploadFile } from '@/shared/api/stores';
 import type { TradeInput } from '@ppopgipang/types';
 import { TEMP_IMAGE_BASE_URL } from '@/shared/lib/api-config';
+import { openLoginModal } from '@/shared/lib/auth-modal';
+import { tokenManager } from '@/shared/lib/token-manager';
+import LoginRequiredCard from '@/shared/ui/auth/login-required-card';
 
 export const Route = createFileRoute('/_header_layout/trades/new')({
     component: TradeNewPage,
@@ -13,6 +16,7 @@ export const Route = createFileRoute('/_header_layout/trades/new')({
 function TradeNewPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const hasAccessToken = Boolean(tokenManager.getAccessToken());
     const [formData, setFormData] = useState<TradeInput.CreateTradeDto>({
         title: '',
         description: '',
@@ -21,6 +25,12 @@ function TradeNewPage() {
         images: [],
     });
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        if (!hasAccessToken) {
+            openLoginModal();
+        }
+    }, [hasAccessToken]);
 
     const createMutation = useMutation({
         mutationFn: (dto: TradeInput.CreateTradeDto) => createTrade(dto),
@@ -31,6 +41,10 @@ function TradeNewPage() {
     });
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!hasAccessToken) {
+            openLoginModal();
+            return;
+        }
         const files = e.target.files;
         if (!files || files.length === 0) return;
 
@@ -52,12 +66,25 @@ function TradeNewPage() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!hasAccessToken) {
+            openLoginModal();
+            return;
+        }
         if (!formData.title || !formData.description) {
             alert('제목과 설명을 입력해주세요.');
             return;
         }
         createMutation.mutate(formData);
     };
+
+    if (!hasAccessToken) {
+        return (
+            <LoginRequiredCard
+                description="게시글을 등록하려면 로그인해주세요."
+                onBack={() => navigate({ to: '/trades' })}
+            />
+        );
+    }
 
     return (
         <div className="relative min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-100 px-4 pb-[var(--page-safe-bottom)] pt-6">

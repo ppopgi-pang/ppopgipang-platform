@@ -54,7 +54,7 @@ const RootLayout = () => {
 		</TanstackQueryProvider>
 	);
 };
-import { NotFoundPage } from "@/pages/not-found";
+import { NotFoundPage } from "@/shared/ui/not-found";
 
 export const Route = createRootRoute({
 	component: RootLayout,

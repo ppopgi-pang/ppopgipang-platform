@@ -10,7 +10,6 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 import { rename } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class TradesService {

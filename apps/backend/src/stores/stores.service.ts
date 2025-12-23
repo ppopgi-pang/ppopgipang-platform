@@ -37,8 +37,13 @@ export class StoresService {
             review.id,
             review.rating,
             review.content,
-            review.images ? review.images.map(image => `http://localhost:3000/public/review/${image}`) : [],
+            review.images ?? [],
             new AuthResult.UserInfo(review.user),
+            new ReviewResult.StoreInfoDto(
+                store.id,
+                store.name,
+                store.address
+            ),
             review.createdAt,
             review.updatedAt
         ));

@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '@/shared/api/api-error-response';
+import { openLoginModal } from '@/shared/lib/auth-modal';
 
 // API 에러 타입 확인 헬퍼
 const isApiError = (error: unknown): error is AxiosError<ApiErrorResponse> => {
@@ -119,11 +120,7 @@ const handleError = (error: unknown) => {
         case 'AUTH':
             // 인증 오류 - 로그인 페이지로 리다이렉트
             // Router를 사용할 수 없는 경우 window.location 사용
-            if (window.location.pathname !== '/riot') {
-                // 현재 위치를 저장하여 로그인 후 돌아올 수 있도록 함
-                sessionStorage.setItem('redirectAfterLogin', window.location.href);
-                window.location.href = '/riot';
-            }
+            openLoginModal();
             break;
 
         case 'PERMISSION':

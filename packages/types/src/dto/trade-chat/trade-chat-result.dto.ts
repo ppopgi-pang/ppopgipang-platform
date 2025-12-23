@@ -2,25 +2,49 @@ import { UserResult } from "../user/user-result.dto";
 
 
 export namespace TradeChatResult {
+    export class TradeSimpleDto {
+        id: number;
+        title: string;
+        description: string;
+        image: string | null;
+        price: number;
+        type: 'sale' | 'exchange';
+        status: 'active' | 'completed' | 'cancelled';
+
+        constructor(trade: any) {
+            this.id = trade.id;
+            this.title = trade.title;
+            this.description = trade.description;
+            this.image = trade.images ? trade.images[0] : null;
+            this.price = trade.price;
+            this.type = trade.type;
+            this.status = trade.status;
+        }
+    }
+
     export class TradeChatRoomDto {
         id: number;
         sellerId: number;
         buyerId: number;
         tradeId: number;
+        trade: TradeSimpleDto;
         createdAt: Date;
-        seller?: UserResult.UserInfo;
-        buyer?: UserResult.UserInfo;
+        seller: UserResult.UserInfo;
+        buyer: UserResult.UserInfo;
 
-        constructor(chatRoom: any, users?: { seller?: any; buyer?: any }) {
+        constructor(chatRoom: any, users: { seller: any; buyer: any }) {
+            const tradePost = chatRoom.tradePost || chatRoom.trade;
+
             this.id = chatRoom.id;
             this.sellerId = chatRoom.sellerId;
             this.buyerId = chatRoom.buyerId;
-            this.tradeId = chatRoom.tradePost ? chatRoom.tradePost.id : chatRoom.tradeId;
+            this.tradeId = tradePost ? tradePost.id : chatRoom.tradeId;
+            this.trade = tradePost ? new TradeSimpleDto(tradePost) : null as any; // Trade info is required now
             this.createdAt = chatRoom.createdAt;
             const seller = users?.seller ?? chatRoom.seller;
             const buyer = users?.buyer ?? chatRoom.buyer;
-            this.seller = seller ? new UserResult.UserInfo(seller) : undefined;
-            this.buyer = buyer ? new UserResult.UserInfo(buyer) : undefined;
+            this.seller = new UserResult.UserInfo(seller);
+            this.buyer = new UserResult.UserInfo(buyer)
         }
     }
 

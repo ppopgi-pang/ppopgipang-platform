@@ -1,17 +1,50 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { getMyChatRooms } from '@/shared/api/trades';
 import { formatRelativeTime } from '@/shared/utils/date';
+import { openLoginModal } from '@/shared/lib/auth-modal';
+import { tokenManager } from '@/shared/lib/token-manager';
+import LoginRequiredCard from '@/shared/ui/auth/login-required-card';
 
 export const Route = createFileRoute('/_header_layout/trades/chats/')({
     component: TradesChatListPage,
 });
 
 function TradesChatListPage() {
+    const navigate = useNavigate();
+    const hasAccessToken = Boolean(tokenManager.getAccessToken());
     const { data: chatRooms, isLoading } = useQuery({
         queryKey: ['myChatRooms'],
         queryFn: getMyChatRooms,
+        enabled: hasAccessToken,
     });
+
+    useEffect(() => {
+        if (!hasAccessToken) {
+            openLoginModal();
+        }
+    }, [hasAccessToken]);
+
+    const avatarLabel = (nickname?: string) => {
+        const trimmed = nickname?.trim();
+        return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
+    };
+
+    const chatTitle = (tradeTitle?: string, buyerName?: string) => {
+        const title = tradeTitle?.trim() || '물품';
+        const name = buyerName?.trim() || '구매자';
+        return `${title} - ${name}`;
+    };
+
+    if (!hasAccessToken) {
+        return (
+            <LoginRequiredCard
+                description="채팅 목록을 보려면 로그인해주세요."
+                onBack={() => navigate({ to: '/trades' })}
+            />
+        );
+    }
 
     return (
         <div className="flex min-h-screen flex-col bg-white pb-[calc(var(--page-safe-bottom)+20px)]">
@@ -49,13 +82,21 @@ function TradesChatListPage() {
                             search={{ from: 'chats' }}
                             className="flex items-center gap-4 border-b border-slate-50 px-4 py-4 transition-colors hover:bg-slate-50 active:bg-slate-100"
                         >
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xl">
-                                🧑‍💻
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100 text-lg font-semibold text-slate-600">
+                                {item.room.buyer?.profileImage ? (
+                                    <img
+                                        src={item.room.buyer.profileImage}
+                                        alt={item.room.buyer.nickname ?? '구매자 프로필'}
+                                        className="h-full w-full object-cover"
+                                    />
+                                ) : (
+                                    <span>{avatarLabel(item.room.buyer?.nickname)}</span>
+                                )}
                             </div>
                             <div className="flex min-w-0 flex-1 flex-col gap-1">
                                 <div className="flex items-center justify-between">
-                                    <span className="font-semibold text-slate-900">
-                                        채팅방 {item.room.id}
+                                    <span className="truncate font-semibold text-slate-900">
+                                        {chatTitle(item.room.trade?.title, item.room.buyer?.nickname)}
                                     </span>
                                     {(item.lastMessage?.sentAt || item.room.createdAt) && (
                                         <span className="text-xs text-slate-400">

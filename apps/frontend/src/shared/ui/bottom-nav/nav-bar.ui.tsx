@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type MouseEvent } from "react";
 import LoginSignupModal from "@/features/auth/login-signup-modal";
+import { onLoginModalOpen } from "@/shared/lib/auth-modal";
 import { tokenManager } from "@/shared/lib/token-manager";
 
 export default function NavBar() {
@@ -22,6 +23,10 @@ export default function NavBar() {
       window.removeEventListener("storage", updateAuth);
       window.removeEventListener("focus", updateAuth);
     };
+  }, []);
+
+  useEffect(() => {
+    return onLoginModalOpen(() => setIsModalOpen(true));
   }, []);
 
   useEffect(() => {

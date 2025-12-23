@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { searchTrades } from '@/shared/api/trades';
 import SearchBar from '@/shared/ui/search-bar/search-bar.ui';
 import TradeCard from '@/features/trades/components/trade-card';
 import { useDebounce } from '@/shared/hooks/use-debounce';
+import { requireAuth } from '@/shared/lib/auth-modal';
 
 export const Route = createFileRoute('/_header_layout/trades/')({
     component: TradesPage,
@@ -49,6 +50,11 @@ function TradesPage() {
     }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const allTrades = data?.pages.flatMap((page) => page.data) || [];
+    const handleAuthLink = (event: MouseEvent) => {
+        if (!requireAuth()) {
+            event.preventDefault();
+        }
+    };
 
     return (
         <div className="relative flex min-h-screen flex-col gap-6 bg-gradient-to-b from-slate-50 via-white to-slate-100 pb-[calc(var(--page-safe-bottom)+64px)]">
@@ -63,6 +69,7 @@ function TradesPage() {
                     </div>
                     <Link
                         to="/trades/chats"
+                        onClick={handleAuthLink}
                         className="flex items-center justify-center rounded-full bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-slate-200 active:scale-95"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -103,6 +110,7 @@ function TradesPage() {
             <div className="fixed bottom-[calc(var(--page-safe-bottom)+12px)] left-1/2 z-40 w-full max-w-[var(--app-max-width)] -translate-x-1/2 px-5 flex justify-end">
                 <Link
                     to="/trades/new"
+                    onClick={handleAuthLink}
                     className="flex h-14 w-14 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg shadow-sky-500/40 transition-all hover:scale-105 active:scale-95"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

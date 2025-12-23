@@ -1,5 +1,6 @@
 import axios from "axios";
 import { tokenManager } from "./token-manager";
+import { openLoginModal } from "./auth-modal";
 import { refreshAuthToken } from "../api/auth";
 import { API_V1_BASE_URL } from "./api-config";
 
@@ -36,7 +37,7 @@ apiClient.interceptors.response.use(
             const refreshToken = tokenManager.getRefreshToken();
             if (!refreshToken) {
                 tokenManager.removeTokens();
-                window.location.href = "/riot"; // 로그인 페이지로 리다이렉트
+                openLoginModal();
                 return Promise.reject(error);
             }
 
@@ -50,7 +51,7 @@ apiClient.interceptors.response.use(
             } catch (refreshError) {
                 // 재발급 실패 시 로그아웃 처리
                 tokenManager.removeTokens();
-                window.location.href = "/riot";
+                openLoginModal();
                 return Promise.reject(refreshError);
             }
         }

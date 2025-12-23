@@ -14,6 +14,7 @@ import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_header_layout/my-reviews'
 import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
 import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
@@ -47,6 +48,11 @@ const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   id: '/stores/$storeId',
   path: '/stores/$storeId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const Header_layoutMyReviewsRoute = Header_layoutMyReviewsRouteImport.update({
+  id: '/my-reviews',
+  path: '/my-reviews',
+  getParentRoute: () => Header_layoutRouteRoute,
 } as any)
 const Header_layoutTradesIndexRoute =
   Header_layoutTradesIndexRouteImport.update({
@@ -102,6 +108,7 @@ const Header_layoutTradesTradeIdChatRoomChatRoomIdRoute =
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/my-reviews'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/my-reviews'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_header_layout'
     | '/about'
+    | '/_header_layout/my-reviews'
     | '/stores/$storeId'
     | '/admin/'
     | '/login/'
@@ -241,6 +253,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/stores/$storeId'
       preLoaderRoute: typeof StoresStoreIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_header_layout/my-reviews': {
+      id: '/_header_layout/my-reviews'
+      path: '/my-reviews'
+      fullPath: '/my-reviews'
+      preLoaderRoute: typeof Header_layoutMyReviewsRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
     }
     '/_header_layout/trades/': {
       id: '/_header_layout/trades/'
@@ -309,6 +328,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface Header_layoutRouteRouteChildren {
+  Header_layoutMyReviewsRoute: typeof Header_layoutMyReviewsRoute
   Header_layoutTradesNewRoute: typeof Header_layoutTradesNewRoute
   Header_layoutmapIndexRoute: typeof Header_layoutmapIndexRoute
   Header_layoutProfileIndexRoute: typeof Header_layoutProfileIndexRoute
@@ -320,6 +340,7 @@ interface Header_layoutRouteRouteChildren {
 }
 
 const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
+  Header_layoutMyReviewsRoute: Header_layoutMyReviewsRoute,
   Header_layoutTradesNewRoute: Header_layoutTradesNewRoute,
   Header_layoutmapIndexRoute: Header_layoutmapIndexRoute,
   Header_layoutProfileIndexRoute: Header_layoutProfileIndexRoute,

@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 
-import { ReviewInput } from '@ppopgipang/types';
+
+
+import { ReviewInput, ReviewResult, AuthResult } from '@ppopgipang/types';
 import { Store } from 'src/stores/entities/store.entity';
 import { User } from 'src/users/entities/user.entity';
 import { join } from 'path';
-import { rename, mkdir } from 'fs/promises';
+import { rename } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
 
 @Injectable()
@@ -55,5 +57,33 @@ export class ReviewsService {
         }
 
         return await this.reviewRepository.save(newReview);
+    }
+
+    async getMyReviews(userId: number, dto: ReviewInput.GetMyReviewsDto): Promise<ReviewResult.GetMyReviewsResultDto> {
+        const [reviews, total] = await this.reviewRepository.findAndCount({
+            where: { user: { id: userId } },
+            skip: (dto.page - 1) * dto.size,
+            take: dto.size,
+            relations: ['user', 'store'],
+            order: { createdAt: 'DESC' }
+        });
+
+        return new ReviewResult.GetMyReviewsResultDto(
+            reviews.map(review => ({
+                id: review.id,
+                rating: review.rating,
+                content: review.content,
+                images: review.images,
+                user: new AuthResult.UserInfo(review.user),
+                store: new ReviewResult.StoreInfoDto(
+                    review.store.id,
+                    review.store.name,
+                    review.store.address
+                ),
+                createdAt: review.createdAt,
+                updatedAt: review.updatedAt,
+            })),
+            total
+        );
     }
 }

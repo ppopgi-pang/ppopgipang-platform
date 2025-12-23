@@ -1,19 +1,31 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { isAxiosError } from 'axios';
 import { getTradeDetail, deleteTrade, createChatRoom } from '@/shared/api/trades';
 import { getMyProfile } from '@/shared/api/users';
 import { TRADE_IMAGE_BASE_URL } from '@/shared/lib/api-config';
+import { tokenManager } from '@/shared/lib/token-manager';
+import { openLoginModal, requireAuth } from '@/shared/lib/auth-modal';
+
+import { z } from 'zod';
+
+const tradeDetailSearchSchema = z.object({
+    fromChatRoomId: z.string().optional(),
+});
 
 export const Route = createFileRoute('/_header_layout/trades/$tradeId/')({
     component: TradeDetailPage,
+    validateSearch: tradeDetailSearchSchema,
 });
 
 function TradeDetailPage() {
     const { tradeId } = Route.useParams();
+    const { fromChatRoomId } = Route.useSearch();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [activeIndex, setActiveIndex] = useState(0);
+    const hasAccessToken = Boolean(tokenManager.getAccessToken());
 
     const { data: trade, isLoading, error } = useQuery({
         queryKey: ['trade', tradeId],
@@ -24,6 +36,7 @@ function TradeDetailPage() {
         queryKey: ['me'],
         queryFn: getMyProfile,
         retry: false,
+        enabled: hasAccessToken,
     });
 
     const deleteMutation = useMutation({
@@ -48,6 +61,10 @@ function TradeDetailPage() {
         },
         onError: (err) => {
             console.error(err);
+            if (isAxiosError(err) && err.response?.status === 401) {
+                openLoginModal();
+                return;
+            }
             alert('채팅방 생성에 실패했습니다.');
         }
     });
@@ -68,8 +85,7 @@ function TradeDetailPage() {
     };
 
     const handleChat = () => {
-        if (!me) {
-            alert('로그인이 필요합니다.');
+        if (!requireAuth()) {
             return;
         }
         if (hasChatRoom) {
@@ -101,7 +117,17 @@ function TradeDetailPage() {
                 <div className="flex items-center justify-between gap-3">
                     <div className="flex min-w-0 items-center gap-3">
                         <button
-                            onClick={() => navigate({ to: '/trades' })}
+                            onClick={() => {
+                                if (fromChatRoomId) {
+                                    navigate({
+                                        to: '/trades/$tradeId/chat-room/$chatRoomId',
+                                        params: { tradeId, chatRoomId: fromChatRoomId },
+                                        search: { from: 'trade' },
+                                    });
+                                } else {
+                                    navigate({ to: '/trades' })
+                                }
+                            }}
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-700 shadow-sm ring-1 ring-white/70"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
