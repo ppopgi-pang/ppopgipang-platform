@@ -8,7 +8,7 @@ import { User } from 'src/users/entities/user.entity';
 import { TradeChatInput, TradeChatResult, TradeInput, TradeResult } from '@ppopgipang/types';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { join } from 'path';
-import { rename } from 'fs/promises';
+import { rename, copyFile, unlink } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
 
 @Injectable()
@@ -149,7 +149,16 @@ export class TradesService {
                 // Check if file exists in temp before moving
                 // We use existsSync for simplicity as fs/promises doesn't have exists
                 if (existsSync(oldPath)) {
-                    await rename(oldPath, newPath);
+                    try {
+                        await rename(oldPath, newPath);
+                    } catch (e: any) {
+                        if (e.code === 'EXDEV') {
+                            await copyFile(oldPath, newPath);
+                            await unlink(oldPath);
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
             } catch (e) {
                 // Ignore error

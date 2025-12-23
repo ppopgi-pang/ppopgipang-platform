@@ -9,7 +9,7 @@ import { ReviewInput, ReviewResult, AuthResult } from '@ppopgipang/types';
 import { Store } from 'src/stores/entities/store.entity';
 import { User } from 'src/users/entities/user.entity';
 import { join } from 'path';
-import { rename } from 'fs/promises';
+import { rename, copyFile, unlink } from 'fs/promises';
 import { existsSync, mkdirSync } from 'fs';
 
 @Injectable()
@@ -49,10 +49,19 @@ export class ReviewsService {
             }
 
             for (let name of dto.images) {
-                await rename(
-                    join(tempFolder, name),
-                    join(reviewFolder, name)
-                );
+                const sourcePath = join(tempFolder, name);
+                const destPath = join(reviewFolder, name);
+
+                try {
+                    await rename(sourcePath, destPath);
+                } catch (error: any) {
+                    if (error.code === 'EXDEV') {
+                        await copyFile(sourcePath, destPath);
+                        await unlink(sourcePath);
+                    } else {
+                        throw error;
+                    }
+                }
             }
         }
 
