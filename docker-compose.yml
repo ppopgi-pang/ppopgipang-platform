@@ -15,6 +15,10 @@ services:
     restart: always
     networks:
       - ppopgipang
+    volumes:
+      - /data/uploads/review:/app/public/review
+      - /data/uploads/temp:/app/public/temp
+      - /data/uploads/trade:/app/public/trade
 
   backend-green:
     image: ppopgipang-backend:green
@@ -30,6 +34,10 @@ services:
     restart: always
     networks:
       - ppopgipang
+    volumes:
+      - /data/uploads/review:/app/public/review
+      - /data/uploads/temp:/app/public/temp
+      - /data/uploads/trade:/app/public/trade
 
 networks:
   ppopgipang:
