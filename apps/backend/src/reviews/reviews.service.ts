@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConfigService } from '@nestjs/config';
 import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 
@@ -8,7 +7,8 @@ import { ReviewInput } from '@ppopgipang/types';
 import { Store } from 'src/stores/entities/store.entity';
 import { User } from 'src/users/entities/user.entity';
 import { join } from 'path';
-import { rename } from 'fs/promises';
+import { rename, mkdir } from 'fs/promises';
+import { existsSync, mkdirSync } from 'fs';
 
 @Injectable()
 export class ReviewsService {
@@ -20,7 +20,6 @@ export class ReviewsService {
         private readonly storeRepository: Repository<Store>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly configService: ConfigService,
     ) { }
 
 
@@ -35,15 +34,18 @@ export class ReviewsService {
             content: dto.content,
             images: dto.images,
             store,
-
             user
         });
 
-        const publicUploadDir = this.configService.getOrThrow<string>('PUBLIC_UPLOAD_DIR');
-        const reviewFolder = join(publicUploadDir, 'review');
-        const tempFolder = join(publicUploadDir, 'temp');
+        const reviewFolder = join(process.cwd(), 'public', 'review');
+        const tempFolder = join(process.cwd(), 'public', 'temp');
 
-        if (dto.images) {
+        if (dto.images && dto.images.length > 0) {
+            // Ensure review folder exists
+            if (!existsSync(reviewFolder)) {
+                mkdirSync(reviewFolder, { recursive: true });
+            }
+
             for (let name of dto.images) {
                 await rename(
                     join(tempFolder, name),

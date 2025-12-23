@@ -6,10 +6,6 @@
 node_modules/
 **/node_modules/
 
-public/review/**
-public/temp/**
-public/trade/**
-
 # 환경 변수 파일
 .env
 .env.local

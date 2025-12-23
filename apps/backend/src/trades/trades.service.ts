@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Trade } from './entities/trade.entity';
 import { In, Like, Repository } from 'typeorm';
@@ -24,7 +23,6 @@ export class TradesService {
         private readonly tradeChatMessageRepository: Repository<TradeChatMessage>,
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly configService: ConfigService,
     ) { }
 
     async createTrade(userId: number, createTradeDto: TradeInput.CreateTradeDto): Promise<number> {
@@ -137,9 +135,8 @@ export class TradesService {
     }
 
     private async moveImages(images: string[]) {
-        const publicUploadDir = this.configService.getOrThrow<string>('PUBLIC_UPLOAD_DIR');
-        const tempFolder = join(publicUploadDir, 'temp');
-        const tradeFolder = join(publicUploadDir, 'trade');
+        const tempFolder = join(process.cwd(), 'public', 'temp');
+        const tradeFolder = join(process.cwd(), 'public', 'trade');
 
         if (!existsSync(tradeFolder)) {
             mkdirSync(tradeFolder, { recursive: true });

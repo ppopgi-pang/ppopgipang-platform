@@ -16,9 +16,9 @@ services:
     networks:
       - ppopgipang
     volumes:
-      - /data/uploads/review:/app/public/review
-      - /data/uploads/temp:/app/public/temp
-      - /data/uploads/trade:/app/public/trade
+      - /data/uploads/review:/app/apps/backend/public/review
+      - /data/uploads/temp:/app/apps/backend/public/temp
+      - /data/uploads/trade:/app/apps/backend/public/trade
 
   backend-green:
     image: ppopgipang-backend:green
@@ -35,9 +35,9 @@ services:
     networks:
       - ppopgipang
     volumes:
-      - /data/uploads/review:/app/public/review
-      - /data/uploads/temp:/app/public/temp
-      - /data/uploads/trade:/app/public/trade
+      - /data/uploads/review:/app/apps/backend/public/review
+      - /data/uploads/temp:/app/apps/backend/public/temp
+      - /data/uploads/trade:/app/apps/backend/public/trade
 
 networks:
   ppopgipang:
