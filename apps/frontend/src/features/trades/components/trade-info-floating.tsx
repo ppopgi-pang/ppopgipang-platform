@@ -1,5 +1,6 @@
 import type { TradeChatResult } from "@ppopgipang/types";
 import { useNavigate } from "@tanstack/react-router";
+import { TRADE_IMAGE_BASE_URL } from "@/shared/lib/api-config";
 
 interface TradeInfoFloatingProps {
     trade: TradeChatResult.TradeSimpleDto;
@@ -44,7 +45,7 @@ export function TradeInfoFloating({ trade, chatRoomId }: TradeInfoFloatingProps)
             <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
                 {trade.image ? (
                     <img
-                        src={`${import.meta.env.VITE_API_URL || ''}/static/trade/${trade.image}`}
+                        src={`${TRADE_IMAGE_BASE_URL}${trade.image}`}
                         alt={trade.title}
                         className="w-full h-full object-cover"
                     />
