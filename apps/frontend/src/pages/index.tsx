@@ -2,7 +2,7 @@ import BottomNavigationBar from "@/components/ui/bottom-navigation-bar/bottom-na
 import Header from "@/shared/ui/header/header.ui";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_header_layout")({
+export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 

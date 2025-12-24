@@ -9,10 +9,19 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../../../pages/__root'
+import { Route as LoginRouteImport } from './../../../pages/login'
 import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
-import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
+import { Route as IndexRouteImport } from './../../../pages/index'
+import { Route as Header_layoutMyIndexRouteImport } from './../../../pages/_header_layout/my/index'
+import { Route as Header_layoutMapsIndexRouteImport } from './../../../pages/_header_layout/maps/index'
+import { Route as Header_layoutMapsSearchRouteImport } from './../../../pages/_header_layout/maps/search'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -22,41 +31,85 @@ const Header_layoutRouteRoute = Header_layoutRouteRouteImport.update({
   id: '/_header_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Header_layoutmapIndexRoute = Header_layoutmapIndexRouteImport.update({
-  id: '/(map)/',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Header_layoutMyIndexRoute = Header_layoutMyIndexRouteImport.update({
+  id: '/my/',
+  path: '/my/',
+  getParentRoute: () => Header_layoutRouteRoute,
+} as any)
+const Header_layoutMapsIndexRoute = Header_layoutMapsIndexRouteImport.update({
+  id: '/maps/',
+  path: '/maps/',
+  getParentRoute: () => Header_layoutRouteRoute,
+} as any)
+const Header_layoutMapsSearchRoute = Header_layoutMapsSearchRouteImport.update({
+  id: '/maps/search',
+  path: '/maps/search',
   getParentRoute: () => Header_layoutRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/': typeof Header_layoutmapIndexRoute
+  '/login': typeof LoginRoute
+  '/maps/search': typeof Header_layoutMapsSearchRoute
+  '/maps': typeof Header_layoutMapsIndexRoute
+  '/my': typeof Header_layoutMyIndexRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/': typeof Header_layoutmapIndexRoute
+  '/login': typeof LoginRoute
+  '/maps/search': typeof Header_layoutMapsSearchRoute
+  '/maps': typeof Header_layoutMapsIndexRoute
+  '/my': typeof Header_layoutMyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
+  '/login': typeof LoginRoute
+  '/_header_layout/maps/search': typeof Header_layoutMapsSearchRoute
+  '/_header_layout/maps/': typeof Header_layoutMapsIndexRoute
+  '/_header_layout/my/': typeof Header_layoutMyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/about' | '/'
+  fullPaths: '/' | '/about' | '/login' | '/maps/search' | '/maps' | '/my'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/'
-  id: '__root__' | '/_header_layout' | '/about' | '/_header_layout/(map)/'
+  to: '/' | '/about' | '/login' | '/maps/search' | '/maps' | '/my'
+  id:
+    | '__root__'
+    | '/'
+    | '/_header_layout'
+    | '/about'
+    | '/login'
+    | '/_header_layout/maps/search'
+    | '/_header_layout/maps/'
+    | '/_header_layout/my/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -71,30 +124,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Header_layoutRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_header_layout/(map)/': {
-      id: '/_header_layout/(map)/'
+    '/': {
+      id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof Header_layoutmapIndexRouteImport
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_header_layout/my/': {
+      id: '/_header_layout/my/'
+      path: '/my'
+      fullPath: '/my'
+      preLoaderRoute: typeof Header_layoutMyIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
+    '/_header_layout/maps/': {
+      id: '/_header_layout/maps/'
+      path: '/maps'
+      fullPath: '/maps'
+      preLoaderRoute: typeof Header_layoutMapsIndexRouteImport
+      parentRoute: typeof Header_layoutRouteRoute
+    }
+    '/_header_layout/maps/search': {
+      id: '/_header_layout/maps/search'
+      path: '/maps/search'
+      fullPath: '/maps/search'
+      preLoaderRoute: typeof Header_layoutMapsSearchRouteImport
       parentRoute: typeof Header_layoutRouteRoute
     }
   }
 }
 
 interface Header_layoutRouteRouteChildren {
-  Header_layoutmapIndexRoute: typeof Header_layoutmapIndexRoute
+  Header_layoutMapsSearchRoute: typeof Header_layoutMapsSearchRoute
+  Header_layoutMapsIndexRoute: typeof Header_layoutMapsIndexRoute
+  Header_layoutMyIndexRoute: typeof Header_layoutMyIndexRoute
 }
 
 const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
-  Header_layoutmapIndexRoute: Header_layoutmapIndexRoute,
+  Header_layoutMapsSearchRoute: Header_layoutMapsSearchRoute,
+  Header_layoutMapsIndexRoute: Header_layoutMapsIndexRoute,
+  Header_layoutMyIndexRoute: Header_layoutMyIndexRoute,
 }
 
 const Header_layoutRouteRouteWithChildren =
   Header_layoutRouteRoute._addFileChildren(Header_layoutRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

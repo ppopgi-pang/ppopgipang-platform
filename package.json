@@ -21,6 +21,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "prettier": "^3.6.2",
     "tsconfig-paths": "^4.2.0",
     "turbo": "^2.6.0"
   }
