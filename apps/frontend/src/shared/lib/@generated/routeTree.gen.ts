@@ -18,8 +18,8 @@ import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_he
 import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
 import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
 import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
+import { Route as AuthKakaoCallbackRouteImport } from './../../../pages/auth/kakao/callback'
 import { Route as Header_layoutTradesNewRouteImport } from './../../../pages/_header_layout/trades/new'
-import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
 import { Route as Header_layoutTradesChatsIndexRouteImport } from './../../../pages/_header_layout/trades/chats/index'
 import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../pages/_header_layout/trades/$tradeId/index'
 import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
@@ -71,15 +71,15 @@ const Header_layoutmapIndexRoute = Header_layoutmapIndexRouteImport.update({
   path: '/',
   getParentRoute: () => Header_layoutRouteRoute,
 } as any)
+const AuthKakaoCallbackRoute = AuthKakaoCallbackRouteImport.update({
+  id: '/auth/kakao/callback',
+  path: '/auth/kakao/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Header_layoutTradesNewRoute = Header_layoutTradesNewRouteImport.update({
   id: '/trades/new',
   path: '/trades/new',
   getParentRoute: () => Header_layoutRouteRoute,
-} as any)
-const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
-  id: '/auth/kakao/callback/',
-  path: '/auth/kakao/callback/',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const Header_layoutTradesChatsIndexRoute =
   Header_layoutTradesChatsIndexRouteImport.update({
@@ -113,13 +113,13 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/trades/new': typeof Header_layoutTradesNewRoute
+  '/auth/kakao/callback': typeof AuthKakaoCallbackRoute
   '/': typeof Header_layoutmapIndexRoute
   '/profile': typeof Header_layoutProfileIndexRoute
   '/trades': typeof Header_layoutTradesIndexRoute
   '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
   '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
   '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRoutesByTo {
@@ -129,13 +129,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
   '/trades/new': typeof Header_layoutTradesNewRoute
+  '/auth/kakao/callback': typeof AuthKakaoCallbackRoute
   '/': typeof Header_layoutmapIndexRoute
   '/profile': typeof Header_layoutProfileIndexRoute
   '/trades': typeof Header_layoutTradesIndexRoute
   '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
   '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
   '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRoutesById {
@@ -147,13 +147,13 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
   '/_header_layout/trades/new': typeof Header_layoutTradesNewRoute
+  '/auth/kakao/callback': typeof AuthKakaoCallbackRoute
   '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
   '/_header_layout/profile/': typeof Header_layoutProfileIndexRoute
   '/_header_layout/trades/': typeof Header_layoutTradesIndexRoute
   '/_header_layout/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
   '/_header_layout/trades/$tradeId/': typeof Header_layoutTradesTradeIdIndexRoute
   '/_header_layout/trades/chats/': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback/': typeof AuthKakaoCallbackIndexRoute
   '/_header_layout/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRouteTypes {
@@ -165,13 +165,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/trades/new'
+    | '/auth/kakao/callback'
     | '/'
     | '/profile'
     | '/trades'
     | '/trades/$tradeId/edit'
     | '/trades/$tradeId'
     | '/trades/chats'
-    | '/auth/kakao/callback'
     | '/trades/$tradeId/chat-room/$chatRoomId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -181,13 +181,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/login'
     | '/trades/new'
+    | '/auth/kakao/callback'
     | '/'
     | '/profile'
     | '/trades'
     | '/trades/$tradeId/edit'
     | '/trades/$tradeId'
     | '/trades/chats'
-    | '/auth/kakao/callback'
     | '/trades/$tradeId/chat-room/$chatRoomId'
   id:
     | '__root__'
@@ -198,13 +198,13 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/login/'
     | '/_header_layout/trades/new'
+    | '/auth/kakao/callback'
     | '/_header_layout/(map)/'
     | '/_header_layout/profile/'
     | '/_header_layout/trades/'
     | '/_header_layout/trades/$tradeId/edit'
     | '/_header_layout/trades/$tradeId/'
     | '/_header_layout/trades/chats/'
-    | '/auth/kakao/callback/'
     | '/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
   fileRoutesById: FileRoutesById
 }
@@ -214,7 +214,7 @@ export interface RootRouteChildren {
   StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
-  AuthKakaoCallbackIndexRoute: typeof AuthKakaoCallbackIndexRoute
+  AuthKakaoCallbackRoute: typeof AuthKakaoCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -282,19 +282,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Header_layoutmapIndexRouteImport
       parentRoute: typeof Header_layoutRouteRoute
     }
+    '/auth/kakao/callback': {
+      id: '/auth/kakao/callback'
+      path: '/auth/kakao/callback'
+      fullPath: '/auth/kakao/callback'
+      preLoaderRoute: typeof AuthKakaoCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_header_layout/trades/new': {
       id: '/_header_layout/trades/new'
       path: '/trades/new'
       fullPath: '/trades/new'
       preLoaderRoute: typeof Header_layoutTradesNewRouteImport
       parentRoute: typeof Header_layoutRouteRoute
-    }
-    '/auth/kakao/callback/': {
-      id: '/auth/kakao/callback/'
-      path: '/auth/kakao/callback'
-      fullPath: '/auth/kakao/callback'
-      preLoaderRoute: typeof AuthKakaoCallbackIndexRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_header_layout/trades/chats/': {
       id: '/_header_layout/trades/chats/'
@@ -361,7 +361,7 @@ const rootRouteChildren: RootRouteChildren = {
   StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
-  AuthKakaoCallbackIndexRoute: AuthKakaoCallbackIndexRoute,
+  AuthKakaoCallbackRoute: AuthKakaoCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
