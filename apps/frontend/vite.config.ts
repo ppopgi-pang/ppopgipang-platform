@@ -37,7 +37,11 @@ export default defineConfig({
                         type: 'image/png'
                     }
                 ]
-            }
+            },
+            workbox: {
+                // Avoid SPA fallback for API OAuth callbacks.
+                navigateFallbackDenylist: [/^\/api\//],
+            },
         }),
         // tsconfigPaths(),
     ],
