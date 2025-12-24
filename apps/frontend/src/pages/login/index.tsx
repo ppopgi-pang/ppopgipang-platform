@@ -1,7 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { API_V1_BASE_URL } from "@/shared/lib/api-config";
 
-const getKakaoLoginUrl = () => `${API_V1_BASE_URL}/auth/kakao`;
+const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID ?? "";
+
+const getKakaoLoginUrl = () => {
+  if (!KAKAO_CLIENT_ID) {
+    console.error("Missing VITE_KAKAO_CLIENT_ID");
+    return "#";
+  }
+  const redirectUri = `${API_V1_BASE_URL}/auth/kakao/callback`;
+  const authorizeParams = new URLSearchParams({
+    client_id: KAKAO_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    through_account: "true",
+  });
+  const authorizeUrl = `https://kauth.kakao.com/oauth/authorize?${authorizeParams.toString()}`;
+  const loginParams = new URLSearchParams({ continue: authorizeUrl });
+  return `https://accounts.kakao.com/login/?${loginParams.toString()}#login`;
+};
 
 const LoginPage = () => {
   const handleKakaoLogin = () => {
