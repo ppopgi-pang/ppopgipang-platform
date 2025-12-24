@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "SEE LICENSE IN ../../LICENSE",
   "scripts": {
     "dev": "nest start --watch",
     "build": "nest build",
