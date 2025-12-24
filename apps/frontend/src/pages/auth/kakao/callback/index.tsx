@@ -33,7 +33,7 @@ const KakaoCallbackPage = () => {
     );
 };
 
-export const Route = createFileRoute("/auth/kakao/callback")({
+export const Route = createFileRoute("/auth/kakao/callback/")({
     validateSearch: (search) => kakaoCallbackSearchSchema.parse(search),
     component: KakaoCallbackPage,
 });
