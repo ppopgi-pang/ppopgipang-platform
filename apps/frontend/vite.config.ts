@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
@@ -16,6 +17,28 @@ export default defineConfig({
         }),
         react(),
         tailwindcss(),
+        VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+            manifest: {
+                name: '뽑기팡',
+                short_name: '뽑기팡',
+                description: '전국 뽑기방 지도·리뷰·중고거래 플랫폼',
+                theme_color: '#ffffff',
+                icons: [
+                    {
+                        src: 'icons/pwa-192x192.png',
+                        sizes: '192x192',
+                        type: 'image/png'
+                    },
+                    {
+                        src: 'icons/pwa-512x512.png',
+                        sizes: '512x512',
+                        type: 'image/png'
+                    }
+                ]
+            }
+        }),
         // tsconfigPaths(),
     ],
     resolve: {
