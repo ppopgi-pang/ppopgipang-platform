@@ -4,8 +4,10 @@ import { z } from "zod";
 import { tokenManager } from "@/shared/lib/token-manager";
 
 const kakaoCallbackSearchSchema = z.object({
-    accessToken: z.string(),
-    refreshToken: z.string(),
+    accessToken: z.string().optional(),
+    refreshToken: z.string().optional(),
+    error: z.string().optional(),
+    error_description: z.string().optional(),
 });
 
 
@@ -19,11 +21,15 @@ const KakaoCallbackPage = () => {
         if (accessToken && refreshToken) {
             tokenManager.setTokens(accessToken, refreshToken);
             navigate({ to: "/" });
-        } else {
-            // Handle error or missing tokens
-            console.error("Missing tokens in callback URL");
-            navigate({ to: "/login" });
+            return;
         }
+
+        if (search.error) {
+            console.error("Kakao login error:", search.error_description ?? search.error);
+        } else {
+            console.error("Missing tokens in callback URL");
+        }
+        navigate({ to: "/login" });
     }, [search, navigate]);
 
     return (

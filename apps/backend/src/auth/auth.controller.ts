@@ -31,6 +31,13 @@ export class AuthController {
         return res.redirect(`${redirectBase}/auth/kakao/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
     }
 
+    @Get('kakao')
+    @ApiOperation({ summary: '카카오 OAuth 로그인 시작' })
+    @UseGuards(AuthGuard('kakao'))
+    async kakaoLogin() {
+        return;
+    }
+
     @Post('refresh')
     @ApiOperation({ summary: 'Access Token 재발급' })
     @ApiBody({
