@@ -1,16 +1,22 @@
 import { Module } from '@nestjs/common';
-import { CommonsService } from './commons.service';
 import { CommonsController } from './commons.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 import { v4 } from "uuid";
 
 @Module({
   imports: [
     MulterModule.register({
       storage: diskStorage({
-        destination: join(process.cwd(), '../../public', 'temp'),
+        destination: (req, file, cb) => {
+          const uploadPath = join(process.cwd(), 'public', 'temp');
+          if (!existsSync(uploadPath)) {
+            mkdirSync(uploadPath, { recursive: true });
+          }
+          cb(null, uploadPath);
+        },
         filename: (req, file, cb) => {
           const split = file.originalname.split('.');
 
@@ -26,6 +32,5 @@ import { v4 } from "uuid";
     })
   ],
   controllers: [CommonsController],
-  providers: [CommonsService],
 })
-export class CommonsModule {}
+export class CommonsModule { }

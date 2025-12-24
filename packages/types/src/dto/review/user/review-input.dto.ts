@@ -19,14 +19,24 @@ export namespace ReviewInput {
         @IsArray()
         images?: string[];
 
+
         @ApiProperty({ description: '가게 ID' })
         @IsNotEmpty()
         @IsNumber()
         storeId: number;
+    }
 
-        @ApiProperty({ description: '게시판 ID' })
-        @IsNotEmpty()
+    export class GetMyReviewsDto {
+        @ApiProperty({ description: '페이지 번호', example: 1, default: 1 })
+        @IsOptional()
         @IsNumber()
-        boardId: number;
+        @Min(1)
+        page: number = 1;
+
+        @ApiProperty({ description: '페이지 크기', example: 10, default: 10 })
+        @IsOptional()
+        @IsNumber()
+        @Min(1)
+        size: number = 10;
     }
 }

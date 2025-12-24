@@ -68,9 +68,22 @@ pnpm-lock.yaml
 docker-compose.override.yml
 *.pid
 *.seed
+docker/backend.env
+
+# Deploy artifacts
+deploy/
 
 # Misc
 *.tgz
 *.zip
 *.bak
 *.tmp
+
+*/.env
+
+apps/backend/public/review/*
+!apps/backend/public/review/.gitkeep
+apps/backend/public/temp/*
+!apps/backend/public/temp/.gitkeep
+apps/backend/public/trade/*
+!apps/backend/public/trade/.gitkeep

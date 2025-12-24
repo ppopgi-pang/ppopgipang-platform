@@ -1,0 +1,68 @@
+name: Deploy Frontend (SCP)
+
+on:
+  push:
+    branches: ["dev"]
+    paths:
+      - "apps/frontend/**"
+      - "packages/**"
+      - ".github/workflows/deploy-frontend.yml"
+      - "*"
+      - ".*"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared types
+        run: npm run build -w @ppopgipang/types
+
+      - name: Build (Vite)
+        run: npm run build -w apps/frontend
+        env:
+          VITE_REACT_APP_KAKAOMAP_KEY: ${{ secrets.VITE_REACT_APP_KAKAOMAP_KEY }}
+          VITE_KAKAO_CLIENT_ID: ${{ secrets.VITE_KAKAO_CLIENT_ID }}
+          VITE_API_ORIGIN: https://ppopgi.me
+
+      - name: Prepare web root
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: ${{ secrets.VM_PORT || 22 }}
+          script: |
+            set -euo pipefail
+            sudo mkdir -p /var/www/frontend
+            sudo chown -R ${{ secrets.VM_USER }}:${{ secrets.VM_USER }} /var/www/frontend
+            sudo chmod -R 755 /var/www/frontend
+            rm -rf /var/www/frontend/*
+
+      - name: Upload build
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: ${{ secrets.VM_PORT || 22 }}
+          source: "apps/frontend/dist/**"
+          target: "/var/www/frontend"
+          strip_components: 3
+          overwrite: true

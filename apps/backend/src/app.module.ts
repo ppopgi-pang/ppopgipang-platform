@@ -13,10 +13,9 @@ import { StoreType } from './stores/entities/store-type.entity';
 import { Review } from './reviews/entities/review.entity';
 import { Proposal } from './proposals/entities/proposal.entity';
 import { Trade } from './trades/entities/trade.entity';
-import { TradeBoard } from './trades/entities/trade-board.entity';
 import { TradeChatMessage } from './trades/entities/trade-chat-message.entity';
 import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
-import { ReviewBoard } from './reviews/entities/review-board.entity';
+
 import { CommonsModule } from './commons/commons.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -36,6 +35,7 @@ import { AuthModule } from './auth/auth.module';
         DB_DATABASE: Joi.string().required(),
         KAKAO_CLIENT_ID: Joi.string().required(),
         KAKAO_REDIRECT_URI: Joi.string().required(),
+        FRONTEND_ORIGIN: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
         JWT_REFRESH_SECRET: Joi.string().required(),
       })
@@ -51,8 +51,8 @@ import { AuthModule } from './auth/auth.module';
         database: ConfigService.getOrThrow<string>('DB_DATABASE'),
         entities: [
           User, Store, StoreType, Review, Proposal, Trade,
-          TradeBoard, TradeChatMessage, TradeChatRoom,
-          ReviewBoard
+          TradeChatMessage, TradeChatRoom,
+
         ],
         synchronize: true
       }),
@@ -60,8 +60,8 @@ import { AuthModule } from './auth/auth.module';
     }),
 
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), '../../public'),
-      serveRoot: '/public/'
+      rootPath: join(process.cwd(), 'public'),
+      serveRoot: '/public/',
     }),
 
     UsersModule,
@@ -81,4 +81,4 @@ import { AuthModule } from './auth/auth.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
