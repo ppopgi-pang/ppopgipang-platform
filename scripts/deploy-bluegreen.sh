@@ -73,6 +73,6 @@ echo "$NEW" > "$ACTIVE_FILE"
 docker compose -f "$COMPOSE_FILE" stop "backend-${ACTIVE}"
 
 echo "Docker cleanup done"
-docker system prune -f
+docker system prune -a -f
 
 echo "Switched to: $NEW"

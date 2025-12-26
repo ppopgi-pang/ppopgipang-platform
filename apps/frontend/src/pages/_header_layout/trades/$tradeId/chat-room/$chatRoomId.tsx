@@ -22,7 +22,7 @@ function TradeChatRoomPage() {
 
     const { data: me, isLoading } = useQuery({
         queryKey: ['me'],
-        queryFn: getMyProfile,
+        queryFn: () => getMyProfile(),
         retry: false,
         enabled: isLoggedIn,
     });

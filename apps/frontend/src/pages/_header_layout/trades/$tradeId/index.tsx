@@ -34,7 +34,7 @@ function TradeDetailPage() {
 
     const { data: me } = useQuery({
         queryKey: ['me'],
-        queryFn: getMyProfile,
+        queryFn: () => getMyProfile(),
         retry: false,
         enabled: isLoggedIn,
     });

@@ -56,8 +56,9 @@ const RootLayout = () => {
 		initializeAuth();
 	}, []);
 
-	const showAdminBlockModal =
-		!isAdminRoute && !isAuthLoading && isLoggedIn && user?.isAdmin;
+	const showAdminBlockModal = Boolean(
+		!isAdminRoute && !isAuthLoading && isLoggedIn && user?.isAdmin,
+	);
 
 	const handleReturnToAdmin = () => {
 		window.location.href = "/admin";

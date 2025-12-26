@@ -10,7 +10,7 @@ const ProfilePage = () => {
 
   const { data, isLoading: isProfileLoading, isError, refetch } = useQuery({
     queryKey: ["my-profile"],
-    queryFn: getMyProfile,
+    queryFn: () => getMyProfile(),
     enabled: isLoggedIn,
   });
 
