@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { getMyChatRooms } from '@/shared/api/trades';
 import { formatRelativeTime } from '@/shared/utils/date';
 import { openLoginModal } from '@/shared/lib/auth-modal';
-import { tokenManager } from '@/shared/lib/token-manager';
+import { useAuth } from '@/shared/lib/use-auth';
 import LoginRequiredCard from '@/shared/ui/auth/login-required-card';
 
 export const Route = createFileRoute('/_header_layout/trades/chats/')({
@@ -13,18 +13,18 @@ export const Route = createFileRoute('/_header_layout/trades/chats/')({
 
 function TradesChatListPage() {
     const navigate = useNavigate();
-    const hasAccessToken = Boolean(tokenManager.getAccessToken());
+    const { isLoggedIn } = useAuth();
     const { data: chatRooms, isLoading } = useQuery({
         queryKey: ['myChatRooms'],
         queryFn: getMyChatRooms,
-        enabled: hasAccessToken,
+        enabled: isLoggedIn,
     });
 
     useEffect(() => {
-        if (!hasAccessToken) {
+        if (!isLoggedIn) {
             openLoginModal();
         }
-    }, [hasAccessToken]);
+    }, [isLoggedIn]);
 
     const avatarLabel = (nickname?: string) => {
         const trimmed = nickname?.trim();
@@ -37,7 +37,7 @@ function TradesChatListPage() {
         return `${title} - ${name}`;
     };
 
-    if (!hasAccessToken) {
+    if (!isLoggedIn) {
         return (
             <LoginRequiredCard
                 description="채팅 목록을 보려면 로그인해주세요."

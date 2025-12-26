@@ -21,12 +21,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
             })
         }),
 
-         TypeOrmModule.forFeature([
-                User
+        TypeOrmModule.forFeature([
+            User
         ]),
     ],
     controllers: [AuthController],
     providers: [AuthService, KakaoStrategy, JwtStrategy],
     exports: [PassportModule, JwtStrategy]
 })
-export class AuthModule {}
+export class AuthModule { }

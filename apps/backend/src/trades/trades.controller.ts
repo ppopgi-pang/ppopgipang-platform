@@ -4,6 +4,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } fro
 import { AuthGuard } from '@nestjs/passport';
 import { TradeChatInput, TradeInput } from '@ppopgipang/types';
 import { JwtOptionalAuthGuard } from 'src/auth/guards/jwt-optional.guard';
+import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 
 @ApiTags('[Trade] 중고거래')
 @Controller('v1/trades')
@@ -29,6 +30,7 @@ export class TradesController {
    * (사용자) 중고거래 게시글 검색
    */
   @Get('search')
+  @IgnoreJwtGuard()
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 검색' })
   @ApiQuery({ name: 'keyword', required: false, description: '검색어', example: '' })
   @ApiQuery({ name: 'page', required: false, description: '페이지 번호', example: 10 })
@@ -123,6 +125,7 @@ export class TradesController {
    */
 
   @Get(':id')
+  @IgnoreJwtGuard()
   @UseGuards(JwtOptionalAuthGuard)
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 상세 조회' })
   @ApiParam({ name: 'id', description: '게시글 ID' })

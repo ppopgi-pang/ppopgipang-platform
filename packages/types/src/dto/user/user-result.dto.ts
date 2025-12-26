@@ -4,7 +4,7 @@ export namespace UserResult {
         email: string;
         nickname: string;
         profileImage: string;
-        isAdmin?: boolean;
+        isAdmin: boolean;
 
         constructor(user: any) {
             this.id = user.id;

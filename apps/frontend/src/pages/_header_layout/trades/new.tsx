@@ -6,7 +6,7 @@ import { uploadFile } from '@/shared/api/stores';
 import type { TradeInput } from '@ppopgipang/types';
 import { TEMP_IMAGE_BASE_URL } from '@/shared/lib/api-config';
 import { openLoginModal } from '@/shared/lib/auth-modal';
-import { tokenManager } from '@/shared/lib/token-manager';
+import { useAuth } from '@/shared/lib/use-auth';
 import LoginRequiredCard from '@/shared/ui/auth/login-required-card';
 
 export const Route = createFileRoute('/_header_layout/trades/new')({
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_header_layout/trades/new')({
 function TradeNewPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const hasAccessToken = Boolean(tokenManager.getAccessToken());
+    const { isLoggedIn } = useAuth();
     const [formData, setFormData] = useState<TradeInput.CreateTradeDto>({
         title: '',
         description: '',
@@ -27,10 +27,10 @@ function TradeNewPage() {
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
-        if (!hasAccessToken) {
+        if (!isLoggedIn) {
             openLoginModal();
         }
-    }, [hasAccessToken]);
+    }, [isLoggedIn]);
 
     const createMutation = useMutation({
         mutationFn: (dto: TradeInput.CreateTradeDto) => createTrade(dto),
@@ -41,7 +41,7 @@ function TradeNewPage() {
     });
 
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!hasAccessToken) {
+        if (!isLoggedIn) {
             openLoginModal();
             return;
         }
@@ -49,24 +49,24 @@ function TradeNewPage() {
         if (!files || files.length === 0) return;
 
         setUploading(true);
-		try {
-			const newImages: string[] = [...(formData.images || [])];
-			for (let i = 0; i < files.length; i++) {
-				const { fileName } = await uploadFile(files[i]);
-				// Backend returns just the filename, frontend needs to prefix with preview URL
-				newImages.push(fileName);
-			}
-			setFormData({ ...formData, images: newImages });
-		} catch {
-			alert('이미지 업로드에 실패했습니다.');
-		} finally {
-			setUploading(false);
-		}
-	};
+        try {
+            const newImages: string[] = [...(formData.images || [])];
+            for (let i = 0; i < files.length; i++) {
+                const { fileName } = await uploadFile(files[i]);
+                // Backend returns just the filename, frontend needs to prefix with preview URL
+                newImages.push(fileName);
+            }
+            setFormData({ ...formData, images: newImages });
+        } catch {
+            alert('이미지 업로드에 실패했습니다.');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!hasAccessToken) {
+        if (!isLoggedIn) {
             openLoginModal();
             return;
         }
@@ -77,7 +77,7 @@ function TradeNewPage() {
         createMutation.mutate(formData);
     };
 
-    if (!hasAccessToken) {
+    if (!isLoggedIn) {
         return (
             <LoginRequiredCard
                 description="게시글을 등록하려면 로그인해주세요."

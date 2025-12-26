@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { AdminStoreInput, StoreTypeInput } from '@ppopgipang/types';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
+import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 
 @ApiTags('[Store] 가게')
 @Controller('v1/stores')
@@ -19,6 +21,7 @@ export class StoresController {
    * @returns 
    */
   @Get('nearby')
+  @IgnoreJwtGuard()
   @ApiOperation({
     summary: '(사용자) 가게 목록 - 반경 검색'
   })
@@ -56,6 +59,7 @@ export class StoresController {
    * @returns 
    */
   @Get('in-bounds')
+  @IgnoreJwtGuard()
   @ApiOperation({
     summary: '(사용자) 가게 목록 - 뷰포트(바운드) 검색'
   })
@@ -80,6 +84,7 @@ export class StoresController {
    * @returns 
    */
   @Post()
+  @IsAdmin(true)
   @ApiOperation({
     summary: '(어드민) 가게 생성'
   })
@@ -94,6 +99,7 @@ export class StoresController {
    * (사용자) 가게 검색 API
    */
   @Get('search')
+  @IgnoreJwtGuard()
   @ApiOperation({
     summary: '(사용자) 가게 검색 API'
   })
@@ -114,6 +120,7 @@ export class StoresController {
    * @returns 
    */
   @Get(':id')
+  @IgnoreJwtGuard()
   @ApiOperation({
     summary: '(사용자) 가게 상세 정보 API'
   })
@@ -129,6 +136,7 @@ export class StoresController {
    * @returns 
    */
   @Post('type')
+  @IsAdmin(true)
   @ApiOperation({
     summary: '(어드민) 가게 타입(카테고리) 생성 API'
   })
@@ -137,6 +145,19 @@ export class StoresController {
     @Body() dto: StoreTypeInput.CreateStoreTypeDto
   ) {
     return this.storesService.createStoreType(dto);
+  }
+
+  /**
+   * (어드민) 가게 타입(카테고리) 목록 조회 API
+   * @returns 
+   */
+  @Get('type')
+  @IsAdmin(true)
+  @ApiOperation({
+    summary: '(어드민) 가게 타입(카테고리) 목록 조회 API'
+  })
+  findStoreTypes() {
+    return this.storesService.findStoreTypes();
   }
 
 

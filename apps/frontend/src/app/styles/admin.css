@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+    --admin-bg: #f8fafc;
+    --admin-surface: #ffffff;
+    --admin-border: #e2e8f0;
+    --admin-text: #0f172a;
+    --admin-muted: #475569;
+    --admin-accent: #0ea5e9;
+}
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    body {
+        font-family: "Space Grotesk", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+        color: var(--admin-text);
+        background: var(--admin-bg);
+    }
+
+    #root {
+        min-height: 100vh;
+    }
+
+    input,
+    button,
+    textarea,
+    select {
+        font-family: inherit;
+    }
+}
+
+@layer components {
+    .admin-shell {
+        min-height: 100vh;
+        background: var(--admin-bg);
+    }
+
+    .admin-frame {
+        width: 100%;
+        min-height: 100vh;
+        padding: 32px 40px;
+    }
+
+    @media (max-width: 1200px) {
+        .admin-frame {
+            padding: 28px 32px;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .admin-frame {
+            padding: 20px 20px;
+        }
+    }
+}

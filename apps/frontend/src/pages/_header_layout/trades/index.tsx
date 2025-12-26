@@ -5,7 +5,8 @@ import { searchTrades } from '@/shared/api/trades';
 import SearchBar from '@/shared/ui/search-bar/search-bar.ui';
 import TradeCard from '@/features/trades/components/trade-card';
 import { useDebounce } from '@/shared/hooks/use-debounce';
-import { requireAuth } from '@/shared/lib/auth-modal';
+import { useAuth } from '@/shared/lib/use-auth';
+import { openLoginModal } from '@/shared/lib/auth-modal';
 
 export const Route = createFileRoute('/_header_layout/trades/')({
     component: TradesPage,
@@ -15,6 +16,7 @@ function TradesPage() {
     const [keyword, setKeyword] = useState('');
     const debouncedKeyword = useDebounce(keyword, 300);
     const loadMoreRef = useRef<HTMLDivElement>(null);
+    const { isLoggedIn } = useAuth();
 
     const {
         data,
@@ -51,8 +53,9 @@ function TradesPage() {
 
     const allTrades = data?.pages.flatMap((page) => page.data) || [];
     const handleAuthLink = (event: MouseEvent) => {
-        if (!requireAuth()) {
+        if (!isLoggedIn) {
             event.preventDefault();
+            openLoginModal();
         }
     };
 

@@ -2,36 +2,17 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type MouseEvent } from "react";
 import LoginSignupModal from "@/features/auth/login-signup-modal";
 import { onLoginModalOpen } from "@/shared/lib/auth-modal";
-import { tokenManager } from "@/shared/lib/token-manager";
+import { useAuth } from "@/shared/lib/use-auth";
 
 export default function NavBar() {
   const router = useRouterState();
   const currentPath = router.location.pathname;
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    const updateAuth = () => {
-      setIsLoggedIn(!!tokenManager.getAccessToken());
-    };
-
-    updateAuth();
-    window.addEventListener("storage", updateAuth);
-    window.addEventListener("focus", updateAuth);
-
-    return () => {
-      window.removeEventListener("storage", updateAuth);
-      window.removeEventListener("focus", updateAuth);
-    };
-  }, []);
 
   useEffect(() => {
     return onLoginModalOpen(() => setIsModalOpen(true));
   }, []);
-
-  useEffect(() => {
-    setIsLoggedIn(!!tokenManager.getAccessToken());
-  }, [currentPath]);
 
   const navItems = [
     {

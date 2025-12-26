@@ -20,6 +20,9 @@ import { CommonsModule } from './commons/commons.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { IsAdminGuard } from './auth/guards/is-admin.guard';
+import { JwtGlobalAuthGuard } from './auth/guards/jwt-global-auth.guard';
 
 @Module({
   imports: [
@@ -79,6 +82,15 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtGlobalAuthGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: IsAdminGuard,
+    }
+  ],
 })
 export class AppModule { }

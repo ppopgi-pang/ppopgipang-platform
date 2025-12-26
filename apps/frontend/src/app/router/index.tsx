@@ -3,16 +3,24 @@ import {
 	Outlet,
 	useLayoutEffect,
 	useLocation,
+	useNavigate,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import TanstackQueryProvider from "../providers/tanstack-query-provider";
+import AdminBlockModal from "@/features/auth/admin-block-modal";
+import { logout } from "@/shared/api/auth";
+import { notifyAuthChange, useAuth } from "@/shared/lib/use-auth";
 // import { TanstackQueryProvider } from "@/app/providers";
 // import { useRefreshToken } from "@/features/auth";
-// import { tokenManager } from "@/shared/api/config";
+// // Token check removed, handled by components/hooks
 
 const RootLayout = () => {
 	const location = useLocation();
+	const navigate = useNavigate();
+	const isAdminRoute = location.pathname.startsWith("/admin");
+	const entryIsAdmin = useRef(isAdminRoute);
+	const { user, isLoading: isAuthLoading, isLoggedIn } = useAuth();
 
 	useLayoutEffect(() => {
 		const root = document.getElementById("root");
@@ -27,6 +35,11 @@ const RootLayout = () => {
 	// const refreshTokenMutation = useRefreshToken();
 
 	useEffect(() => {
+		if (entryIsAdmin.current !== isAdminRoute) {
+			window.location.reload();
+			return;
+		}
+
 		const initializeAuth = async () => {
 			// const accessToken = tokenManager.getAccessToken();
 			// const refreshToken = tokenManager.getRefreshToken();
@@ -43,13 +56,39 @@ const RootLayout = () => {
 		initializeAuth();
 	}, []);
 
+	const showAdminBlockModal =
+		!isAdminRoute && !isAuthLoading && isLoggedIn && user?.isAdmin;
+
+	const handleReturnToAdmin = () => {
+		window.location.href = "/admin";
+	};
+
+	const handleLogout = async () => {
+		await logout();
+		notifyAuthChange(null);
+		navigate({ to: "/" });
+	};
+
 	return (
 		<TanstackQueryProvider>
-			<div className="app-shell">
-				<div className="app-frame">
-					<Outlet />
+			{isAdminRoute ? (
+				<div className="admin-shell">
+					<div className="admin-frame">
+						<Outlet />
+					</div>
 				</div>
-			</div>
+			) : (
+				<div className="app-shell">
+					<div className="app-frame">
+						<Outlet />
+					</div>
+				</div>
+			)}
+			<AdminBlockModal
+				isOpen={showAdminBlockModal}
+				onReturnToAdmin={handleReturnToAdmin}
+				onLogout={handleLogout}
+			/>
 			<TanStackRouterDevtools />
 		</TanstackQueryProvider>
 	);

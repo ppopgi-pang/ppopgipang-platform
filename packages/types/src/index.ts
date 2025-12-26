@@ -10,6 +10,8 @@ import { TradeInput } from './dto/trade/user/trade-input.dto';
 import { TradeResult } from './dto/trade/user/trade-result.dto';
 import { TradeChatInput } from './dto/trade-chat/trade-chat-input.dto';
 import { TradeChatResult } from './dto/trade-chat/trade-chat-result.dto';
+import { AuthInput } from './dto/auth/auth-input.dto';
+import { StoreTypeResult } from './dto/store-type/store-type-result.dto';
 
 export {
     AdminStoreInput,
@@ -23,5 +25,7 @@ export {
     TradeInput,
     TradeResult,
     TradeChatInput,
-    TradeChatResult
+    TradeChatResult,
+    AuthInput,
+    StoreTypeResult
 };

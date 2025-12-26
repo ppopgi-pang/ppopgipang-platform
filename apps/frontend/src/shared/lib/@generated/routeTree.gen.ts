@@ -14,6 +14,7 @@ import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as AdminLoginRouteImport } from './../../../pages/admin/login'
 import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_header_layout/my-reviews'
 import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
 import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
@@ -47,6 +48,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   id: '/stores/$storeId',
   path: '/stores/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Header_layoutMyReviewsRoute = Header_layoutMyReviewsRouteImport.update({
@@ -109,6 +115,7 @@ const Header_layoutTradesTradeIdChatRoomChatRoomIdRoute =
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
+  '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
+  '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
+  '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -161,6 +170,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/about'
     | '/my-reviews'
+    | '/admin/login'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
   to:
     | '/about'
     | '/my-reviews'
+    | '/admin/login'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/_header_layout'
     | '/about'
     | '/_header_layout/my-reviews'
+    | '/admin/login'
     | '/stores/$storeId'
     | '/admin/'
     | '/login/'
@@ -211,6 +223,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -252,6 +265,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$storeId'
       fullPath: '/stores/$storeId'
       preLoaderRoute: typeof StoresStoreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_header_layout/my-reviews': {
@@ -358,6 +378,7 @@ const Header_layoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AdminLoginRoute: AdminLoginRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
