@@ -1,13 +1,13 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { getMyReviews } from "@/shared/api/reviews";
-import { tokenManager } from "@/shared/lib/token-manager";
+import { useAuth } from "@/shared/lib/use-auth";
 import { useEffect, useRef } from "react";
 import ReviewCard from "@/features/stores/review-card";
 
 const MyReviewsPage = () => {
     const size = 10;
-    const isLoggedIn = !!tokenManager.getAccessToken();
+    const { isLoggedIn } = useAuth();
     const loadMoreRef = useRef<HTMLDivElement>(null);
 
     const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({

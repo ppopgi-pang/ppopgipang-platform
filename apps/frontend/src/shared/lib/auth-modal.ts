@@ -1,4 +1,4 @@
-import { tokenManager } from "@/shared/lib/token-manager";
+
 
 const AUTH_MODAL_EVENT = "ppopgipang:auth-modal";
 
@@ -14,10 +14,5 @@ export const onLoginModalOpen = (handler: () => void) => {
     return () => window.removeEventListener(AUTH_MODAL_EVENT, listener);
 };
 
-export const requireAuth = () => {
-    const hasToken = Boolean(tokenManager.getAccessToken());
-    if (!hasToken) {
-        openLoginModal();
-    }
-    return hasToken;
-};
+// requireAuth는 이제 사용되지 않음 (useAuth 훅 사용)
+// export const requireAuth = () => { ... }

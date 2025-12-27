@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 import { API_V1_BASE_URL } from "@/shared/lib/api-config";
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID ?? "";
@@ -20,8 +21,17 @@ const getKakaoLoginUrl = () => {
   return `https://accounts.kakao.com/login/?${loginParams.toString()}#login`;
 };
 
+const LoginSearchSchema = z.object({
+  redirect: z.string().optional(),
+});
+
 const LoginPage = () => {
+  const search = Route.useSearch();
+
   const handleKakaoLogin = () => {
+    if (search.redirect) {
+      sessionStorage.setItem("auth_return_url", search.redirect);
+    }
     window.location.href = getKakaoLoginUrl();
   };
 
@@ -54,5 +64,6 @@ const LoginPage = () => {
 };
 
 export const Route = createFileRoute("/login/")({
+  validateSearch: (search) => LoginSearchSchema.parse(search),
   component: LoginPage,
 });

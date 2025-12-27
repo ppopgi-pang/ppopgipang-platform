@@ -5,8 +5,8 @@ import { isAxiosError } from 'axios';
 import { getTradeDetail, deleteTrade, createChatRoom } from '@/shared/api/trades';
 import { getMyProfile } from '@/shared/api/users';
 import { TRADE_IMAGE_BASE_URL } from '@/shared/lib/api-config';
-import { tokenManager } from '@/shared/lib/token-manager';
-import { openLoginModal, requireAuth } from '@/shared/lib/auth-modal';
+import { useAuth } from '@/shared/lib/use-auth';
+import { openLoginModal } from '@/shared/lib/auth-modal';
 
 import { z } from 'zod';
 
@@ -25,7 +25,7 @@ function TradeDetailPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [activeIndex, setActiveIndex] = useState(0);
-    const hasAccessToken = Boolean(tokenManager.getAccessToken());
+    const { isLoggedIn } = useAuth();
 
     const { data: trade, isLoading, error } = useQuery({
         queryKey: ['trade', tradeId],
@@ -34,9 +34,9 @@ function TradeDetailPage() {
 
     const { data: me } = useQuery({
         queryKey: ['me'],
-        queryFn: getMyProfile,
+        queryFn: () => getMyProfile(),
         retry: false,
-        enabled: hasAccessToken,
+        enabled: isLoggedIn,
     });
 
     const deleteMutation = useMutation({
@@ -85,7 +85,8 @@ function TradeDetailPage() {
     };
 
     const handleChat = () => {
-        if (!requireAuth()) {
+        if (!isLoggedIn) {
+            openLoginModal();
             return;
         }
         if (hasChatRoom) {

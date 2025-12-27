@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
 import { Like, Repository } from 'typeorm';
-import { AdminStoreInput, AuthResult, ReviewResult, StoreTypeInput, UserStoreResult } from '@ppopgipang/types';
+import { AdminStoreInput, AuthResult, ReviewResult, StoreTypeInput, StoreTypeResult, UserStoreResult } from '@ppopgipang/types';
 import { StoreType } from './entities/store-type.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 
@@ -116,6 +116,15 @@ export class StoresService {
      */
     async createStoreType(dto: StoreTypeInput.CreateStoreTypeDto) {
         return await this.storeTypeRepository.save(dto);
+    }
+
+    /**
+     * (어드민) 가게 카테고리(타입) 목록 조회 메서드
+     * @returns 
+     */
+    async findStoreTypes(): Promise<StoreTypeResult.ListTypeDto> {
+        const storeTypes = await this.storeTypeRepository.find();
+        return new StoreTypeResult.ListTypeDto(storeTypes);
     }
 
     /**

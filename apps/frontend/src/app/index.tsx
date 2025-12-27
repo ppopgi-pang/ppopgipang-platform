@@ -1,10 +1,17 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { routeTree } from "@/shared/lib/@generated/routeTree.gen";
+import { queryClient } from "@/shared/lib/query-client";
 // import "@/features/auth/api/test-login"; // 개발 환경 테스트 로그인 헬퍼
-import "@/app/styles/globals.css";
+
+const isAdminEntry = window.location.pathname.startsWith("/admin");
+if (isAdminEntry) {
+	import("@/app/styles/admin.css");
+} else {
+	import("@/app/styles/globals.css");
+}
 
 // 개발 환경에서 mock auth 설정
 if (import.meta.env.MODE === "development") {
@@ -18,8 +25,6 @@ if (import.meta.env.MODE === "development") {
 }
 
 const router = createRouter({ routeTree });
-const queryClient = new QueryClient();
-
 declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;

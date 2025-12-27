@@ -13,13 +13,13 @@ export class User {
     @Column({ length: 50, unique: true })
     email: string;
 
-    @Column()
+    @Column({ nullable: true })
     kakaoId: string;
 
     @Column({ length: 30 })
     nickname: string;
 
-    @Column()
+    @Column({ nullable: true })
     profileImage: string;
 
     @Column({ default: false })
@@ -27,6 +27,9 @@ export class User {
 
     @Column({ type: 'varchar', nullable: true })
     refreshToken?: string;
+
+    @Column({ type: 'varchar', nullable: true })
+    adminPassword: string;
 
     @OneToMany(() => Review, (reviews) => reviews.user)
     reviews: Review[];

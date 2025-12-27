@@ -1,21 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { getMyProfile } from "@/shared/api/users";
-import { tokenManager } from "@/shared/lib/token-manager";
+import { useAuth, notifyAuthChange } from "@/shared/lib/use-auth";
+import { logout } from "@/shared/api/auth";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!tokenManager.getAccessToken());
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
+
+  const { data, isLoading: isProfileLoading, isError, refetch } = useQuery({
     queryKey: ["my-profile"],
-    queryFn: getMyProfile,
+    queryFn: () => getMyProfile(),
     enabled: isLoggedIn,
   });
 
-  const handleLogout = () => {
-    tokenManager.removeTokens();
-    setIsLoggedIn(false);
+  const isLoading = isAuthLoading || isProfileLoading;
+
+  const handleLogout = async () => {
+    await logout();
+    notifyAuthChange(null);
     navigate({ to: "/" });
   };
 

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { TradeChatRoom } from '@/features/trades/components/trade-chat-room';
 import { getMyProfile } from '@/shared/api/users';
 import { openLoginModal } from '@/shared/lib/auth-modal';
-import { tokenManager } from '@/shared/lib/token-manager';
+import { useAuth } from '@/shared/lib/use-auth';
 import LoginRequiredCard from '@/shared/ui/auth/login-required-card';
 
 export const Route = createFileRoute('/_header_layout/trades/$tradeId/chat-room/$chatRoomId')({
@@ -18,13 +18,13 @@ function TradeChatRoomPage() {
     const { tradeId, chatRoomId } = Route.useParams();
     const { from } = Route.useSearch();
     const navigate = useNavigate();
-    const hasAccessToken = Boolean(tokenManager.getAccessToken());
+    const { isLoggedIn } = useAuth();
 
     const { data: me, isLoading } = useQuery({
         queryKey: ['me'],
-        queryFn: getMyProfile,
+        queryFn: () => getMyProfile(),
         retry: false,
-        enabled: hasAccessToken,
+        enabled: isLoggedIn,
     });
 
     const handleClose = () => {
@@ -36,10 +36,10 @@ function TradeChatRoomPage() {
     };
 
     useEffect(() => {
-        if (!hasAccessToken) {
+        if (!isLoggedIn) {
             openLoginModal();
         }
-    }, [hasAccessToken]);
+    }, [isLoggedIn]);
 
     if (isLoading) {
         return (

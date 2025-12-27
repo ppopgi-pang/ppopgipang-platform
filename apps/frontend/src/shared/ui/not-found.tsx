@@ -1,31 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import "@/app/styles/globals.css";
 
 export const NotFoundPage = () => {
-    return (
-        <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="glass-panel-strong relative flex w-full max-w-md flex-col items-center overflow-hidden rounded-3xl p-10 text-center animate-pop">
-                {/* Background Decoration */}
-                <div className="absolute top-[-50px] right-[-50px] h-40 w-40 rounded-full bg-sky-300/30 blur-3xl" />
-                <div className="absolute bottom-[-50px] left-[-50px] h-40 w-40 rounded-full bg-yellow-300/20 blur-3xl" />
-
-                <div className="animate-float z-10 mb-6">
-                    <h1 className="text-9xl font-bold text-sky-500 drop-shadow-sm">404</h1>
-                </div>
-
-                <div className="animate-fade-up z-10">
-                    <h2 className="mb-3 text-2xl font-bold text-[var(--color-text-primary)]">
-                        Oops! Page Not Found
-                    </h2>
-                    <p className="mb-8 text-[var(--color-text-secondary)]">
-                        The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
-                    </p>
-
-                    <Link to="/" className="liquid-button inline-flex items-center justify-center px-8 py-3 text-white font-medium hover:no-underline">
-                        Back to Home
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
+	return (
+		<div className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-12 text-slate-900">
+			<div className="w-full max-w-xl rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-lg">
+				<p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">404</p>
+				<h1 className="mt-4 text-3xl font-semibold">Page not found</h1>
+				<p className="mt-3 text-sm text-slate-500">
+					The page you are looking for might have moved or no longer exists.
+				</p>
+				<Link
+					to="/"
+					className="mt-7 inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 hover:no-underline"
+				>
+					Back to home
+				</Link>
+			</div>
+		</div>
+	);
 };
