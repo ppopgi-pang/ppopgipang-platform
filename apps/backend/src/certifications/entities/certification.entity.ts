@@ -2,6 +2,7 @@ import { Store } from "src/stores/entities/store.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CertificationPhoto } from "./certification-photo.entity";
+import { LootLike } from "./loot-like.entity";
 
 @Entity('certifications')
 @Index(['store', 'occurredAt'])
@@ -38,4 +39,7 @@ export class Certification {
 
     @OneToMany(() => CertificationPhoto, (photo) => photo.certification)
     photos: CertificationPhoto[];
+
+    @OneToMany(() => LootLike, (like) => like.certification)
+    likes: LootLike[];
 }

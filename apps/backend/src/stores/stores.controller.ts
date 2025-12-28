@@ -128,12 +128,16 @@ export class StoresController {
   @ApiOperation({
     summary: '(사용자) 가게 요약 정보 (시트용)'
   })
+  @ApiQuery({ name: 'lat', required: false, description: '위도 (거리 계산용)' })
+  @ApiQuery({ name: 'lng', required: false, description: '경도 (거리 계산용)' })
   getStoreSummary(
     @Param('id') id: number,
+    @Query('lat') lat?: number,
+    @Query('lng') lng?: number,
     @Req() req?: any
   ) {
     const userId = req?.user?.userId;
-    return this.storesService.findStoreSummaryWithUser(id, userId);
+    return this.storesService.findStoreSummaryWithUser(id, userId, lat, lng);
   }
 
   @Post(':id/scrap')
