@@ -20,8 +20,9 @@ export class QuestService {
 
     /**
      * 특정 가게에서 달성 가능한 퀘스트 목록 조회
-     * @param store 가게 정보
-     * @param userId 유저 ID (옵션)
+     * @param store 가게 엔티티 (region1, region2, type 정보 포함)
+     * @param userId 사용자 ID (선택, 입력 시 진행도 및 완료 여부 계산)
+     * @returns 지역 및 카테고리 기반 달성 가능한 퀘스트 목록
      */
     async getAvailableQuests(store: Store, userId?: number): Promise<UserStoreResult.QuestInfoDto[]> {
         const allAchievements: Achievement[] = [];
@@ -93,6 +94,10 @@ export class QuestService {
 
     /**
      * 업적 진행도 계산
+     * @param achievement Achievement 엔티티 (conditionJson 포함)
+     * @param userId 사용자 ID
+     * @param storeId 가게 ID
+     * @returns 진행도 퍼센트 (0-100)
      */
     private async calculateProgress(achievement: Achievement, userId: number, storeId: number): Promise<number> {
         const condition = achievement.conditionJson;
@@ -136,6 +141,8 @@ export class QuestService {
 
     /**
      * conditionJson을 사용자 친화적인 문자열로 변환
+     * @param conditionJson Achievement의 conditionJson 객체
+     * @returns 한글로 표현된 달성 조건 문자열 (예: "마포구에서 인형 10회 득템")
      */
     private formatCondition(conditionJson: any): string {
         if (!conditionJson) return '';
