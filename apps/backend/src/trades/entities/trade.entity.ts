@@ -1,6 +1,7 @@
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { TradeChatRoom } from "./trade-chat-room.entity";
+import { UserLoot } from "src/users/entities/user-loot.entity";
 
 @Entity('trades')
 export class Trade {
@@ -19,13 +20,14 @@ export class Trade {
     @Column({ type: 'int', nullable: true })
     price: number;
 
-    @Column({ type: 'enum', enum: ['sale', 'exchange'], default: 'sale' })
+    @Column({ type: 'enum', enum: ['sale', 'exchange'] })
     type: 'sale' | 'exchange';
 
-    @Column({ type: 'enum', enum: ['active', 'completed', 'cancelled'], default: 'active' })
-    status: 'active' | 'completed' | 'cancelled';
+    @Column({ type: 'enum', enum: ['active', 'reserved', 'completed', 'cancelled'], default: 'active' })
+    status: 'active' | 'reserved' | 'completed' | 'cancelled';
 
-    @ManyToOne(() => User, (user) => user.trades)
+    @ManyToOne(() => User, (user) => user.trades, { onDelete: 'CASCADE', nullable: false })
+    @JoinColumn({ name: 'userId' })
     user: User;
 
     @CreateDateColumn()
@@ -37,4 +39,7 @@ export class Trade {
     @OneToMany(() => TradeChatRoom, (room) => room.tradePost)
     chatRooms: TradeChatRoom[];
 
+    @ManyToOne(() => UserLoot, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'lootId' })
+    loot: UserLoot;
 }

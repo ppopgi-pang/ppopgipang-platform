@@ -8,13 +8,32 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { TradesModule } from './trades/trades.module';
 import { User } from './users/entities/user.entity';
+import { UserLoot } from './users/entities/user-loot.entity';
+import { UserSearchHistory } from './users/entities/user-search-history.entity';
 import { Store } from './stores/entities/store.entity';
 import { StoreType } from './stores/entities/store-type.entity';
+import { StoreFacility } from './stores/entities/store-facility.entity';
+import { StorePhoto } from './stores/entities/store-photo.entity';
+import { StoreOpeningHours } from './stores/entities/store-opening-hours.entity';
+import { StoreAnalytics } from './stores/entities/store-analytics.entity';
 import { Review } from './reviews/entities/review.entity';
 import { Proposal } from './proposals/entities/proposal.entity';
 import { Trade } from './trades/entities/trade.entity';
 import { TradeChatMessage } from './trades/entities/trade-chat-message.entity';
 import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
+import { Certification } from './certifications/entities/certification.entity';
+import { CertificationPhoto } from './certifications/entities/certification-photo.entity';
+import { LootLike } from './certifications/entities/loot-like.entity';
+import { UserStoreStats } from './certifications/entities/user-store-stats.entity';
+import { Achievement } from './gamification/entities/achievement.entity';
+import { Stamp } from './gamification/entities/stamp.entity';
+import { UserProgress } from './gamification/entities/user-progress.entity';
+import { UserAchievement } from './gamification/entities/user-achievement.entity';
+import { UserStamp } from './gamification/entities/user-stamp.entity';
+import { ContentReport } from './moderation/entities/content-report.entity';
+import { ModerationAction } from './moderation/entities/moderation-action.entity';
+import { Notification } from './notifications/entities/notification.entity';
+import { PushSubscription } from './notifications/entities/push-subscription.entity';
 
 import { CommonsModule } from './commons/commons.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -23,6 +42,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { IsAdminGuard } from './auth/guards/is-admin.guard';
 import { JwtGlobalAuthGuard } from './auth/guards/jwt-global-auth.guard';
+import { CertificationsModule } from './certifications/certifications.module';
+import { GamificationModule } from './gamification/gamification.module';
+import { ModerationModule } from './moderation/moderation.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -53,8 +76,33 @@ import { JwtGlobalAuthGuard } from './auth/guards/jwt-global-auth.guard';
         password: ConfigService.getOrThrow<string>('DB_PASSWORD'),
         database: ConfigService.getOrThrow<string>('DB_DATABASE'),
         entities: [
-          User, Store, StoreType, Review, Proposal, Trade,
-          TradeChatMessage, TradeChatRoom,
+          User,
+          UserLoot,
+          UserSearchHistory,
+          Store,
+          StoreType,
+          StoreFacility,
+          StorePhoto,
+          StoreOpeningHours,
+          StoreAnalytics,
+          Review,
+          Proposal,
+          Trade,
+          TradeChatMessage,
+          TradeChatRoom,
+          Certification,
+          CertificationPhoto,
+          LootLike,
+          UserStoreStats,
+          Achievement,
+          Stamp,
+          UserProgress,
+          UserAchievement,
+          UserStamp,
+          ContentReport,
+          ModerationAction,
+          Notification,
+          PushSubscription,
 
         ],
         synchronize: true
@@ -80,6 +128,14 @@ import { JwtGlobalAuthGuard } from './auth/guards/jwt-global-auth.guard';
     CommonsModule,
 
     AuthModule,
+
+    CertificationsModule,
+
+    GamificationModule,
+
+    ModerationModule,
+
+    NotificationsModule,
   ],
   controllers: [],
   providers: [
