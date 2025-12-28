@@ -140,6 +140,27 @@ export class StoresController {
     return this.storesService.findStoreSummaryWithUser(id, userId, lat, lng);
   }
 
+  /**
+   * (사용자) 가게 득템 갤러리 조회
+   */
+  @Get(':id/gallery')
+  @IgnoreJwtGuard()
+  @ApiOperation({
+    summary: '(사용자) 가게 득템 갤러리 조회',
+    description: '가게에서 인증된 득템 사진 목록'
+  })
+  @ApiQuery({ name: 'page', required: false, description: '페이지 번호', example: 1 })
+  @ApiQuery({ name: 'size', required: false, description: '페이지 크기', example: 20 })
+  @ApiQuery({ name: 'sort', required: false, description: '정렬 방식 (recent|popular)', example: 'recent' })
+  async getStoreGallery(
+    @Param('id') id: number,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = 20,
+    @Query('sort') sort: 'recent' | 'popular' = 'recent'
+  ) {
+    return this.storesService.getStoreGallery(id, page, size, sort);
+  }
+
   @Post(':id/scrap')
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth('access-token')
@@ -154,19 +175,24 @@ export class StoresController {
   }
 
   /**
-   * (사용자) 가게 상세 정보 API
-   * @param dto 
-   * @returns 
+   * (사용자) 가게 상세 정보 API - 확장 버전
+   * @param id
+   * @param req
+   * @returns
    */
   @Get(':id')
   @IgnoreJwtGuard()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
-    summary: '(사용자) 가게 상세 정보 API'
+    summary: '(사용자) 가게 상세 정보 API (확장)',
+    description: 'AI 분석 데이터, 퀘스트 정보, 시설 정보, 운영 시간 등 포함'
   })
-  findOneReview(
-    @Param('id') id: number
+  async findStoreDetail(
+    @Param('id') id: number,
+    @Req() req?: any
   ) {
-    return this.storesService.findStoreDetail(id);
+    const userId = req?.user?.userId;
+    return this.storesService.findStoreDetailExtended(id, userId);
   }
 
   /**

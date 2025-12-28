@@ -9,6 +9,9 @@ import { UserStoreStats } from './entities/user-store-stats.entity';
 import { UsersService } from 'src/users/users.service';
 import { Certification } from 'src/certifications/entities/certification.entity';
 import { UserStamp } from 'src/gamification/entities/user-stamp.entity';
+import { StoreAnalytics } from './entities/store-analytics.entity';
+import { StoreFacility } from './entities/store-facility.entity';
+import { QuestService } from 'src/gamification/quest.service';
 
 
 @Injectable()
@@ -26,7 +29,12 @@ export class StoresService {
         private readonly certificationRepository: Repository<Certification>,
         @InjectRepository(UserStamp)
         private readonly userStampRepository: Repository<UserStamp>,
-        private readonly usersService: UsersService
+        @InjectRepository(StoreAnalytics)
+        private readonly storeAnalyticsRepository: Repository<StoreAnalytics>,
+        @InjectRepository(StoreFacility)
+        private readonly storeFacilityRepository: Repository<StoreFacility>,
+        private readonly usersService: UsersService,
+        private readonly questService: QuestService
     ) { }
 
     async findStoreDetail(id: number) {
@@ -270,7 +278,7 @@ export class StoresService {
     async findStoreSummaryWithUser(id: number, userId?: number, lat?: number, lng?: number) {
         const store = await this.storeRepository.findOne({
             where: { id },
-            relations: ['photos', 'openingHours', 'type']
+            relations: ['photos', 'openingHours', 'type', 'analytics']
         });
         if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
 
@@ -339,7 +347,17 @@ export class StoresService {
             );
         });
 
-        // 5. 응답 DTO 생성
+        // 5. AI 득템 지수 추가
+        const successProb = store.analytics?.successProb ?? 50;
+        const successLevel = this.getSuccessLevel(successProb);
+
+        // 6. 나의 랭킹 계산 (해당 가게 방문자 중 내 순위)
+        let myRanking: number | undefined;
+        if (userId) {
+            myRanking = await this.calculateUserRanking(id, userId);
+        }
+
+        // 7. 응답 DTO 생성
         return new UserStoreResult.StoreSummaryExtendedDto(
             {
                 id: store.id,
@@ -353,8 +371,41 @@ export class StoresService {
             },
             businessStatus,
             myStatus,
-            recentLoots
+            recentLoots,
+            successProb,
+            successLevel,
+            myRanking
         );
+    }
+
+    /**
+     * 득템 지수를 레벨 문자열로 변환
+     */
+    private getSuccessLevel(prob: number): string {
+        if (prob >= 80) return '매우 높음';
+        if (prob >= 60) return '높음';
+        if (prob >= 40) return '보통';
+        if (prob >= 20) return '낮음';
+        return '매우 낮음';
+    }
+
+    /**
+     * 나의 랭킹 계산 (lootCount 기준)
+     */
+    private async calculateUserRanking(storeId: number, userId: number): Promise<number> {
+        const userStat = await this.userStoreStatsRepository.findOne({
+            where: { storeId, userId }
+        });
+
+        if (!userStat) return 0;
+
+        const ranking = await this.userStoreStatsRepository
+            .createQueryBuilder('uss')
+            .where('uss.storeId = :storeId', { storeId })
+            .andWhere('uss.lootCount > :lootCount', { lootCount: userStat.lootCount })
+            .getCount();
+
+        return ranking + 1;
     }
 
     // 영업 상태 계산 헬퍼 메서드
@@ -411,5 +462,261 @@ export class StoresService {
             stat.isScrapped = !stat.isScrapped;
         }
         return await this.userStoreStatsRepository.save(stat);
+    }
+
+    /**
+     * 가게 상세 정보 조회 (확장 버전)
+     * AI 분석, 퀘스트, 시설 정보 등 포함
+     */
+    async findStoreDetailExtended(id: number, userId?: number): Promise<UserStoreResult.StoreDetailExtendedDto> {
+        const store = await this.storeRepository.findOne({
+            where: { id },
+            relations: ['openingHours', 'facilities', 'photos', 'type', 'analytics']
+        });
+
+        if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
+
+        // 1. 기본 정보 구성
+        const storeInfo = {
+            id: store.id,
+            name: store.name,
+            address: store.address,
+            latitude: Number(store.latitude),
+            longitude: Number(store.longitude),
+            phone: store.phone,
+            category: store.type?.name || null,
+            region1: store.region1,
+            region2: store.region2
+        };
+
+        // 2. [AI] 분석 데이터
+        const analytics = store.analytics ? new UserStoreResult.StoreAnalyticsDto(
+            store.analytics.successProb,
+            this.getSuccessLevel(store.analytics.successProb),
+            store.analytics.recentLootCount,
+            this.parseHotTimeData(store.analytics.hotTimeJson),
+            this.getBestTimeMessage(store.analytics.hotTimeJson)
+        ) : null;
+
+        // 3. [Game] 퀘스트 정보 조회
+        const availableQuests = await this.questService.getAvailableQuests(store, userId);
+
+        // 4. [Original] 시설 정보
+        const facilities = store.facilities ? new UserStoreResult.StoreFacilitiesDto(
+            store.facilities.machineCount,
+            this.translatePaymentMethods(store.facilities.paymentMethods),
+            store.facilities.notes
+        ) : null;
+
+        // 5. 운영 시간
+        const openingHours = this.formatOpeningHours(store.openingHours);
+
+        // 6. 영업 상태
+        const businessStatus = this.calculateBusinessStatus(store.openingHours);
+
+        // 7. 사진
+        const photos = store.photos.map(p => new UserStoreResult.StorePhotoDto(
+            p.id,
+            p.type,
+            p.imageName
+        ));
+
+        // 8. 최근 리뷰
+        const recentReviews = await this.getRecentReviews(id, 5);
+
+        // 9. 나의 상태 (로그인 시)
+        let myStatus: UserStoreResult.MyStoreStatusDto | undefined;
+        if (userId) {
+            myStatus = await this.getMyStoreStatus(id, userId);
+        }
+
+        return new UserStoreResult.StoreDetailExtendedDto(
+            storeInfo,
+            analytics,
+            availableQuests,
+            facilities,
+            openingHours,
+            businessStatus,
+            photos,
+            recentReviews,
+            myStatus
+        );
+    }
+
+    /**
+     * 가게 인증샷 갤러리 조회
+     */
+    async getStoreGallery(
+        storeId: number,
+        page: number = 1,
+        size: number = 20,
+        sort: 'recent' | 'popular' = 'recent'
+    ): Promise<UserStoreResult.StoreGalleryDto> {
+        const qb = this.certificationRepository
+            .createQueryBuilder('c')
+            .leftJoinAndSelect('c.photos', 'cp')
+            .leftJoinAndSelect('c.user', 'u')
+            .where('c.storeId = :storeId', { storeId })
+            .andWhere('c.type = :type', { type: 'loot' });
+
+        if (sort === 'recent') {
+            qb.orderBy('c.occurredAt', 'DESC');
+        } else if (sort === 'popular') {
+            // 좋아요 수가 없으면 일단 최신순으로 정렬
+            qb.orderBy('c.occurredAt', 'DESC');
+        }
+
+        const total = await qb.getCount();
+        const certifications = await qb
+            .skip((page - 1) * size)
+            .take(size)
+            .getMany();
+
+        const data = certifications.map(cert => {
+            const photoUrl = cert.photos && cert.photos.length > 0 ? cert.photos[0].imageName : '';
+            return new UserStoreResult.StoreGalleryItemDto(
+                cert.id,
+                photoUrl,
+                cert.occurredAt,
+                cert.user?.nickname || '알 수 없음',
+                cert.user?.profileImageName || null,
+                0 // likeCount는 나중에 구현
+            );
+        });
+
+        return new UserStoreResult.StoreGalleryDto(
+            true,
+            data,
+            { page, size, total }
+        );
+    }
+
+    /**
+     * 최근 리뷰 조회
+     */
+    private async getRecentReviews(storeId: number, limit: number): Promise<ReviewResult.ReviewDto[]> {
+        const reviews = await this.reviewRepository.find({
+            where: { store: { id: storeId } },
+            relations: ['user', 'store'],
+            take: limit,
+            order: { createdAt: 'DESC' }
+        });
+
+        return reviews.map(review => new ReviewResult.ReviewDto(
+            review.id,
+            review.rating,
+            review.content,
+            review.images ?? [],
+            new AuthResult.UserInfo(review.user),
+            new ReviewResult.StoreInfoDto(
+                review.store.id,
+                review.store.name,
+                review.store.address
+            ),
+            review.createdAt,
+            review.updatedAt
+        ));
+    }
+
+    /**
+     * 나의 가게 상태 조회
+     */
+    private async getMyStoreStatus(storeId: number, userId: number): Promise<UserStoreResult.MyStoreStatusDto> {
+        const stat = await this.userStoreStatsRepository.findOne({
+            where: { userId, storeId }
+        });
+
+        const userStamps = await this.userStampRepository.find({
+            where: { userId },
+            relations: ['stamp', 'stamp.store']
+        });
+
+        const storeStamps = userStamps
+            .filter(us => us.stamp?.store?.id === storeId)
+            .map(us => new UserStoreResult.StampDto(
+                us.stampId,
+                us.stamp.imageName,
+                us.acquiredAt
+            ));
+
+        if (stat) {
+            return new UserStoreResult.MyStoreStatusDto(
+                stat.visitCount,
+                stat.lootCount,
+                stat.isScrapped,
+                stat.tier,
+                storeStamps
+            );
+        }
+
+        return new UserStoreResult.MyStoreStatusDto(0, 0, false, 'unknown', storeStamps);
+    }
+
+    /**
+     * hotTimeJson 파싱
+     */
+    private parseHotTimeData(hotTimeJson: any): UserStoreResult.HotTimeSlotDto[] {
+        if (!hotTimeJson || !Array.isArray(hotTimeJson)) {
+            return [];
+        }
+
+        return hotTimeJson.map(slot => new UserStoreResult.HotTimeSlotDto(
+            slot.hour || 0,
+            slot.probability || 0
+        ));
+    }
+
+    /**
+     * 시간대별 최적 시간 메시지 생성
+     */
+    private getBestTimeMessage(hotTimeJson: any): string {
+        if (!hotTimeJson || !Array.isArray(hotTimeJson) || hotTimeJson.length === 0) {
+            return '데이터 수집 중입니다.';
+        }
+
+        const sorted = [...hotTimeJson].sort((a, b) => (b.probability || 0) - (a.probability || 0));
+        const best = sorted[0];
+
+        if (!best || (best.probability || 0) < 30) {
+            return '현재 데이터가 부족합니다.';
+        }
+
+        const hour = best.hour || 0;
+        const period = hour < 12 ? '오전' : (hour < 18 ? '오후' : '저녁');
+        const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+
+        return `${period} ${displayHour}시~${displayHour + 2}시가 기회입니다!`;
+    }
+
+    /**
+     * 결제 방법 한글 변환
+     */
+    private translatePaymentMethods(methods: string[] | null): string[] {
+        if (!methods) return [];
+
+        const translations: Record<string, string> = {
+            'cash': '현금',
+            'card': '카드',
+            'qr': 'QR결제'
+        };
+
+        return methods.map(m => translations[m] || m);
+    }
+
+    /**
+     * 운영 시간 포맷팅
+     */
+    private formatOpeningHours(openingHours: any[]): UserStoreResult.OpeningHoursDto[] {
+        if (!openingHours) return [];
+
+        const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+        return openingHours.map(h => new UserStoreResult.OpeningHoursDto(
+            h.dayOfWeek,
+            dayNames[h.dayOfWeek] || '알 수 없음',
+            h.openTime || '',
+            h.closeTime || '',
+            h.isClosed || false
+        ));
     }
 }
