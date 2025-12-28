@@ -6,6 +6,7 @@ import { StoreAnalytics } from "./store-analytics.entity";
 import { StoreFacility } from "./store-facility.entity";
 import { StoreOpeningHours } from "./store-opening-hours.entity";
 import { StorePhoto } from "./store-photo.entity";
+import { UserStoreStats } from "./user-store-stats.entity";
 
 @Entity('stores')
 @Index('idx_store_region', ['region1', 'region2'])
@@ -19,7 +20,7 @@ export class Store {
     @Column({ length: 255, nullable: true })
     address: string;
 
-    @Column('decimal', { precision: 10, scale: 6})
+    @Column('decimal', { precision: 10, scale: 6 })
     latitude: number;
 
     @Column('decimal', { precision: 10, scale: 6 })
@@ -42,7 +43,7 @@ export class Store {
 
     @UpdateDateColumn()
     updatedAt: Date;
-    
+
     @OneToMany(() => Review, (review) => review.store)
     reviews: Review[];
 
@@ -51,7 +52,7 @@ export class Store {
 
     @ManyToOne(() => StoreType, (storeType) => storeType.stores, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'typeId' })
-    type: StoreType; 
+    type: StoreType;
 
     @OneToOne(() => StoreAnalytics, (analytics) => analytics.store, { cascade: true })
     analytics: StoreAnalytics;
@@ -64,4 +65,7 @@ export class Store {
 
     @OneToMany(() => StoreOpeningHours, (hours) => hours.store)
     openingHours: StoreOpeningHours[];
+
+    @OneToMany(() => UserStoreStats, (stats) => stats.store)
+    userStats: UserStoreStats[];
 }

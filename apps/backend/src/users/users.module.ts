@@ -16,5 +16,6 @@ import { UserSearchHistory } from './entities/user-search-history.entity';
   ],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule { }

@@ -5,6 +5,8 @@ import { Like, Repository } from 'typeorm';
 import { AdminStoreInput, AuthResult, ReviewResult, StoreTypeInput, StoreTypeResult, UserStoreResult } from '@ppopgipang/types';
 import { StoreType } from './entities/store-type.entity';
 import { Review } from 'src/reviews/entities/review.entity';
+import { UserStoreStats } from './entities/user-store-stats.entity';
+import { UsersService } from 'src/users/users.service';
 
 
 @Injectable()
@@ -15,12 +17,18 @@ export class StoresService {
         @InjectRepository(StoreType)
         private readonly storeTypeRepository: Repository<StoreType>,
         @InjectRepository(Review)
-        private readonly reviewRepository: Repository<Review>
+        private readonly reviewRepository: Repository<Review>,
+        @InjectRepository(UserStoreStats)
+        private readonly userStoreStatsRepository: Repository<UserStoreStats>,
+        private readonly usersService: UsersService
     ) { }
 
     async findStoreDetail(id: number) {
 
-        const store = await this.storeRepository.findOneBy({ id });
+        const store = await this.storeRepository.findOne({
+            where: { id },
+            relations: ['openingHours', 'facilities', 'photos', 'type']
+        });
 
         if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
 
@@ -173,14 +181,94 @@ export class StoresService {
     /**
      * 가게 검색
      */
-    async searchStore(keyword: string, page: number, size: number) {
-        const [stores, total] = await this.storeRepository.findAndCount({
-            where: { name: Like(`%${keyword}%`) },
-            take: size,
-            skip: (page - 1) * size,
-            order: { name: 'ASC' }
+    async searchStore(keyword: string, latitude: number = 0, longitude: number = 0, page: number, size: number, userId?: number) {
+        if (userId && keyword) {
+            // 비동기로 처리하여 응답 속도 저하 방지
+            this.usersService.addSearchHistory(userId, keyword).catch(e => console.error('Search history save failed', e));
+        }
+
+        const qb = this.storeRepository.createQueryBuilder('s')
+            .leftJoinAndSelect('s.type', 'st')
+            .leftJoinAndSelect('s.photos', 'sp') // 썸네일 필요시
+            .where('s.name LIKE :keyword OR s.address LIKE :keyword', { keyword: `%${keyword}%` });
+
+        if (latitude && longitude) {
+            qb.addSelect(
+                `ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(s.longitude, s.latitude))`,
+                'distance'
+            )
+                .setParameters({ latitude, longitude });
+            qb.orderBy('distance', 'ASC');
+        } else {
+            qb.orderBy('s.name', 'ASC');
+        }
+
+        const count = await qb.getCount();
+        const { entities, raw } = await qb
+            .offset((page - 1) * size)
+            .limit(size)
+            .getRawAndEntities();
+
+        const data = entities.map((store, i) => {
+            const dist = raw[i].distance ? Math.round(raw[i].distance) : undefined;
+            const dto = new UserStoreResult.StoreDto(
+                store.id,
+                store.name,
+                store.address,
+                store.latitude,
+                store.longitude,
+                store.phone
+            );
+            dto.distance = dist;
+            return dto;
         });
 
-        return new UserStoreResult.SearchDto(true, stores, { count: total });
+        return new UserStoreResult.SearchDto(true, data, { count });
+    }
+
+    async findStoreSummary(id: number) {
+        const store = await this.storeRepository.findOne({
+            where: { id },
+            relations: ['photos']
+        });
+        if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
+
+        const thumbnail = store.photos.find(p => p.type === 'cover')?.imageName || store.photos[0]?.imageName || null;
+        // isScrapped 확인은 별도 로직 필요, userId가 필요함.
+        // 하지만 Summary 요청 시 AuthGuard가 없으면 false.
+        // Controller에서 userId를 넘겨줘야 함. 
+        // 여기서는 일단 false로 처리하거나 userId 인자를 추가해야 함.
+        // Task description implies checking user_store_stats.
+        // I will add userId param.
+
+        return { store, thumbnail };
+    }
+
+    // Helper to be used by controller which will construct DTO
+    async findStoreSummaryWithUser(id: number, userId?: number) {
+        const { store, thumbnail } = await this.findStoreSummary(id);
+        let isScrapped = false;
+        if (userId) {
+            const stat = await this.userStoreStatsRepository.findOne({ where: { userId, storeId: id } });
+            if (stat && stat.isScrapped) isScrapped = true;
+        }
+        return new UserStoreResult.StoreSummaryDto(store.id, store.name, store.address, thumbnail, store.averageRating, isScrapped);
+    }
+
+    async toggleScrap(storeId: number, userId: number) {
+        let stat = await this.userStoreStatsRepository.findOne({
+            where: { userId, storeId }
+        });
+
+        if (!stat) {
+            stat = this.userStoreStatsRepository.create({
+                userId,
+                storeId,
+                isScrapped: true
+            });
+        } else {
+            stat.isScrapped = !stat.isScrapped;
+        }
+        return await this.userStoreStatsRepository.save(stat);
     }
 }

@@ -24,7 +24,7 @@ import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
 import { Certification } from './certifications/entities/certification.entity';
 import { CertificationPhoto } from './certifications/entities/certification-photo.entity';
 import { LootLike } from './certifications/entities/loot-like.entity';
-import { UserStoreStats } from './certifications/entities/user-store-stats.entity';
+import { UserStoreStats } from './stores/entities/user-store-stats.entity';
 import { Achievement } from './gamification/entities/achievement.entity';
 import { Stamp } from './gamification/entities/stamp.entity';
 import { UserProgress } from './gamification/entities/user-progress.entity';
@@ -103,7 +103,6 @@ import { NotificationsModule } from './notifications/notifications.module';
           ModerationAction,
           Notification,
           PushSubscription,
-
         ],
         synchronize: true
       }),

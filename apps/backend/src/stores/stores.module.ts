@@ -9,6 +9,8 @@ import { StorePhoto } from './entities/store-photo.entity';
 import { StoreOpeningHours } from './entities/store-opening-hours.entity';
 import { StoreAnalytics } from './entities/store-analytics.entity';
 import { Review } from 'src/reviews/entities/review.entity';
+import { UserStoreStats } from './entities/user-store-stats.entity';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -20,9 +22,11 @@ import { Review } from 'src/reviews/entities/review.entity';
       StoreOpeningHours,
       StoreAnalytics,
       Review,
-    ])
+      UserStoreStats
+    ]),
+    UsersModule,
   ],
   controllers: [StoresController],
   providers: [StoresService],
 })
-export class StoresModule {}
+export class StoresModule { }

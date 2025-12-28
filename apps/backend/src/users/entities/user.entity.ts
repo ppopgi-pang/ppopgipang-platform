@@ -4,6 +4,7 @@ import { Trade } from "src/trades/entities/trade.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserLoot } from "./user-loot.entity";
 import { UserSearchHistory } from "./user-search-history.entity";
+import { UserStoreStats } from "src/stores/entities/user-store-stats.entity";
 
 
 
@@ -56,5 +57,8 @@ export class User {
 
     @OneToMany(() => UserSearchHistory, (history) => history.user)
     searchHistories: UserSearchHistory[];
+
+    @OneToMany(() => UserStoreStats, (stats) => stats.user)
+    storeStats: UserStoreStats[];
 
 }

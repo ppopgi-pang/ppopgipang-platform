@@ -69,4 +69,23 @@ export namespace UserStoreResult {
             this.store = store;
         }
     }
+
+    export class StoreSummaryDto {
+        id: number;
+        name: string;
+        address: string;
+        thumbnailUrl: string | null;
+        rating: number;
+        isScrapped: boolean;
+
+        constructor(id: number, name: string, address: string, thumbnailUrl: string | null, rating: number, isScrapped: boolean) {
+            this.id = id;
+            this.name = name;
+            this.address = address;
+            this.thumbnailUrl = thumbnailUrl;
+            this.rating = rating;
+            this.isScrapped = isScrapped;
+        }
+    }
 }
+
