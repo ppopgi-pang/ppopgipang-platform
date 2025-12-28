@@ -10,6 +10,8 @@ export namespace UserStoreResult {
         phone?: string | null;
         averageRating?: number;
         distance?: number;
+        isVisited?: boolean;
+        thumbnailUrl?: string | null;
         type?: {
             id: number;
             name: string;
@@ -85,6 +87,76 @@ export namespace UserStoreResult {
             this.thumbnailUrl = thumbnailUrl;
             this.rating = rating;
             this.isScrapped = isScrapped;
+        }
+    }
+
+    export class StampDto {
+        id: number;
+        imageName: string;
+        acquiredAt: Date;
+
+        constructor(id: number, imageName: string, acquiredAt: Date) {
+            this.id = id;
+            this.imageName = imageName;
+            this.acquiredAt = acquiredAt;
+        }
+    }
+
+    export class MyStoreStatusDto {
+        visitCount: number;
+        lootCount: number;
+        isScrapped: boolean;
+        tier: 'unknown' | 'visited' | 'master';
+        stamps: StampDto[];
+
+        constructor(visitCount: number, lootCount: number, isScrapped: boolean, tier: 'unknown' | 'visited' | 'master', stamps: StampDto[]) {
+            this.visitCount = visitCount;
+            this.lootCount = lootCount;
+            this.isScrapped = isScrapped;
+            this.tier = tier;
+            this.stamps = stamps;
+        }
+    }
+
+    export class RecentLootDto {
+        id: number;
+        photoUrl: string;
+        createdAt: Date;
+        userName: string;
+
+        constructor(id: number, photoUrl: string, createdAt: Date, userName: string) {
+            this.id = id;
+            this.photoUrl = photoUrl;
+            this.createdAt = createdAt;
+            this.userName = userName;
+        }
+    }
+
+    export class StoreSummaryExtendedDto {
+        store: {
+            id: number;
+            name: string;
+            address: string;
+            category?: string | null;
+            latitude: number;
+            longitude: number;
+            distance?: number;
+            thumbnailUrl?: string | null;
+        };
+        businessStatus: 'open' | 'closed' | 'unknown';
+        myStatus: MyStoreStatusDto;
+        recentLoots: RecentLootDto[];
+
+        constructor(
+            store: { id: number; name: string; address: string; category?: string | null; latitude: number; longitude: number; distance?: number; thumbnailUrl?: string | null },
+            businessStatus: 'open' | 'closed' | 'unknown',
+            myStatus: MyStoreStatusDto,
+            recentLoots: RecentLootDto[]
+        ) {
+            this.store = store;
+            this.businessStatus = businessStatus;
+            this.myStatus = myStatus;
+            this.recentLoots = recentLoots;
         }
     }
 }

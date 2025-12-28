@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Store } from './entities/store.entity';
-import { Like, Repository } from 'typeorm';
+import { In, Like, MoreThan, Repository } from 'typeorm';
 import { AdminStoreInput, AuthResult, ReviewResult, StoreTypeInput, StoreTypeResult, UserStoreResult } from '@ppopgipang/types';
 import { StoreType } from './entities/store-type.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { UserStoreStats } from './entities/user-store-stats.entity';
 import { UsersService } from 'src/users/users.service';
+import { Certification } from 'src/certifications/entities/certification.entity';
+import { UserStamp } from 'src/gamification/entities/user-stamp.entity';
 
 
 @Injectable()
@@ -20,6 +22,10 @@ export class StoresService {
         private readonly reviewRepository: Repository<Review>,
         @InjectRepository(UserStoreStats)
         private readonly userStoreStatsRepository: Repository<UserStoreStats>,
+        @InjectRepository(Certification)
+        private readonly certificationRepository: Repository<Certification>,
+        @InjectRepository(UserStamp)
+        private readonly userStampRepository: Repository<UserStamp>,
         private readonly usersService: UsersService
     ) { }
 
@@ -209,8 +215,21 @@ export class StoresService {
             .limit(size)
             .getRawAndEntities();
 
+        // userId가 있으면 UserStoreStats를 한 번에 조회
+        let userStatsMap = new Map<number, UserStoreStats>();
+        if (userId && entities.length > 0) {
+            const storeIds = entities.map(s => s.id);
+            const stats = await this.userStoreStatsRepository.find({
+                where: { userId, storeId: storeIds as any }
+            });
+            stats.forEach(stat => userStatsMap.set(stat.storeId, stat));
+        }
+
         const data = entities.map((store, i) => {
             const dist = raw[i].distance ? Math.round(raw[i].distance) : undefined;
+            const thumbnail = store.photos.find(p => p.type === 'cover')?.imageName || store.photos[0]?.imageName || null;
+            const isVisited = userId ? userStatsMap.has(store.id) && (userStatsMap.get(store.id)?.visitCount || 0) > 0 : false;
+
             const dto = new UserStoreResult.StoreDto(
                 store.id,
                 store.name,
@@ -220,6 +239,9 @@ export class StoresService {
                 store.phone
             );
             dto.distance = dist;
+            dto.averageRating = store.averageRating;
+            dto.thumbnailUrl = thumbnail;
+            dto.isVisited = isVisited;
             return dto;
         });
 
@@ -245,14 +267,133 @@ export class StoresService {
     }
 
     // Helper to be used by controller which will construct DTO
-    async findStoreSummaryWithUser(id: number, userId?: number) {
-        const { store, thumbnail } = await this.findStoreSummary(id);
-        let isScrapped = false;
+    async findStoreSummaryWithUser(id: number, userId?: number, lat?: number, lng?: number) {
+        const store = await this.storeRepository.findOne({
+            where: { id },
+            relations: ['photos', 'openingHours', 'type']
+        });
+        if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
+
+        const thumbnail = store.photos.find(p => p.type === 'cover')?.imageName || store.photos[0]?.imageName || null;
+
+        // 1. 영업 상태 계산
+        const businessStatus = this.calculateBusinessStatus(store.openingHours);
+
+        // 2. 거리 계산 (선택적)
+        let distance: number | undefined = undefined;
+        if (lat && lng) {
+            distance = this.calculateDistance(lat, lng, Number(store.latitude), Number(store.longitude));
+        }
+
+        // 3. myStatus 조회
+        let myStatus: UserStoreResult.MyStoreStatusDto;
         if (userId) {
             const stat = await this.userStoreStatsRepository.findOne({ where: { userId, storeId: id } });
-            if (stat && stat.isScrapped) isScrapped = true;
+
+            // 해당 가게와 관련된 stamps 조회
+            const userStamps = await this.userStampRepository.find({
+                where: { userId },
+                relations: ['stamp', 'stamp.store']
+            });
+            const storeStamps = userStamps
+                .filter(us => us.stamp?.store?.id === id)
+                .map(us => new UserStoreResult.StampDto(us.stampId, us.stamp.imageName, us.acquiredAt));
+
+            if (stat) {
+                myStatus = new UserStoreResult.MyStoreStatusDto(
+                    stat.visitCount,
+                    stat.lootCount,
+                    stat.isScrapped,
+                    stat.tier,
+                    storeStamps
+                );
+            } else {
+                myStatus = new UserStoreResult.MyStoreStatusDto(0, 0, false, 'unknown', storeStamps);
+            }
+        } else {
+            myStatus = new UserStoreResult.MyStoreStatusDto(0, 0, false, 'unknown', []);
         }
-        return new UserStoreResult.StoreSummaryDto(store.id, store.name, store.address, thumbnail, store.averageRating, isScrapped);
+
+        // 4. 최근 24시간 내 득템 인증 조회 (최대 4개)
+        const yesterday = new Date();
+        yesterday.setHours(yesterday.getHours() - 24);
+
+        const recentCertifications = await this.certificationRepository.find({
+            where: {
+                store: { id },
+                type: 'loot',
+                occurredAt: MoreThan(yesterday)
+            },
+            relations: ['photos', 'user'],
+            order: { occurredAt: 'DESC' },
+            take: 4
+        });
+
+        const recentLoots = recentCertifications.map(cert => {
+            const photoUrl = cert.photos && cert.photos.length > 0 ? cert.photos[0].imageName : '';
+            return new UserStoreResult.RecentLootDto(
+                cert.id,
+                photoUrl,
+                cert.occurredAt,
+                cert.user?.nickname || '알 수 없음'
+            );
+        });
+
+        // 5. 응답 DTO 생성
+        return new UserStoreResult.StoreSummaryExtendedDto(
+            {
+                id: store.id,
+                name: store.name,
+                address: store.address,
+                category: store.type?.name || null,
+                latitude: Number(store.latitude),
+                longitude: Number(store.longitude),
+                distance,
+                thumbnailUrl: thumbnail
+            },
+            businessStatus,
+            myStatus,
+            recentLoots
+        );
+    }
+
+    // 영업 상태 계산 헬퍼 메서드
+    private calculateBusinessStatus(openingHours: any[]): 'open' | 'closed' | 'unknown' {
+        if (!openingHours || openingHours.length === 0) return 'unknown';
+
+        const now = new Date();
+        const dayOfWeek = now.getDay(); // 0=Sunday, 1=Monday, ...
+        const currentTime = now.toTimeString().substring(0, 5); // HH:MM
+
+        const todayHours = openingHours.find(h => h.dayOfWeek === dayOfWeek);
+        if (!todayHours) return 'unknown';
+        if (todayHours.isClosed) return 'closed';
+
+        if (todayHours.openTime && todayHours.closeTime) {
+            if (currentTime >= todayHours.openTime && currentTime <= todayHours.closeTime) {
+                return 'open';
+            } else {
+                return 'closed';
+            }
+        }
+
+        return 'unknown';
+    }
+
+    // Haversine 거리 계산 헬퍼 메서드
+    private calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+        const R = 6371000; // 지구 반지름 (미터)
+        const dLat = this.toRad(lat2 - lat1);
+        const dLng = this.toRad(lng2 - lng1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.toRad(lat1)) * Math.cos(this.toRad(lat2)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+    }
+
+    private toRad(value: number): number {
+        return value * Math.PI / 180;
     }
 
     async toggleScrap(storeId: number, userId: number) {
