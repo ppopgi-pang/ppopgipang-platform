@@ -14,6 +14,8 @@ import { AuthInput } from './dto/auth/auth-input.dto';
 import { StoreTypeResult } from './dto/store-type/store-type-result.dto';
 import { UserSearchHistory } from './dto/user/user-search-history.dto';
 import { ProposalInput } from './dto/proposal/proposal-input.dto';
+import { ProposalResult } from './dto/proposal/proposal-result.dto';
+import { CertificationResult } from './dto/certification/certification-result.dto';
 
 export {
     AdminStoreInput,
@@ -31,5 +33,7 @@ export {
     AuthInput,
     StoreTypeResult,
     UserSearchHistory,
-    ProposalInput
+    ProposalInput,
+    ProposalResult,
+    CertificationResult
 };

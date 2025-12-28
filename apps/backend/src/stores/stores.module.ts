@@ -11,6 +11,11 @@ import { StoreAnalytics } from './entities/store-analytics.entity';
 import { Review } from 'src/reviews/entities/review.entity';
 import { UserStoreStats } from './entities/user-store-stats.entity';
 import { UsersModule } from 'src/users/users.module';
+import { Certification } from 'src/certifications/entities/certification.entity';
+import { CertificationPhoto } from 'src/certifications/entities/certification-photo.entity';
+import { UserStamp } from 'src/gamification/entities/user-stamp.entity';
+import { Stamp } from 'src/gamification/entities/stamp.entity';
+import { GamificationModule } from 'src/gamification/gamification.module';
 
 @Module({
   imports: [
@@ -22,9 +27,14 @@ import { UsersModule } from 'src/users/users.module';
       StoreOpeningHours,
       StoreAnalytics,
       Review,
-      UserStoreStats
+      UserStoreStats,
+      Certification,
+      CertificationPhoto,
+      UserStamp,
+      Stamp
     ]),
     UsersModule,
+    GamificationModule,
   ],
   controllers: [StoresController],
   providers: [StoresService],
