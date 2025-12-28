@@ -1,9 +1,14 @@
 import { Proposal } from "src/proposals/entities/proposal.entity";
 import { Review } from "src/reviews/entities/review.entity";
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { StoreType } from "./store-type.entity";
+import { StoreAnalytics } from "./store-analytics.entity";
+import { StoreFacility } from "./store-facility.entity";
+import { StoreOpeningHours } from "./store-opening-hours.entity";
+import { StorePhoto } from "./store-photo.entity";
 
 @Entity('stores')
+@Index('idx_store_region', ['region1', 'region2'])
 export class Store {
     @PrimaryGeneratedColumn()
     id: number;
@@ -26,12 +31,37 @@ export class Store {
     @Column({ type: 'float', default: 0 })
     averageRating: number;
 
+    @Column({ length: 50, nullable: true })
+    region1: string; // 시/도
+
+    @Column({ length: 50, nullable: true })
+    region2: string; // 구/군
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
+    
     @OneToMany(() => Review, (review) => review.store)
     reviews: Review[];
 
     @OneToMany(() => Proposal, (proposal) => proposal.store)
     proposals: Proposal[];
 
-    @ManyToOne(() => StoreType, (storeType) => storeType.stores)
+    @ManyToOne(() => StoreType, (storeType) => storeType.stores, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'typeId' })
     type: StoreType; 
+
+    @OneToOne(() => StoreAnalytics, (analytics) => analytics.store, { cascade: true })
+    analytics: StoreAnalytics;
+
+    @OneToOne(() => StoreFacility, (facility) => facility.store, { cascade: true })
+    facilities: StoreFacility;
+
+    @OneToMany(() => StorePhoto, (photo) => photo.store)
+    photos: StorePhoto[];
+
+    @OneToMany(() => StoreOpeningHours, (hours) => hours.store)
+    openingHours: StoreOpeningHours[];
 }

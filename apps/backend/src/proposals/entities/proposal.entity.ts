@@ -1,6 +1,6 @@
 import { Store } from "src/stores/entities/store.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('proposals')
 export class Proposal {
@@ -22,10 +22,12 @@ export class Proposal {
     @Column({ type: 'enum', enum: ['pending', 'approved', 'rejected'], default: 'pending' })
     status: 'pending' | 'approved' | 'rejected';
     
-    @ManyToOne(() => User, (user) => user.proposals)
+    @ManyToOne(() => User, (user) => user.proposals, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne(() => Store, (store) => store.proposals)
+    @ManyToOne(() => Store, (store) => store.proposals, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'storeId' })
     store: Store;
 
     @CreateDateColumn()
