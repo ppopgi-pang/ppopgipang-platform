@@ -579,7 +579,7 @@ export class StoresService {
                 photoUrl,
                 cert.occurredAt,
                 cert.user?.nickname || '알 수 없음',
-                cert.user?.profileImageName || null,
+                cert.user?.profileImage || null,
                 0 // likeCount는 나중에 구현
             );
         });
