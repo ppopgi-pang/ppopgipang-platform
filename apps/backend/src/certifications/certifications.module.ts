@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Certification } from './entities/certification.entity';
 import { CertificationPhoto } from './entities/certification-photo.entity';
 import { LootLike } from './entities/loot-like.entity';
-import { UserStoreStats } from './entities/user-store-stats.entity';
 
 @Module({
   imports: [
@@ -11,8 +10,7 @@ import { UserStoreStats } from './entities/user-store-stats.entity';
       Certification,
       CertificationPhoto,
       LootLike,
-      UserStoreStats,
     ])
   ],
 })
-export class CertificationsModule {}
+export class CertificationsModule { }

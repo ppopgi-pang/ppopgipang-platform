@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { StoresService } from './stores.service';
 import { AdminStoreInput, StoreTypeInput } from '@ppopgipang/types';
-import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 
@@ -100,18 +101,52 @@ export class StoresController {
    */
   @Get('search')
   @IgnoreJwtGuard()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '(사용자) 가게 검색 API'
   })
   @ApiQuery({ name: 'keyword', required: true, description: '검색 키워드' })
+  @ApiQuery({ name: 'lat', required: false, description: '위도 (거리순 정렬용)' })
+  @ApiQuery({ name: 'lng', required: false, description: '경도 (거리순 정렬용)' })
   @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
   @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수', example: 20 })
   searchStore(
     @Query('keyword') keyword: string,
+    @Query('lat') lat?: number,
+    @Query('lng') lng?: number,
     @Query('page') page: number = 1,
-    @Query('size') size: number = 20
+    @Query('size') size: number = 20,
+    @Req() req?: any
   ) {
-    return this.storesService.searchStore(keyword, page, size);
+    const userId = req?.user?.userId;
+    return this.storesService.searchStore(keyword, lat, lng, page, size, userId);
+  }
+
+  @Get(':id/summary')
+  @IgnoreJwtGuard()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '(사용자) 가게 요약 정보 (시트용)'
+  })
+  getStoreSummary(
+    @Param('id') id: number,
+    @Req() req?: any
+  ) {
+    const userId = req?.user?.userId;
+    return this.storesService.findStoreSummaryWithUser(id, userId);
+  }
+
+  @Post(':id/scrap')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth('access-token')
+  @ApiOperation({
+    summary: '(사용자) 가게 스크랩 토글'
+  })
+  toggleScrap(
+    @Param('id') id: number,
+    @Req() req: any
+  ) {
+    return this.storesService.toggleScrap(id, req.user.userId);
   }
 
   /**

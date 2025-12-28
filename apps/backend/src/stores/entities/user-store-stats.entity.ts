@@ -16,17 +16,20 @@ export class UserStoreStats {
     @Column({ default: 0 })
     lootCount: number;
 
-    @Column({ nullable: true })
+    @Column({ type: 'datetime', precision: 6, nullable: true })
     lastVisitedAt: Date;
+
+    @Column({ default: false })
+    isScrapped: boolean;
 
     @Column({ type: 'enum', enum: ['unknown', 'visited', 'master'], default: 'unknown' })
     tier: 'unknown' | 'visited' | 'master';
 
-    @ManyToOne(() => User, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.storeStats, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'userId' })
     user: User;
 
-    @ManyToOne(() => Store, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Store, (store) => store.userStats, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'storeId' })
     store: Store;
 }

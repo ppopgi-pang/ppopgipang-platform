@@ -95,4 +95,55 @@ export class ReviewsService {
             total
         );
     }
+
+
+    async findReviewsByStore(storeId: number, page: number, size: number, sort: 'latest' | 'rating') {
+        const order = sort === 'rating' ? { rating: 'DESC' } : { createdAt: 'DESC' } as any;
+        const [reviews, total] = await this.reviewRepository.findAndCount({
+            where: { store: { id: storeId } },
+            skip: (page - 1) * size,
+            take: size,
+            relations: ['user', 'store'],
+            order
+        });
+
+        return new ReviewResult.GetMyReviewsResultDto(
+            reviews.map(review => ({
+                id: review.id,
+                rating: review.rating,
+                content: review.content,
+                images: review.images,
+                user: new AuthResult.UserInfo(review.user),
+                store: new ReviewResult.StoreInfoDto(
+                    review.store.id,
+                    review.store.name,
+                    review.store.address
+                ),
+                createdAt: review.createdAt,
+                updatedAt: review.updatedAt,
+            })),
+            total
+        );
+    }
+
+    async findReviewStats(storeId: number) {
+        const reviews = await this.reviewRepository.find({
+            where: { store: { id: storeId } },
+            select: ['rating']
+        });
+
+        const total = reviews.length;
+        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+        const averageRating = total > 0 ? parseFloat((sum / total).toFixed(1)) : 0;
+
+        const ratingDistribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        reviews.forEach(r => {
+            const rInt = Math.floor(r.rating); // Assuming integer ratings mostly
+            if (ratingDistribution[rInt] !== undefined) {
+                ratingDistribution[rInt]++;
+            }
+        });
+
+        return new ReviewResult.ReviewStatsDto(averageRating, ratingDistribution);
+    }
 }
