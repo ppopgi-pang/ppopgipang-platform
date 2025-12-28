@@ -18,9 +18,8 @@ export class ProposalsController {
   })
   createProposal(
     @Req() req: any,
-    @Body() dto: any // using any because ProposalInput might not be detected yet or strict typing check. Actually explicit is better if available.
+    @Body() dto: ProposalInput.CreateProposalDto
   ) {
-    // dto casting
     return this.proposalsService.createProposal(req.user.userId, dto);
   }
 

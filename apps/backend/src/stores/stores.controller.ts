@@ -5,6 +5,7 @@ import { AdminStoreInput, StoreTypeInput } from '@ppopgipang/types';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
+import { JwtOptionalAuthGuard } from 'src/auth/guards/jwt-optional.guard';
 
 @ApiTags('[Store] 가게')
 @Controller('v1/stores')
@@ -100,8 +101,7 @@ export class StoresController {
    * (사용자) 가게 검색 API
    */
   @Get('search')
-  @IgnoreJwtGuard()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtOptionalAuthGuard)
   @ApiOperation({
     summary: '(사용자) 가게 검색 API'
   })
@@ -123,8 +123,7 @@ export class StoresController {
   }
 
   @Get(':id/summary')
-  @IgnoreJwtGuard()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtOptionalAuthGuard)
   @ApiOperation({
     summary: '(사용자) 가게 요약 정보 (시트용)'
   })
