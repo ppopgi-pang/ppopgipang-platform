@@ -62,7 +62,7 @@ export class TradesService {
             const chatRoom = await this.tradeChatRoomRepository.findOne({
                 where: {
                     tradePost: { id },
-                    buyerId: userId
+                    buyer: { id: userId }
                 }
             });
 
@@ -181,7 +181,7 @@ export class TradesService {
         const existingChatRoom = await this.tradeChatRoomRepository.findOne({
             where: {
                 tradePost: { id: tradeId },
-                buyerId
+                buyer: { id: buyerId }
             },
             relations: ['tradePost']
         });
@@ -196,12 +196,14 @@ export class TradesService {
 
         const chatRoom = this.tradeChatRoomRepository.create({
             tradePost: trade,
-            sellerId: trade.user.id,
-            buyerId
+            seller: trade.user,
+            buyer: { id: buyerId } as User
         });
 
         const buyer = await this.userRepository.findOne({ where: { id: buyerId } });
         const savedChatRoom = await this.tradeChatRoomRepository.save(chatRoom);
+        savedChatRoom.sellerId = trade.user.id;
+        savedChatRoom.buyerId = buyerId;
         return new TradeChatResult.TradeChatRoomDto(savedChatRoom, { seller: trade.user, buyer });
     }
 
@@ -292,8 +294,8 @@ export class TradesService {
     async getMyTradeChatRooms(userId: number): Promise<TradeChatResult.TradeChatRoomListDto> {
         const chatRooms = await this.tradeChatRoomRepository.find({
             where: [
-                { sellerId: userId },
-                { buyerId: userId }
+                { seller: { id: userId } },
+                { buyer: { id: userId } }
             ],
             relations: ['tradePost'],
             order: { createdAt: 'DESC' }
