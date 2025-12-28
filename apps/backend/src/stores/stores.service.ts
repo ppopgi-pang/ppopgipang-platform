@@ -274,7 +274,14 @@ export class StoresService {
         return { store, thumbnail };
     }
 
-    // Helper to be used by controller which will construct DTO
+    /**
+     * (사용자) 가게 요약 정보 조회 (Bottom Sheet용)
+     * @param id 가게 ID
+     * @param userId 사용자 ID (선택)
+     * @param lat 위도 (거리 계산용, 선택)
+     * @param lng 경도 (거리 계산용, 선택)
+     * @returns AI 득템 지수, 나의 랭킹, 방문 통계 등을 포함한 가게 요약 정보
+     */
     async findStoreSummaryWithUser(id: number, userId?: number, lat?: number, lng?: number) {
         const store = await this.storeRepository.findOne({
             where: { id },
@@ -380,6 +387,8 @@ export class StoresService {
 
     /**
      * 득템 지수를 레벨 문자열로 변환
+     * @param prob 득템 확률 (0-100)
+     * @returns '매우 높음', '높음', '보통', '낮음', '매우 낮음'
      */
     private getSuccessLevel(prob: number): string {
         if (prob >= 80) return '매우 높음';
@@ -391,6 +400,9 @@ export class StoresService {
 
     /**
      * 나의 랭킹 계산 (lootCount 기준)
+     * @param storeId 가게 ID
+     * @param userId 사용자 ID
+     * @returns 해당 가게에서 사용자의 득템 랭킹 (1위부터 시작)
      */
     private async calculateUserRanking(storeId: number, userId: number): Promise<number> {
         const userStat = await this.userStoreStatsRepository.findOne({
@@ -465,8 +477,10 @@ export class StoresService {
     }
 
     /**
-     * 가게 상세 정보 조회 (확장 버전)
-     * AI 분석, 퀘스트, 시설 정보 등 포함
+     * (사용자) 가게 상세 정보 조회 (확장 버전)
+     * @param id 가게 ID
+     * @param userId 사용자 ID (선택)
+     * @returns AI 분석, 퀘스트 정보, 시설 정보, 운영 시간, 리뷰 등을 포함한 가게 상세 정보
      */
     async findStoreDetailExtended(id: number, userId?: number): Promise<UserStoreResult.StoreDetailExtendedDto> {
         const store = await this.storeRepository.findOne({
@@ -544,7 +558,12 @@ export class StoresService {
     }
 
     /**
-     * 가게 인증샷 갤러리 조회
+     * (사용자) 가게 인증샷 갤러리 조회
+     * @param storeId 가게 ID
+     * @param page 페이지 번호 (기본값: 1)
+     * @param size 페이지 크기 (기본값: 20)
+     * @param sort 정렬 방식 ('recent' | 'popular', 기본값: 'recent')
+     * @returns 페이지네이션된 득템 인증샷 목록
      */
     async getStoreGallery(
         storeId: number,
@@ -593,6 +612,9 @@ export class StoresService {
 
     /**
      * 최근 리뷰 조회
+     * @param storeId 가게 ID
+     * @param limit 조회할 리뷰 개수
+     * @returns 최근 리뷰 목록
      */
     private async getRecentReviews(storeId: number, limit: number): Promise<ReviewResult.ReviewDto[]> {
         const reviews = await this.reviewRepository.find({
@@ -620,6 +642,9 @@ export class StoresService {
 
     /**
      * 나의 가게 상태 조회
+     * @param storeId 가게 ID
+     * @param userId 사용자 ID
+     * @returns 방문 횟수, 득템 횟수, 스크랩 여부, 티어, 획득 도장 등의 정보
      */
     private async getMyStoreStatus(storeId: number, userId: number): Promise<UserStoreResult.MyStoreStatusDto> {
         const stat = await this.userStoreStatsRepository.findOne({
@@ -654,6 +679,8 @@ export class StoresService {
 
     /**
      * hotTimeJson 파싱
+     * @param hotTimeJson StoreAnalytics의 hotTimeJson 원본 데이터
+     * @returns 시간대별 득템 확률 배열
      */
     private parseHotTimeData(hotTimeJson: any): UserStoreResult.HotTimeSlotDto[] {
         if (!hotTimeJson || !Array.isArray(hotTimeJson)) {
@@ -668,6 +695,8 @@ export class StoresService {
 
     /**
      * 시간대별 최적 시간 메시지 생성
+     * @param hotTimeJson StoreAnalytics의 hotTimeJson 원본 데이터
+     * @returns "오후 7시~9시가 기회입니다!" 형식의 추천 메시지
      */
     private getBestTimeMessage(hotTimeJson: any): string {
         if (!hotTimeJson || !Array.isArray(hotTimeJson) || hotTimeJson.length === 0) {
@@ -690,6 +719,8 @@ export class StoresService {
 
     /**
      * 결제 방법 한글 변환
+     * @param methods StoreFacility의 paymentMethods 배열 (예: ['cash', 'card', 'qr'])
+     * @returns 한글 변환된 결제 방법 배열 (예: ['현금', '카드', 'QR결제'])
      */
     private translatePaymentMethods(methods: string[] | null): string[] {
         if (!methods) return [];
@@ -705,6 +736,8 @@ export class StoresService {
 
     /**
      * 운영 시간 포맷팅
+     * @param openingHours StoreOpeningHours 엔티티 배열
+     * @returns 요일명(한글)을 포함한 운영 시간 DTO 배열
      */
     private formatOpeningHours(openingHours: any[]): UserStoreResult.OpeningHoursDto[] {
         if (!openingHours) return [];
