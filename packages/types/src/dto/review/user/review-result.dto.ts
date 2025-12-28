@@ -53,4 +53,14 @@ export namespace ReviewResult {
             this.total = total;
         }
     }
+
+    export class ReviewStatsDto {
+        averageRating: number;
+        ratingDistribution: { [key: number]: number }; // 1: count, 2: count ...
+
+        constructor(averageRating: number, ratingDistribution: { [key: number]: number }) {
+            this.averageRating = averageRating;
+            this.ratingDistribution = ratingDistribution;
+        }
+    }
 }
