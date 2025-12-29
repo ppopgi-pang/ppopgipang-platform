@@ -68,7 +68,7 @@ export default function EditJobPostingForm({ id, onSuccess, onCancel }: EditJobP
 
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold mb-4">채용 공고 수정</h2>
+            <h2 className="text-lg font-bold mb-4">모집 공고 수정</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
                     <label className="block text-sm font-medium text-slate-600">제목</label>

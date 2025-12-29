@@ -22,7 +22,7 @@ export default function CreateJobPostingForm({ onSuccess, onCancel }: CreateJobP
         mutationFn: createJobPosting,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["admin-job-postings"] });
-            alert("채용 공고가 생성되었습니다.");
+            alert("모집 공고가 생성되었습니다.");
             onSuccess();
         },
         onError: () => {
@@ -42,7 +42,7 @@ export default function CreateJobPostingForm({ onSuccess, onCancel }: CreateJobP
 
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold mb-4">채용 공고 생성</h2>
+            <h2 className="text-lg font-bold mb-4">모집 공고 생성</h2>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
                     <label className="block text-sm font-medium text-slate-600">제목</label>

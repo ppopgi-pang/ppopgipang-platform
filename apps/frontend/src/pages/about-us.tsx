@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
+import { useEffect } from "react";
 import type { CareerResult } from "@ppopgipang/types";
 import { getJobPostings } from "@/shared/api/careers";
+import { applyPageMeta, resetPageMeta } from "@/shared/lib/page-meta";
 
 const formatJobDate = (value?: string | Date) => {
 	if (!value) return "";
@@ -17,10 +19,20 @@ const getJobMeta = (jobPosting: CareerResult.JobPostingDto) =>
 const getJobSummary = (jobPosting: CareerResult.JobPostingDto) => {
 	const description = jobPosting.description?.trim();
 	if (description) return description;
-	return "상세 설명은 채용 공고에서 확인할 수 있어요.";
+	return "상세 설명은 모집 공고에서 확인할 수 있어요.";
 };
 
 function AboutUsPage() {
+	useEffect(() => {
+		applyPageMeta({
+			title: "뽑기팡팀 소개 | 뽑기팡",
+			description: "뽑기팡 팀 소개와 서비스 방향, 그리고 현재 진행 중인 채용 공고를 확인해 보세요.",
+			url: "/about-us",
+		});
+
+		return () => resetPageMeta();
+	}, []);
+
 	const scrollToSection = (id: string) => {
 		const element = document.getElementById(id);
 		if (element) {
@@ -91,8 +103,12 @@ function AboutUsPage() {
 			<header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur">
 				<div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
 					<div className="flex items-center gap-3">
-						<span className="h-9 w-9 rounded-xl bg-sky-600" aria-hidden="true" />
-						<span className="text-lg font-semibold text-slate-900">PpopgiPang</span>
+						<img
+							src="/icons/ppopgipang-icon.png"
+							alt="뽑기팡"
+							className="h-9 w-9 rounded-xl object-contain"
+						/>
+						<span className="text-lg font-semibold text-slate-900">뽑기팡팀</span>
 					</div>
 					<nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
 						<button
@@ -114,26 +130,14 @@ function AboutUsPage() {
 							팀원
 						</button>
 						<button
-							onClick={() => scrollToSection("roadmap")}
-							className="transition-colors hover:text-sky-600"
-						>
-							로드맵
-						</button>
-						<button
 							onClick={() => scrollToSection("careers")}
 							className="transition-colors hover:text-sky-600"
 						>
-							채용
-						</button>
-						<button
-							onClick={() => scrollToSection("join-us")}
-							className="transition-colors hover:text-sky-600"
-						>
-							합류
+							모집
 						</button>
 					</nav>
 					<button
-						onClick={() => scrollToSection("join-us")}
+						onClick={() => scrollToSection("careers")}
 						className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-700"
 					>
 						함께하기
@@ -165,7 +169,7 @@ function AboutUsPage() {
 							뽑기팡이 하는 일 보기
 						</button>
 						<button
-							onClick={() => scrollToSection("join-us")}
+							onClick={() => scrollToSection("careers")}
 							className="rounded-xl border border-slate-300 bg-white/80 px-8 py-3 text-base font-semibold text-slate-700 transition hover:border-slate-400"
 						>
 							함께하기
@@ -308,6 +312,32 @@ function AboutUsPage() {
 				</div>
 			</section>
 
+			<section id="team" className="w-full bg-slate-50 py-20">
+				<div className="mx-auto max-w-6xl px-6 lg:px-10">
+					<h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">우리는 이런 팀</h2>
+					<p className="mt-4 text-center text-lg text-slate-600">
+						우리는 역할보다 문제 해결을 우선합니다. 작지만 빠르고, 만들면서 배웁니다.
+					</p>
+					<div className="mt-12 rounded-3xl border border-slate-100 bg-white p-10 shadow-sm">
+						<h3 className="text-xl font-semibold text-slate-900">우리가 중요하게 생각하는 것</h3>
+						<div className="mt-6 grid gap-4 md:grid-cols-2">
+							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+								과장하지 않기
+							</span>
+							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+								데이터를 남기는 실행
+							</span>
+							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+								사용자 루프를 끝까지 완성하기
+							</span>
+							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+								피드백을 빨리 반영하기
+							</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			<section className="w-full bg-white py-20">
 				<div className="mx-auto max-w-6xl px-6 lg:px-10">
 					<h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">우리가 실행하는 방식</h2>
@@ -354,32 +384,6 @@ function AboutUsPage() {
 									<span>Monorepo</span>
 								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section id="team" className="w-full bg-slate-50 py-20">
-				<div className="mx-auto max-w-6xl px-6 lg:px-10">
-					<h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">우리는 이런 팀</h2>
-					<p className="mt-4 text-center text-lg text-slate-600">
-						우리는 역할보다 문제 해결을 우선합니다. 작지만 빠르고, 만들면서 배웁니다.
-					</p>
-					<div className="mt-12 rounded-3xl border border-slate-100 bg-white p-10 shadow-sm">
-						<h3 className="text-xl font-semibold text-slate-900">우리가 중요하게 생각하는 것</h3>
-						<div className="mt-6 grid gap-4 md:grid-cols-2">
-							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-								과장하지 않기
-							</span>
-							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-								데이터를 남기는 실행
-							</span>
-							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-								사용자 루프를 끝까지 완성하기
-							</span>
-							<span className="rounded-full border border-slate-200 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-								피드백을 빨리 반영하기
-							</span>
 						</div>
 					</div>
 				</div>
@@ -434,54 +438,10 @@ function AboutUsPage() {
 				</div>
 			</section>
 
-			<section id="roadmap" className="w-full bg-white py-20">
-				<div className="mx-auto max-w-6xl px-6 lg:px-10">
-					<h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">다음 단계</h2>
-					<p className="mt-4 text-center text-lg text-slate-600">
-						지금은 '루프를 굴리는 MVP'에 집중합니다. 데이터가 쌓이면 AI는 그다음입니다.
-					</p>
-					<div className="mt-12 space-y-6">
-						<div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-								<div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-600 text-sm font-semibold text-white">
-									Now
-								</div>
-								<div>
-									<h3 className="text-xl font-semibold text-slate-900">단기: MVP 루프 고도화</h3>
-									<p className="mt-2 text-slate-600">인증/방문 데이터 축적, 리텐션 지표 확보</p>
-								</div>
-							</div>
-						</div>
-						<div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-								<div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-500 text-sm font-semibold text-white">
-									Next
-								</div>
-								<div>
-									<h3 className="text-xl font-semibold text-slate-900">중기: 데이터 기반 추천</h3>
-									<p className="mt-2 text-slate-600">득템 신호등(추천), 타임슬롯 기반 힌트</p>
-								</div>
-							</div>
-						</div>
-						<div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
-							<div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-								<div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-400 text-sm font-semibold text-white">
-									Later
-								</div>
-								<div>
-									<h3 className="text-xl font-semibold text-slate-900">장기: 자산화 & 거래</h3>
-									<p className="mt-2 text-slate-600">득템 자산화, 시세 추정, 안전 거래 강화</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
 			<section id="careers" className="w-full bg-white py-20">
 				<div className="mx-auto max-w-6xl px-6 lg:px-10">
 					<div className="text-center">
-						<h2 className="text-3xl font-bold text-slate-900 md:text-4xl">채용 공고</h2>
+						<h2 className="text-3xl font-bold text-slate-900 md:text-4xl">모집 공고</h2>
 						<p className="mt-4 text-lg text-slate-600">
 							뽑기팡과 함께 서비스의 루프를 완성할 동료를 찾고 있습니다.
 						</p>
@@ -509,13 +469,13 @@ function AboutUsPage() {
 							: jobPostingsQuery.isError
 								? (
 										<div className="rounded-3xl border border-rose-100 bg-rose-50 p-6 text-sm text-rose-600 md:col-span-2">
-											채용 공고를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+											모집 공고를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
 										</div>
 								  )
 								: jobPostings.length === 0
 									? (
 											<div className="rounded-3xl border border-slate-100 bg-slate-50 p-6 text-sm text-slate-600 md:col-span-2">
-												현재 오픈된 채용 공고가 없습니다.
+												현재 오픈된 모집 공고가 없습니다.
 											</div>
 									  )
 									: jobPostings.map((jobPosting: any) => {
@@ -570,23 +530,23 @@ function AboutUsPage() {
 					</div>
 					{jobPostings.length > 0 && totalJobPostings > jobPostings.length && (
 						<p className="mt-6 text-center text-sm text-slate-500">
-							총 {totalJobPostings}개의 채용 공고 중 일부만 표시하고 있어요.
+							총 {totalJobPostings}개의 모집 공고 중 일부만 표시하고 있어요.
 						</p>
 					)}
 					<div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-						<button className="rounded-xl bg-sky-600 px-8 py-3 text-base font-semibold text-white transition hover:bg-sky-700">
+						<a
+							href="mailto:admin@ppopgi.me"
+							className="rounded-xl bg-sky-600 px-8 py-3 text-base font-semibold text-white transition hover:bg-sky-700"
+						>
 							합류 문의하기
-						</button>
-						<button className="rounded-xl border border-slate-300 bg-white px-8 py-3 text-base font-semibold text-slate-700 transition hover:border-slate-400">
-							커피챗 요청하기
-						</button>
+						</a>
 					</div>
 				</div>
 			</section>
 
 			<footer className="bg-slate-900 py-12 text-white">
 				<div className="mx-auto max-w-6xl px-6 text-center lg:px-10">
-					<p className="text-sm text-slate-300">© 2025 뽑기팡. All rights reserved.</p>
+					<p className="text-sm text-slate-300">© 2025 뽑기팡팀. All rights reserved.</p>
 				</div>
 			</footer>
 		</div>

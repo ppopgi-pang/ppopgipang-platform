@@ -37,7 +37,7 @@ export default function JobPostingList({ onEdit }: JobPostingListProps) {
 
     return (
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-bold mb-4">채용 공고 목록</h2>
+            <h2 className="text-lg font-bold mb-4">모집 공고 목록</h2>
             <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-slate-600">
                     <thead className="bg-slate-50 text-xs uppercase text-slate-500">
@@ -90,7 +90,7 @@ export default function JobPostingList({ onEdit }: JobPostingListProps) {
                         {!data?.items.length && (
                             <tr>
                                 <td colSpan={7} className="px-4 py-8 text-center text-slate-500">
-                                    등록된 채용 공고가 없습니다.
+                                    등록된 모집 공고가 없습니다.
                                 </td>
                             </tr>
                         )}

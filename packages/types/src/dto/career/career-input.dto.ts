@@ -3,7 +3,7 @@ import { IsBoolean, IsEmail, IsMobilePhone, IsNotEmpty, IsNumber, IsOptional, Is
 
 export namespace CareerInput {
     export class CreateJobPostingDto {
-        @ApiProperty({ description: '채용 공고 제목', example: '백엔드 개발자 채용' })
+        @ApiProperty({ description: '모집 공고 제목', example: '백엔드 개발자 모집' })
         @IsString()
         @IsNotEmpty()
         title: string;
@@ -30,7 +30,7 @@ export namespace CareerInput {
     }
 
     export class UpdateJobPostingDto {
-        @ApiProperty({ description: '채용 공고 제목', example: '백엔드 개발자 채용', required: false })
+        @ApiProperty({ description: '모집 공고 제목', example: '백엔드 개발자 모집', required: false })
         @IsOptional()
         @IsString()
         title?: string;
@@ -62,7 +62,7 @@ export namespace CareerInput {
     }
 
     export class CreateApplicationDto {
-        @ApiProperty({ description: '채용 공고 ID', example: 1 })
+        @ApiProperty({ description: '모집 공고 ID', example: 1 })
         @IsNumber()
         @IsNotEmpty()
         jobPostingId: number;

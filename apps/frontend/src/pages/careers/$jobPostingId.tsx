@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import type { CareerInput, CareerResult, FileResult } from "@ppopgipang/types";
 import { createApplication, getJobPosting, uploadResumeFile } from "@/shared/api/careers";
+import { applyPageMeta, getMetaDescription, resetPageMeta } from "@/shared/lib/page-meta";
 
 const formatJobDate = (value?: string | Date) => {
 	if (!value) return "";
@@ -31,11 +32,39 @@ function JobPostingDetailPage() {
 		enabled: Number.isFinite(parsedId),
 	});
 
+	useEffect(() => {
+		if (!Number.isFinite(parsedId)) {
+			applyPageMeta({
+				title: "모집 공고 | 뽑기팡",
+				description: "유효하지 않은 모집 공고입니다.",
+				url: "/careers",
+			});
+
+			return () => resetPageMeta();
+		}
+
+		const fallbackDescription = "뽑기팡 팀의 채용 공고를 확인하고 지원해 보세요.";
+		const jobPosting = jobPostingQuery.data;
+		const title = jobPosting ? `${jobPosting.title} | 뽑기팡 채용` : "뽑기팡 채용 | 모집 공고";
+		const description = jobPosting
+			? getMetaDescription(jobPosting.description, fallbackDescription)
+			: fallbackDescription;
+		const url = jobPosting ? `/careers/${jobPosting.id}` : `/careers/${parsedId}`;
+
+		applyPageMeta({
+			title,
+			description,
+			url,
+		});
+
+		return () => resetPageMeta();
+	}, [parsedId, jobPostingQuery.data]);
+
 	if (!Number.isFinite(parsedId)) {
 		return (
 			<div className="min-h-screen w-full bg-slate-50 text-slate-900">
 				<div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-20 text-center">
-					<p className="text-lg font-semibold text-slate-700">유효하지 않은 채용 공고입니다.</p>
+					<p className="text-lg font-semibold text-slate-700">유효하지 않은 모집 공고입니다.</p>
 					<Link
 						to="/about-us"
 						className="mt-4 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:text-sky-600"
@@ -52,7 +81,7 @@ function JobPostingDetailPage() {
 			<div className="min-h-screen w-full bg-slate-50 text-slate-900">
 				<div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-20 text-center">
 					<div className="h-10 w-10 animate-spin rounded-full border-4 border-sky-500 border-t-transparent" />
-					<p className="mt-4 text-sm text-slate-500">채용 공고를 불러오는 중입니다.</p>
+					<p className="mt-4 text-sm text-slate-500">모집 공고를 불러오는 중입니다.</p>
 				</div>
 			</div>
 		);
@@ -62,7 +91,7 @@ function JobPostingDetailPage() {
 		return (
 			<div className="min-h-screen w-full bg-slate-50 text-slate-900">
 				<div className="mx-auto flex max-w-3xl flex-col items-center px-6 py-20 text-center">
-					<p className="text-lg font-semibold text-slate-700">채용 공고를 불러오지 못했습니다.</p>
+					<p className="text-lg font-semibold text-slate-700">모집 공고를 불러오지 못했습니다.</p>
 					<p className="mt-2 text-sm text-slate-500">잠시 후 다시 시도해 주세요.</p>
 					<Link
 						to="/about-us"
@@ -91,7 +120,7 @@ function JobPostingDetailPage() {
 					<Link to="/about-us" className="text-sm font-semibold text-slate-600 transition hover:text-sky-600">
 						← 소개 페이지
 					</Link>
-					<span className="text-sm font-semibold text-slate-500">채용 공고</span>
+					<span className="text-sm font-semibold text-slate-500">모집 공고</span>
 				</div>
 			</header>
 
@@ -328,7 +357,7 @@ function ApplicationModal({ jobPostingId, jobTitle, isOpen, onClose, onSuccess }
 							type="tel"
 							value={formData.phone}
 							onChange={handleChange("phone")}
-							placeholder="010-1234-5678"
+							placeholder="+82-010-1234-5678"
 							className="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
 						/>
 					</div>

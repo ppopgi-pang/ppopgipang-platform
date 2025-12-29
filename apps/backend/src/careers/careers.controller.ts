@@ -6,12 +6,12 @@ import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 
 @Controller('v1/careers')
-@ApiTags('[Career] 채용')
+@ApiTags('[Career] 모집')
 export class CareersController {
     constructor(private readonly careersService: CareersService) { }
 
     @Post('job-postings')
-    @ApiOperation({ summary: '(관리자) 채용 공고 생성' })
+    @ApiOperation({ summary: '(관리자) 모집 공고 생성' })
     @ApiBody({ type: CareerInput.CreateJobPostingDto })
     createJobPosting(@Body() dto: CareerInput.CreateJobPostingDto) {
         return this.careersService.createJobPosting(dto);
@@ -19,7 +19,7 @@ export class CareersController {
 
     @Get('job-postings')
     @IgnoreJwtGuard()
-    @ApiOperation({ summary: '(공통) 채용 공고 목록 조회' })
+    @ApiOperation({ summary: '(공통) 모집 공고 목록 조회' })
     @ApiQuery({ name: 'isActive', required: false, description: '활성 상태 필터 (true/false)' })
     @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
     @ApiQuery({ name: 'size', required: false, description: '한 페이지당 개수', example: 20 })
@@ -34,14 +34,14 @@ export class CareersController {
 
     @Get('job-postings/:id')
     @IgnoreJwtGuard()
-    @ApiOperation({ summary: '(사용자) 채용 공고 상세 조회' })
+    @ApiOperation({ summary: '(사용자) 모집 공고 상세 조회' })
     getJobPosting(@Param('id', ParseIntPipe) id: number) {
         return this.careersService.getJobPosting(id);
     }
 
     @Put('job-postings/:id')
     @IsAdmin(true)
-    @ApiOperation({ summary: '(관리자) 채용 공고 수정' })
+    @ApiOperation({ summary: '(관리자) 모집 공고 수정' })
     @ApiBody({ type: CareerInput.UpdateJobPostingDto })
     updateJobPosting(
         @Param('id', ParseIntPipe) id: number,
@@ -52,7 +52,7 @@ export class CareersController {
 
     @Delete('job-postings/:id')
     @IsAdmin(true)
-    @ApiOperation({ summary: '(관리자) 채용 공고 삭제' })
+    @ApiOperation({ summary: '(관리자) 모집 공고 삭제' })
     deleteJobPosting(@Param('id', ParseIntPipe) id: number) {
         return this.careersService.deleteJobPosting(id);
     }
@@ -68,7 +68,7 @@ export class CareersController {
     @Get('applications')
     @IsAdmin(true)
     @ApiOperation({ summary: '(관리자) 지원서 목록 조회' })
-    @ApiQuery({ name: 'jobPostingId', required: false, description: '채용 공고 ID 필터' })
+    @ApiQuery({ name: 'jobPostingId', required: false, description: '모집 공고 ID 필터' })
     @ApiQuery({ name: 'status', required: false, description: '지원서 상태 필터' })
     @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
     @ApiQuery({ name: 'size', required: false, description: '한 페이지당 개수', example: 20 })

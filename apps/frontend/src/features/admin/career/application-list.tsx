@@ -26,7 +26,7 @@ export default function ApplicationList({ onViewDetail }: ApplicationListProps) 
                         <tr>
                             <th className="px-4 py-3">ID</th>
                             <th className="px-4 py-3">지원자</th>
-                            <th className="px-4 py-3">채용 공고</th>
+                            <th className="px-4 py-3">모집 공고</th>
                             <th className="px-4 py-3">상태</th>
                             <th className="px-4 py-3">제출일</th>
                             <th className="px-4 py-3">관리</th>
