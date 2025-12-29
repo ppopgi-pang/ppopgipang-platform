@@ -49,6 +49,9 @@ import { CertificationsModule } from './certifications/certifications.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { ModerationModule } from './moderation/moderation.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { CareersModule } from './careers/careers.module';
+import { JobPosting } from './careers/entities/job-posting.entity';
+import { Application } from './careers/entities/application.entity';
 
 @Module({
   imports: [
@@ -109,6 +112,8 @@ import { NotificationsModule } from './notifications/notifications.module';
           ModerationAction,
           Notification,
           PushSubscription,
+          JobPosting,
+          Application,
         ],
         synchronize: true
       }),
@@ -141,6 +146,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     ModerationModule,
 
     NotificationsModule,
+
+    CareersModule,
   ],
   controllers: [],
   providers: [

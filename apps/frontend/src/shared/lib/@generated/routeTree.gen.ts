@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../../../pages/__root'
+import { Route as AboutUsRouteImport } from './../../../pages/about-us'
 import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as CareersJobPostingIdRouteImport } from './../../../pages/careers/$jobPostingId'
 import { Route as AdminLoginRouteImport } from './../../../pages/admin/login'
 import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_header_layout/my-reviews'
 import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
@@ -26,6 +28,11 @@ import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../
 import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
 import { Route as Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport } from './../../../pages/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
 
+const AboutUsRoute = AboutUsRouteImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -48,6 +55,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   id: '/stores/$storeId',
   path: '/stores/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersJobPostingIdRoute = CareersJobPostingIdRouteImport.update({
+  id: '/careers/$jobPostingId',
+  path: '/careers/$jobPostingId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -114,8 +126,10 @@ const Header_layoutTradesTradeIdChatRoomChatRoomIdRoute =
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -131,8 +145,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -150,8 +166,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -169,8 +187,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/about-us'
     | '/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -186,8 +206,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/about-us'
     | '/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -204,8 +226,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_header_layout'
     | '/about'
+    | '/about-us'
     | '/_header_layout/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin/'
     | '/login/'
@@ -223,7 +247,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AboutUsRoute: typeof AboutUsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  CareersJobPostingIdRoute: typeof CareersJobPostingIdRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -232,6 +258,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -265,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$storeId'
       fullPath: '/stores/$storeId'
       preLoaderRoute: typeof StoresStoreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/$jobPostingId': {
+      id: '/careers/$jobPostingId'
+      path: '/careers/$jobPostingId'
+      fullPath: '/careers/$jobPostingId'
+      preLoaderRoute: typeof CareersJobPostingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -378,7 +418,9 @@ const Header_layoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AboutUsRoute: AboutUsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  CareersJobPostingIdRoute: CareersJobPostingIdRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
