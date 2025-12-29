@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { UserProgress } from './entities/user-progress.entity';
 import { UserStamp } from './entities/user-stamp.entity';
 import { Stamp } from './entities/stamp.entity';
@@ -198,7 +198,7 @@ export class GamificationService {
      * 배지 달성 체크 & 지급
      */
     private async checkAndGrantBadges(
-        manager: any,
+        manager: EntityManager,
         userId: number,
         type: 'loot' | 'checkin'
     ): Promise<CertificationResult.NewBadgeDto[]> {
@@ -224,14 +224,15 @@ export class GamificationService {
                 continue;
             }
 
-            let shouldGrant = false;
+            let shouldGrant: boolean | null = false;
 
             // 배지별 조건 체크
             switch (badgeCode) {
                 case 'FIRST_LOOT':
                     if (type === 'loot') {
                         const lootCount = await manager.count(Certification, {
-                            where: { userId, type: 'loot' }
+                            where: { user: { id: userId }, type: 'loot' },
+                            relations: ['User']
                         });
                         shouldGrant = lootCount === 1;
                     }
@@ -240,7 +241,8 @@ export class GamificationService {
                 case 'FIRST_CHECKIN':
                     if (type === 'checkin') {
                         const checkinCount = await manager.count(Certification, {
-                            where: { userId, type: 'checkin' }
+                            where: { user: { id: userId }, type: 'checkin' },
+                            relations: ['User']
                         });
                         shouldGrant = checkinCount === 1;
                     }
@@ -248,7 +250,8 @@ export class GamificationService {
 
                 case 'LOOT_10':
                     const lootCount = await manager.count(Certification, {
-                        where: { userId, type: 'loot' }
+                        where: { user: { id : userId }, type: 'loot' },
+                        relations: ['User']
                     });
                     shouldGrant = lootCount >= 10;
                     break;
