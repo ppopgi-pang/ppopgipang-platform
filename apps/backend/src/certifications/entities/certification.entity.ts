@@ -1,8 +1,10 @@
 import { Store } from "src/stores/entities/store.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { CertificationPhoto } from "./certification-photo.entity";
 import { LootLike } from "./loot-like.entity";
+import { LootTag } from "./loot-tag.entity";
+import { CheckinReasonPreset } from "./checkin-reason-preset.entity";
 
 @Entity('certifications')
 @Index(['store', 'occurredAt'])
@@ -26,6 +28,12 @@ export class Certification {
     @Column({ type: 'datetime', precision: 6 })
     occurredAt: Date;
 
+    @Column({ length: 200, nullable: true })
+    comment: string; // 한줄평 (득템용)
+
+    @Column({ type: 'enum', enum: ['good', 'normal', 'bad'], nullable: true })
+    rating: 'good' | 'normal' | 'bad'; // 상태 평가 (체크인용)
+
     @CreateDateColumn()
     createdAt: Date;
 
@@ -42,4 +50,20 @@ export class Certification {
 
     @OneToMany(() => LootLike, (like) => like.certification)
     likes: LootLike[];
+
+    @ManyToMany(() => LootTag, tag => tag.certifications)
+    @JoinTable({
+        name: 'certification_tags',
+        joinColumn: { name: 'certificationId' },
+        inverseJoinColumn: { name: 'tagId' }
+    })
+    tags: LootTag[];
+
+    @ManyToMany(() => CheckinReasonPreset, reason => reason.certifications)
+    @JoinTable({
+        name: 'certification_reasons',
+        joinColumn: { name: 'certificationId' },
+        inverseJoinColumn: { name: 'reasonId' }
+    })
+    reasons: CheckinReasonPreset[];
 }

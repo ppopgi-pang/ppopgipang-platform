@@ -150,14 +150,63 @@ export class StoresService {
     }
 
     /**
+     * (사용자) 가장 가까운 가게 1개 조회
+     * @param latitude 현재 위도
+     * @param longitude 현재 경도
+     * @param radius 검색 반경 (기본: 100m)
+     * @returns 가장 가까운 가게 1개 또는 null
+     */
+    async findNearestStore(latitude: number, longitude: number, radius = 100) {
+        const qb = this.storeRepository.createQueryBuilder('s')
+            .leftJoinAndSelect('s.type', 'st')
+            .leftJoinAndSelect('s.photos', 'sp')
+            .addSelect(
+                `ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(s.longitude, s.latitude))`,
+                'distance'
+            )
+            .where(`ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(s.longitude, s.latitude)) <= :radius`, {
+                latitude,
+                longitude,
+                radius
+            })
+            .setParameters({ latitude, longitude, radius })
+            .orderBy('distance', 'ASC')
+            .limit(1);
+
+        const { entities, raw } = await qb.getRawAndEntities();
+
+        if (entities.length === 0) {
+            return { success: true, data: null };
+        }
+
+        const store = entities[0];
+        const distance = Math.round(raw[0].distance);
+        const thumbnail = store.photos?.find(p => p.type === 'cover')?.imageName || store.photos?.[0]?.imageName || null;
+
+        return {
+            success: true,
+            data: {
+                id: store.id,
+                name: store.name,
+                address: store.address,
+                latitude: Number(store.latitude),
+                longitude: Number(store.longitude),
+                distance,
+                thumbnailUrl: thumbnail,
+                category: store.type?.name || null
+            }
+        };
+    }
+
+    /**
      * (사용자) 가게 목록 반경 검색
-     * @param latitude 
-     * @param longitude 
-     * @param radius 
-     * @param page 
-     * @param size 
-     * @param keyword 
-     * @returns 
+     * @param latitude
+     * @param longitude
+     * @param radius
+     * @param page
+     * @param size
+     * @param keyword
+     * @returns
      */
     async findNearByStores(latitude: number, longitude: number, radius = 3000, page = 1, size = 20, keyword?: string) {
         const qb = this.storeRepository.createQueryBuilder('s')
