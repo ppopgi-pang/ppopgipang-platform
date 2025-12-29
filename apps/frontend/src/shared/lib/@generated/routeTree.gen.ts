@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../../../pages/__root'
+import { Route as AboutUsRouteImport } from './../../../pages/about-us'
 import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
@@ -26,6 +27,11 @@ import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../
 import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
 import { Route as Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport } from './../../../pages/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
 
+const AboutUsRoute = AboutUsRouteImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -114,6 +120,7 @@ const Header_layoutTradesTradeIdChatRoomChatRoomIdRoute =
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_header_layout': typeof Header_layoutRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/about-us'
     | '/my-reviews'
     | '/admin/login'
     | '/stores/$storeId'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/about-us'
     | '/my-reviews'
     | '/admin/login'
     | '/stores/$storeId'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_header_layout'
     | '/about'
+    | '/about-us'
     | '/_header_layout/my-reviews'
     | '/admin/login'
     | '/stores/$storeId'
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AboutUsRoute: typeof AboutUsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -232,6 +245,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -378,6 +398,7 @@ const Header_layoutRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AboutUsRoute: AboutUsRoute,
   AdminLoginRoute: AdminLoginRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
