@@ -13,14 +13,34 @@ export class StoresController {
   constructor(private readonly storesService: StoresService) { }
 
   /**
+   * (사용자) 가장 가까운 가게 1개 조회
+   */
+  @Get('nearest')
+  @IgnoreJwtGuard()
+  @ApiOperation({
+    summary: '(사용자) 가장 가까운 가게 1개 조회',
+    description: 'GPS 기반으로 가장 가까운 가게 1개를 반환합니다. 반경 내 가게가 없으면 null 반환.'
+  })
+  @ApiQuery({ name: 'latitude', required: true, description: '현재 위도' })
+  @ApiQuery({ name: 'longitude', required: true, description: '현재 경도' })
+  @ApiQuery({ name: 'radius', required: false, description: '검색 반경 (미터, 기본: 100m)', example: 100 })
+  findNearestStore(
+    @Query('latitude') latitude: number,
+    @Query('longitude') longitude: number,
+    @Query('radius') radius?: number,
+  ) {
+    return this.storesService.findNearestStore(latitude, longitude, radius);
+  }
+
+  /**
    * (사용자) 가게 목록 - 반경 검색
-   * @param latitude 
-   * @param longitude 
-   * @param radius 
-   * @param page 
-   * @param size 
-   * @param keyword 
-   * @returns 
+   * @param latitude
+   * @param longitude
+   * @param radius
+   * @param page
+   * @param size
+   * @param keyword
+   * @returns
    */
   @Get('nearby')
   @IgnoreJwtGuard()
