@@ -2,8 +2,8 @@ import { Body, Controller, Post, Req, UseGuards, Get, Query } from '@nestjs/comm
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { ReviewsService } from './reviews.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ReviewInput } from '@ppopgipang/types';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ReviewInput, ReviewResult } from '@ppopgipang/types';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 
 @ApiTags('[Review] 리뷰(후기)')
 @Controller('v1/reviews')
@@ -15,6 +15,7 @@ export class ReviewsController {
   @ApiOperation({
     summary: '(사용자) 특정 가게 리뷰 리스트 조회'
   })
+  @ApiOkResponse({ type: [ReviewResult.ReviewDto], description: '리뷰 리스트 조회 성공' })
   getReviews(
     @Query('storeId') storeId: number,
     @Query('page') page: number = 1,
@@ -29,6 +30,7 @@ export class ReviewsController {
   @ApiOperation({
     summary: '(사용자) 가게 리뷰 통계 조회'
   })
+  @ApiOkResponse({ type: ReviewResult.ReviewStatsDto, description: '리뷰 통계 조회 성공' })
   getReviewStats(@Query('storeId') storeId: number) {
     return this.reviewsService.findReviewStats(storeId);
   }
@@ -40,6 +42,7 @@ export class ReviewsController {
     summary: '(사용자) 리뷰 생성'
   })
   @ApiBody({ type: ReviewInput.CreateReviewDto })
+  @ApiCreatedResponse({ type: ReviewResult.ReviewDto, description: '리뷰 생성 성공' })
   createReview(
     @Req() req: any,
     @Body() dto: ReviewInput.CreateReviewDto
@@ -53,6 +56,7 @@ export class ReviewsController {
   @ApiOperation({
     summary: '(사용자) 내 리뷰 목록 조회'
   })
+  @ApiOkResponse({ type: ReviewResult.GetMyReviewsResultDto, description: '내 리뷰 목록 조회 성공' })
   async getMyReviews(
     @Req() req: any,
     @Query('page') page: number = 1,

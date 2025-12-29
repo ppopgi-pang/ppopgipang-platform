@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StoresService } from './stores.service';
-import { AdminStoreInput, StoreTypeInput } from '@ppopgipang/types';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { AdminStoreInput, StoreTypeInput, UserStoreResult, StoreTypeResult } from '@ppopgipang/types';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
@@ -24,6 +24,7 @@ export class StoresController {
   @ApiQuery({ name: 'latitude', required: true, description: '현재 위도' })
   @ApiQuery({ name: 'longitude', required: true, description: '현재 경도' })
   @ApiQuery({ name: 'radius', required: false, description: '검색 반경 (미터, 기본: 100m)', example: 100 })
+  @ApiOkResponse({ type: UserStoreResult.StoreDto, description: '가장 가까운 가게 조회 성공 (없으면 null)' })
   findNearestStore(
     @Query('latitude') latitude: number,
     @Query('longitude') longitude: number,
@@ -53,6 +54,7 @@ export class StoresController {
   @ApiQuery({ name: 'page', required: false, description: '페이지' })
   @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수' })
   @ApiQuery({ name: 'keyword', required: false, description: '검색 키워드' })
+  @ApiOkResponse({ type: UserStoreResult.FindNearByDto, description: '반경 내 가게 목록 조회 성공' })
   findNearByStores(
     @Query('latitude') latitude: number,
     @Query('longitude') longitude: number,
@@ -90,6 +92,7 @@ export class StoresController {
   @ApiQuery({ name: 'east', required: true, description: '동쪽 경도 경계' })
   @ApiQuery({ name: 'west', required: true, description: '서쪽 경도 경계' })
   @ApiQuery({ name: 'keyword', required: false, description: '검색 키워드' })
+  @ApiOkResponse({ type: UserStoreResult.InBoundSearchDto, description: '바운드 내 가게 검색 성공' })
   searchInBounds(
     @Query('north') north: number,
     @Query('south') south: number,
@@ -102,8 +105,8 @@ export class StoresController {
 
   /**
    * (어드민) 가게 생성 API
-   * @param dto 
-   * @returns 
+   * @param dto
+   * @returns
    */
   @Post()
   @IsAdmin(true)
@@ -111,6 +114,7 @@ export class StoresController {
     summary: '(어드민) 가게 생성'
   })
   @ApiBody({ type: AdminStoreInput.CreateStoreDto })
+  @ApiCreatedResponse({ type: UserStoreResult.StoreDto, description: '가게 생성 성공' })
   createStore(
     @Body() dto: AdminStoreInput.CreateStoreDto
   ) {
@@ -130,6 +134,7 @@ export class StoresController {
   @ApiQuery({ name: 'lng', required: false, description: '경도 (거리순 정렬용)' })
   @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
   @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수', example: 20 })
+  @ApiOkResponse({ type: UserStoreResult.SearchDto, description: '가게 검색 성공' })
   searchStore(
     @Query('keyword') keyword: string,
     @Query('lat') lat?: number,
@@ -149,6 +154,7 @@ export class StoresController {
   })
   @ApiQuery({ name: 'lat', required: false, description: '위도 (거리 계산용)' })
   @ApiQuery({ name: 'lng', required: false, description: '경도 (거리 계산용)' })
+  @ApiOkResponse({ type: UserStoreResult.StoreSummaryExtendedDto, description: '가게 요약 정보 조회 성공' })
   getStoreSummary(
     @Param('id') id: number,
     @Query('lat') lat?: number,
@@ -171,6 +177,7 @@ export class StoresController {
   @ApiQuery({ name: 'page', required: false, description: '페이지 번호', example: 1 })
   @ApiQuery({ name: 'size', required: false, description: '페이지 크기', example: 20 })
   @ApiQuery({ name: 'sort', required: false, description: '정렬 방식 (recent|popular)', example: 'recent' })
+  @ApiOkResponse({ type: UserStoreResult.StoreGalleryDto, description: '가게 갤러리 조회 성공' })
   async getStoreGallery(
     @Param('id') id: number,
     @Query('page') page: number = 1,
@@ -186,6 +193,7 @@ export class StoresController {
   @ApiOperation({
     summary: '(사용자) 가게 스크랩 토글'
   })
+  @ApiOkResponse({ schema: { properties: { isScrapped: { type: 'boolean' } } }, description: '가게 스크랩 토글 성공' })
   toggleScrap(
     @Param('id') id: number,
     @Req() req: any
@@ -205,6 +213,7 @@ export class StoresController {
     summary: '(사용자) 가게 상세 정보 API (확장)',
     description: 'AI 분석 데이터, 퀘스트 정보, 시설 정보, 운영 시간 등 포함'
   })
+  @ApiOkResponse({ type: UserStoreResult.StoreDetailExtendedDto, description: '가게 상세 정보 조회 성공' })
   async findStoreDetail(
     @Param('id') id: number,
     @Req() req?: any
@@ -215,8 +224,8 @@ export class StoresController {
 
   /**
    * (어드민) 가게 타입(카테고리) 생성 API
-   * @param dto 
-   * @returns 
+   * @param dto
+   * @returns
    */
   @Post('type')
   @IsAdmin(true)
@@ -224,6 +233,7 @@ export class StoresController {
     summary: '(어드민) 가게 타입(카테고리) 생성 API'
   })
   @ApiBody({ type: StoreTypeInput.CreateStoreTypeDto })
+  @ApiCreatedResponse({ description: '가게 타입 생성 성공' })
   createStoreType(
     @Body() dto: StoreTypeInput.CreateStoreTypeDto
   ) {
@@ -232,13 +242,14 @@ export class StoresController {
 
   /**
    * (어드민) 가게 타입(카테고리) 목록 조회 API
-   * @returns 
+   * @returns
    */
   @Get('type')
   @IsAdmin(true)
   @ApiOperation({
     summary: '(어드민) 가게 타입(카테고리) 목록 조회 API'
   })
+  @ApiOkResponse({ description: '가게 타입 목록 조회 성공' })
   findStoreTypes() {
     return this.storesService.findStoreTypes();
   }

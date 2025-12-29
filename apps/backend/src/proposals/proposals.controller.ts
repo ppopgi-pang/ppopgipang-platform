@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ProposalsService } from './proposals.service';
-import { ProposalInput } from '@ppopgipang/types';
+import { ProposalInput, ProposalResult } from '@ppopgipang/types';
 
 @Controller('proposals')
 @ApiTags('[Proposal] 제보')
@@ -16,6 +16,7 @@ export class ProposalsController {
   @ApiOperation({
     summary: '(사용자) 신규 제보 생성'
   })
+  @ApiCreatedResponse({ type: ProposalResult.CreateProposalResultDto, description: '신규 제보 생성 성공' })
   createProposal(
     @Req() req: any,
     @Body() dto: ProposalInput.CreateProposalDto
@@ -32,6 +33,7 @@ export class ProposalsController {
   @ApiQuery({ name: 'status', required: false, description: '제보 상태 (pending | approved | rejected)' })
   @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
   @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수', example: 20 })
+  @ApiOkResponse({ type: ProposalResult.MyProposalsDto, description: '내 제보 내역 조회 성공' })
   getMyProposals(
     @Req() req: any,
     @Query('status') status?: 'pending' | 'approved' | 'rejected',

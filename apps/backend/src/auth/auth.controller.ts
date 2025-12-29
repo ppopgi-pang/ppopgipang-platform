@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags, ApiOkResponse } from "@nestjs/swagger";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { CookieOptions, Response } from "express";
-import { AuthInput } from "@ppopgipang/types";
+import { AuthInput, AuthResult } from "@ppopgipang/types";
 import { IsAdmin } from "./decorators/is-admin.decorator";
 import { IgnoreJwtGuard } from "./decorators/ignore-jwt-guard.decorator";
 
@@ -55,6 +55,7 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     @IsAdmin(true)
     @ApiOperation({ summary: '관리자 계정 생성' })
+    @ApiOkResponse({ description: '관리자 계정 생성 성공' })
     async createAdminUser(
         @Req() req: any,
         @Body() adminUserDto: AuthInput.CreateAdminUserDto
@@ -65,6 +66,7 @@ export class AuthController {
     @Post('admin-login')
     @IgnoreJwtGuard()
     @ApiOperation({ summary: '관리자 로그인' })
+    @ApiOkResponse({ type: AuthResult.UserInfo, description: '로그인 성공, 쿠키에 토큰 포함' })
     async adminLogin(
         @Body() adminLoginDto: AuthInput.AdminLoginDto,
         @Res() res: Response
@@ -80,6 +82,7 @@ export class AuthController {
 
     @Post('logout')
     @ApiOperation({ summary: '로그아웃' })
+    @ApiOkResponse({ schema: { properties: { message: { type: 'string', example: 'success' } } }, description: '로그아웃 성공' })
     async logout(@Res() res: Response) {
         const clearOptions = this.getCookieOptions();
         res.clearCookie('accessToken', clearOptions);
@@ -89,6 +92,7 @@ export class AuthController {
 
     @Post('refresh')
     @ApiOperation({ summary: 'Access Token 재발급' })
+    @ApiOkResponse({ schema: { properties: { message: { type: 'string', example: 'success' } } }, description: 'Access Token 재발급 성공' })
     async refreshToken(
         @Req() req: any,
         @Res() res: Response

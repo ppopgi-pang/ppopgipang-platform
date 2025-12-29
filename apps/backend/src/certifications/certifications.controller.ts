@@ -1,10 +1,11 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiProperty, ApiQuery, ApiTags, ApiBearerAuth, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { CertificationsService } from './certifications.service';
 import { IsArray, IsEnum, IsInt, IsLatitude, IsLongitude, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { CertificationResult } from '@ppopgipang/types';
 
 // Request DTO with validators (for controller validation only)
 class CreateLootRequestDto {
@@ -84,6 +85,7 @@ export class CertificationsController {
     @ApiQuery({ name: 'sort', required: false, description: '정렬 (latest | popular)', example: 'latest' })
     @ApiQuery({ name: 'page', required: false, description: '페이지', example: 1 })
     @ApiQuery({ name: 'size', required: false, description: '한번에 가져올 콘텐츠 수', example: 20 })
+    @ApiOkResponse({ type: CertificationResult.LootGalleryDto, description: '득템 갤러리 조회 성공' })
     getLootGallery(
         @Query('storeId') storeId: number,
         @Query('sort') sort: 'latest' | 'popular' = 'latest',
@@ -101,6 +103,7 @@ export class CertificationsController {
         summary: '(사용자) 태그 및 프리셋 조회',
         description: '득템 태그, 한줄평 프리셋, 체크인 이유 프리셋 전체 조회'
     })
+    @ApiOkResponse({ type: CertificationResult.PresetsDto, description: '프리셋 조회 성공' })
     getPresets() {
         return this.certificationsService.getPresets();
     }
@@ -113,6 +116,7 @@ export class CertificationsController {
         description: '득템 인증을 생성하고 보상(EXP, 레벨, 스탬프, 배지)을 반환합니다. 먼저 /v1/commons/file-upload로 이미지를 업로드하고 받은 파일명을 photoFileNames에 담아 전송합니다.'
     })
     @ApiBody({ type: CreateLootRequestDto })
+    @ApiCreatedResponse({ type: CertificationResult.CertificationResponseDto, description: '득템 인증 생성 성공' })
     createLoot(
         @Body() dto: CreateLootRequestDto,
         @Req() req: any
@@ -129,6 +133,7 @@ export class CertificationsController {
         description: '체크인 인증을 생성하고 보상(EXP, 레벨, 스탬프, 배지)을 반환합니다.'
     })
     @ApiBody({ type: CreateCheckinRequestDto })
+    @ApiCreatedResponse({ type: CertificationResult.CertificationResponseDto, description: '체크인 인증 생성 성공' })
     createCheckin(
         @Body() dto: CreateCheckinRequestDto,
         @Req() req: any
