@@ -19,6 +19,7 @@ services:
       - /data/uploads/review:/app/public/review
       - /data/uploads/temp:/app/public/temp
       - /data/uploads/trade:/app/public/trade
+      - /data/uploads/career:/app/public/career
 
   backend-green:
     image: ppopgipang-backend:green
@@ -38,6 +39,7 @@ services:
       - /data/uploads/review:/app/public/review
       - /data/uploads/temp:/app/public/temp
       - /data/uploads/trade:/app/public/trade
+      - /data/uploads/career:/app/public/career
 
 networks:
   ppopgipang:

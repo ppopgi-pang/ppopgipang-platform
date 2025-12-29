@@ -6,9 +6,15 @@ import { routeTree } from "@/shared/lib/@generated/routeTree.gen";
 import { queryClient } from "@/shared/lib/query-client";
 // import "@/features/auth/api/test-login"; // 개발 환경 테스트 로그인 헬퍼
 
-const isAdminEntry = window.location.pathname.startsWith("/admin");
+const pathname = window.location.pathname;
+const isAdminEntry = pathname.startsWith("/admin");
+const isAboutUsEntry = pathname.startsWith("/about-us");
+const isCareersEntry = pathname.startsWith("/careers");
+
 if (isAdminEntry) {
 	import("@/app/styles/admin.css");
+} else if (isAboutUsEntry || isCareersEntry) {
+	import("@/app/styles/about-us.css");
 } else {
 	import("@/app/styles/globals.css");
 }
