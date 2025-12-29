@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getApplication } from "@/shared/api/careers";
 
-import { TEMP_IMAGE_BASE_URL } from "@/shared/lib/api-config";
+import { CAREER_IMAGE_BASE_URL } from "@/shared/lib/api-config";
 
 interface ApplicationDetailProps {
     id: number;
@@ -17,7 +17,7 @@ export default function ApplicationDetail({ id, onBack }: ApplicationDetailProps
     if (isLoading) return <div>Loading...</div>;
     if (!application) return <div>Application not found</div>;
 
-    const downloadUrl = application.resumeName ? `${TEMP_IMAGE_BASE_URL}${application.resumeName}` : null;
+    const downloadUrl = application.resumeName ? `${CAREER_IMAGE_BASE_URL}${application.resumeName}` : null;
     const fileName = application.resumeName;
 
     return (
