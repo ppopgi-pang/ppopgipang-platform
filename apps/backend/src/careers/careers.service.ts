@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { JobPosting } from './entities/job-posting.entity';
 import { Application } from './entities/application.entity';
 import { CareerInput, CareerResult } from '@ppopgipang/types';
+import { join } from 'path';
+import { copyFile, rename, unlink } from 'fs/promises';
 
 @Injectable()
 export class CareersService {
@@ -14,7 +16,6 @@ export class CareersService {
         private readonly applicationRepository: Repository<Application>
     ) { }
 
-    // Job Posting CRUD
     async createJobPosting(dto: CareerInput.CreateJobPostingDto): Promise<CareerResult.JobPostingDto> {
         const jobPosting = new JobPosting();
         jobPosting.title = dto.title;
@@ -156,7 +157,6 @@ export class CareersService {
         await this.jobPostingRepository.remove(jobPosting);
     }
 
-    // Application
     async createApplication(dto: CareerInput.CreateApplicationDto): Promise<CareerResult.CreateApplicationResultDto> {
         const jobPosting = await this.jobPostingRepository.findOne({
             where: { id: dto.jobPostingId }
@@ -178,6 +178,25 @@ export class CareersService {
         application.resumeName = dto.resumeName;
         application.memo = dto.memo;
         application.status = 'new';
+
+        if (dto.resumeName) {
+            const tempFolder = join(process.cwd(), 'public', 'temp');
+            const careerFolder = join(process.cwd(), 'public', 'career');
+
+            const oldPath = join(tempFolder, dto.resumeName);
+            const newPath = join(careerFolder, dto.resumeName);
+
+            try {
+                await rename(oldPath, newPath);
+            } catch (e: any) {
+                if (e.code === 'EXDEV') {
+                    await copyFile(oldPath, newPath);
+                    await unlink(oldPath);
+                } else {
+                    throw e;
+                }
+            }
+        }
 
         const saved = await this.applicationRepository.save(application);
 

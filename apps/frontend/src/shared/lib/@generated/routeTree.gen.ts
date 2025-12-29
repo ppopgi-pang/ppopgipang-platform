@@ -15,6 +15,7 @@ import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header
 import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
 import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as CareersJobPostingIdRouteImport } from './../../../pages/careers/$jobPostingId'
 import { Route as AdminLoginRouteImport } from './../../../pages/admin/login'
 import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_header_layout/my-reviews'
 import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
@@ -54,6 +55,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   id: '/stores/$storeId',
   path: '/stores/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersJobPostingIdRoute = CareersJobPostingIdRouteImport.update({
+  id: '/careers/$jobPostingId',
+  path: '/careers/$jobPostingId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/about-us': typeof AboutUsRoute
   '/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin': typeof AdminIndexRoute
   '/login': typeof LoginIndexRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/about-us': typeof AboutUsRoute
   '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/admin/': typeof AdminIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin'
     | '/login'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/about-us'
     | '/_header_layout/my-reviews'
     | '/admin/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/admin/'
     | '/login/'
@@ -237,6 +249,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AboutUsRoute: typeof AboutUsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  CareersJobPostingIdRoute: typeof CareersJobPostingIdRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$storeId'
       fullPath: '/stores/$storeId'
       preLoaderRoute: typeof StoresStoreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/$jobPostingId': {
+      id: '/careers/$jobPostingId'
+      path: '/careers/$jobPostingId'
+      fullPath: '/careers/$jobPostingId'
+      preLoaderRoute: typeof CareersJobPostingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -400,6 +420,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AboutUsRoute: AboutUsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  CareersJobPostingIdRoute: CareersJobPostingIdRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
   AdminIndexRoute: AdminIndexRoute,
   LoginIndexRoute: LoginIndexRoute,
