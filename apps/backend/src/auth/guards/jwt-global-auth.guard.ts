@@ -1,7 +1,8 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
 import { IGNORE_JWT_GUARD_KEY } from "../decorators/ignore-jwt-guard.decorator";
+import { OPTIONAL_ACCESS_KEY } from "../decorators/optional-access.decorator";
 
 @Injectable()
 export class JwtGlobalAuthGuard extends AuthGuard('jwt') {
@@ -23,5 +24,26 @@ export class JwtGlobalAuthGuard extends AuthGuard('jwt') {
 
         // 여기서 request.user 세팅
         return super.canActivate(context);
+    }
+
+    handleRequest(err: unknown, user: any, info: unknown, context: ExecutionContext) {
+        const optionalAccess = this.reflector.getAllAndOverride<boolean>(OPTIONAL_ACCESS_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        if (optionalAccess) {
+            if (err || info) {
+                return null;
+            }
+
+            return user;
+        }
+
+        if (err || info || !user) {
+            throw err || new UnauthorizedException();
+        }
+
+        return user;
     }
 }

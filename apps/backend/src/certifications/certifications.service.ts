@@ -11,8 +11,6 @@ export class CertificationsService {
     constructor(
         @InjectRepository(Certification)
         private readonly certificationRepository: Repository<Certification>,
-        @InjectRepository(CertificationPhoto)
-        private readonly certificationPhotoRepository: Repository<CertificationPhoto>,
         @InjectRepository(LootLike)
         private readonly lootLikeRepository: Repository<LootLike>
     ) { }

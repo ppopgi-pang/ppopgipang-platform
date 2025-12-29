@@ -15,6 +15,7 @@ import { Certification } from 'src/certifications/entities/certification.entity'
 import { CertificationPhoto } from 'src/certifications/entities/certification-photo.entity';
 import { UserStamp } from 'src/gamification/entities/user-stamp.entity';
 import { Stamp } from 'src/gamification/entities/stamp.entity';
+import { GamificationModule } from 'src/gamification/gamification.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Stamp } from 'src/gamification/entities/stamp.entity';
       Stamp
     ]),
     UsersModule,
+    GamificationModule,
   ],
   controllers: [StoresController],
   providers: [StoresService],

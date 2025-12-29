@@ -1,7 +1,6 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Query, Req } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
+import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
 import { CertificationsService } from './certifications.service';
 
 @ApiTags('[Certification] 득템/체크인 인증')
@@ -10,8 +9,7 @@ export class CertificationsController {
     constructor(private readonly certificationsService: CertificationsService) { }
 
     @Get('loots')
-    @IgnoreJwtGuard()
-    @UseGuards(AuthGuard('jwt'))
+    @OptionalAccess()
     @ApiOperation({
         summary: '(사용자) 득템 갤러리 조회'
     })
