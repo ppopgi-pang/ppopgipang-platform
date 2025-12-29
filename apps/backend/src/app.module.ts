@@ -24,6 +24,9 @@ import { TradeChatRoom } from './trades/entities/trade-chat-room.entity';
 import { Certification } from './certifications/entities/certification.entity';
 import { CertificationPhoto } from './certifications/entities/certification-photo.entity';
 import { LootLike } from './certifications/entities/loot-like.entity';
+import { LootTag } from './certifications/entities/loot-tag.entity';
+import { LootCommentPreset } from './certifications/entities/loot-comment-preset.entity';
+import { CheckinReasonPreset } from './certifications/entities/checkin-reason-preset.entity';
 import { UserStoreStats } from './stores/entities/user-store-stats.entity';
 import { Achievement } from './gamification/entities/achievement.entity';
 import { Stamp } from './gamification/entities/stamp.entity';
@@ -93,6 +96,9 @@ import { NotificationsModule } from './notifications/notifications.module';
           Certification,
           CertificationPhoto,
           LootLike,
+          LootTag,
+          LootCommentPreset,
+          CheckinReasonPreset,
           UserStoreStats,
           Achievement,
           Stamp,

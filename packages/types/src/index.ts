@@ -15,6 +15,7 @@ import { StoreTypeResult } from './dto/store-type/store-type-result.dto';
 import { UserSearchHistory } from './dto/user/user-search-history.dto';
 import { ProposalInput } from './dto/proposal/proposal-input.dto';
 import { ProposalResult } from './dto/proposal/proposal-result.dto';
+import { CertificationInput } from './dto/certification/certification-input.dto';
 import { CertificationResult } from './dto/certification/certification-result.dto';
 
 export {
@@ -35,5 +36,6 @@ export {
     UserSearchHistory,
     ProposalInput,
     ProposalResult,
+    CertificationInput,
     CertificationResult
 };

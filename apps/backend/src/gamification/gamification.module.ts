@@ -6,7 +6,10 @@ import { UserAchievement } from './entities/user-achievement.entity';
 import { UserProgress } from './entities/user-progress.entity';
 import { UserStamp } from './entities/user-stamp.entity';
 import { QuestService } from './quest.service';
+import { GamificationService } from './gamification.service';
 import { Certification } from 'src/certifications/entities/certification.entity';
+import { UserStoreStats } from 'src/stores/entities/user-store-stats.entity';
+import { Store } from 'src/stores/entities/store.entity';
 
 @Module({
   imports: [
@@ -17,9 +20,11 @@ import { Certification } from 'src/certifications/entities/certification.entity'
       UserProgress,
       UserStamp,
       Certification,
+      UserStoreStats,
+      Store
     ])
   ],
-  providers: [QuestService],
-  exports: [QuestService],
+  providers: [QuestService, GamificationService],
+  exports: [QuestService, GamificationService],
 })
 export class GamificationModule {}
