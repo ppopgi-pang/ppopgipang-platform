@@ -19,25 +19,9 @@ mysql -u your_username -p your_database
 source apps/backend/migrations/001-certify-feature.sql
 ```
 
-### 2. 환경변수 설정 (선택사항 - S3 사용 시)
+### 2. 이미지 업로드 설정
 
-`.env` 파일에 다음 변수 추가:
-
-```env
-# AWS S3 설정 (이미지 업로드용)
-AWS_REGION=ap-northeast-2
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_S3_BUCKET_NAME=ppopgipang-uploads
-```
-
-**참고**: 현재는 S3 SDK가 설치되어 있지 않습니다. 실제 S3 사용을 위해서는:
-
-```bash
-npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
-```
-
-그리고 `apps/backend/src/commons/uploads.service.ts`의 TODO 주석 부분을 활성화하세요.
+기존 `/v1/commons/file-upload` 엔드포인트를 사용합니다. 업로드된 파일은 로컬 스토리지에 저장되며, 파일명이 반환됩니다.
 
 ## 📁 구현된 파일 구조
 
@@ -46,15 +30,11 @@ apps/backend/src/
 ├── certifications/
 │   ├── entities/
 │   │   ├── certification.entity.ts           # ✅ 업데이트됨 (comment, rating 추가)
+│   │   ├── certification-photo.entity.ts     # ✅ 기존
+│   │   ├── loot-like.entity.ts               # ✅ 기존
 │   │   ├── loot-tag.entity.ts                # ✅ 신규
 │   │   ├── loot-comment-preset.entity.ts     # ✅ 신규
 │   │   └── checkin-reason-preset.entity.ts   # ✅ 신규
-│   ├── dto/
-│   │   ├── create-loot.dto.ts                # ✅ 신규
-│   │   ├── create-checkin.dto.ts             # ✅ 신규
-│   │   └── certification-rewards.dto.ts       # ✅ 신규
-│   ├── seeds/
-│   │   └── seed-presets.ts                   # ✅ 신규 (초기 데이터)
 │   ├── certifications.controller.ts          # ✅ 업데이트됨
 │   ├── certifications.service.ts             # ✅ 업데이트됨
 │   └── certifications.module.ts              # ✅ 업데이트됨
@@ -65,11 +45,15 @@ apps/backend/src/
 │   ├── stores.controller.ts                  # ✅ 업데이트됨 (nearest 엔드포인트 추가)
 │   └── stores.service.ts                     # ✅ 업데이트됨
 └── commons/
-    ├── dto/
-    │   └── upload-request.dto.ts             # ✅ 신규
-    ├── uploads.service.ts                    # ✅ 신규
-    ├── commons.controller.ts                 # ✅ 업데이트됨
-    └── commons.module.ts                     # ✅ 업데이트됨
+    ├── commons.controller.ts                 # ✅ file-upload 사용
+    └── commons.module.ts                     # ✅ 기존
+
+packages/types/src/dto/certification/
+├── certification-input.dto.ts                # ✅ 신규 (CertificationInput namespace)
+└── certification-result.dto.ts               # ✅ 업데이트됨 (Rewards DTOs 추가)
+
+apps/backend/migrations/
+└── 001-certify-feature.sql                   # ✅ 신규 (DB 스키마 + 시드 데이터)
 ```
 
 ## 🔌 API 엔드포인트
@@ -116,7 +100,23 @@ GET /v1/certifications/presets
 }
 ```
 
-### 3. 득템 인증 생성
+### 3. 이미지 업로드
+```
+POST /v1/commons/file-upload
+Content-Type: multipart/form-data
+```
+
+**Request:**
+- `file`: 이미지 파일 (multipart/form-data)
+
+**Response:**
+```json
+{
+  "fileName": "1735467890123-uuid.jpg"
+}
+```
+
+### 4. 득템 인증 생성
 ```
 POST /v1/certifications/loot
 Authorization: Bearer {token}
@@ -128,7 +128,7 @@ Authorization: Bearer {token}
   "storeId": 1,
   "latitude": 37.5665,
   "longitude": 126.9780,
-  "photoKeys": ["certifications/2025/12/uuid1.jpg", "certifications/2025/12/uuid2.jpg"],
+  "photoFileNames": ["1735467890123-uuid1.jpg", "1735467890123-uuid2.jpg"],
   "tagIds": [1, 2],
   "comment": "집게 힘이 좋아요"
 }
@@ -155,7 +155,7 @@ Authorization: Bearer {token}
 }
 ```
 
-### 4. 체크인 인증 생성
+### 5. 체크인 인증 생성
 ```
 POST /v1/certifications/checkin
 Authorization: Bearer {token}
@@ -187,36 +187,35 @@ Authorization: Bearer {token}
 }
 ```
 
-### 5. 이미지 업로드 URL 발급
-```
-POST /v1/commons/uploads/certification
-Authorization: Bearer {token}
-```
+## 📝 이미지 업로드 플로우
 
-**Request:**
-```json
-{
-  "fileCount": 2,
-  "contentTypes": ["image/jpeg", "image/png"]
-}
-```
+득템 인증을 위한 이미지 업로드는 다음과 같은 절차로 진행됩니다:
 
-**Response:**
-```json
-{
-  "uploads": [
-    {
-      "key": "certifications/2025/12/uuid1.jpg",
-      "uploadUrl": "https://...",
-      "expiresIn": 3600
-    },
-    {
-      "key": "certifications/2025/12/uuid2.jpg",
-      "uploadUrl": "https://...",
-      "expiresIn": 3600
-    }
-  ]
-}
+1. **이미지 업로드**: 클라이언트가 `POST /v1/commons/file-upload`로 이미지 파일을 전송 (multipart/form-data)
+2. **파일명 수신**: 서버가 로컬 스토리지에 저장 후 파일명 반환 (예: `1735467890123-uuid.jpg`)
+3. **인증 생성**: 받은 파일명을 `photoFileNames` 배열에 담아 `POST /v1/certifications/loot`로 전송
+
+**예시:**
+```bash
+# 1단계: 이미지 업로드
+curl -X POST "http://localhost:3000/v1/commons/file-upload" \
+  -F "file=@photo1.jpg"
+# 응답: { "fileName": "1735467890123-uuid1.jpg" }
+
+curl -X POST "http://localhost:3000/v1/commons/file-upload" \
+  -F "file=@photo2.jpg"
+# 응답: { "fileName": "1735467890123-uuid2.jpg" }
+
+# 2단계: 득템 인증 생성
+curl -X POST "http://localhost:3000/v1/certifications/loot" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "storeId": 1,
+    "photoFileNames": ["1735467890123-uuid1.jpg", "1735467890123-uuid2.jpg"],
+    "tagIds": [1, 2],
+    "comment": "집게 힘이 좋아요"
+  }'
 ```
 
 ## 🎮 게이미피케이션 로직
@@ -261,14 +260,20 @@ curl -X GET "http://localhost:3000/v1/stores/nearest?latitude=37.5665&longitude=
 curl -X GET "http://localhost:3000/v1/certifications/presets"
 ```
 
-#### 3. 득템 인증 (로그인 필요)
+#### 3. 이미지 업로드
+```bash
+curl -X POST "http://localhost:3000/v1/commons/file-upload" \
+  -F "file=@test.jpg"
+```
+
+#### 4. 득템 인증 (로그인 필요)
 ```bash
 curl -X POST "http://localhost:3000/v1/certifications/loot" \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "storeId": 1,
-    "photoKeys": ["test.jpg"],
+    "photoFileNames": ["1735467890123-uuid.jpg"],
     "tagIds": [1],
     "comment": "테스트 득템"
   }'
@@ -280,16 +285,18 @@ curl -X POST "http://localhost:3000/v1/certifications/loot" \
 
 2. **외래키 제약**: `certification_tags`, `certification_reasons` 테이블은 `certifications`, `loot_tags`, `checkin_reason_presets` 테이블에 의존합니다.
 
-3. **S3 설정**: 실제 S3를 사용하려면 AWS SDK 설치 및 환경변수 설정이 필요합니다. 현재는 목(mock) URL을 반환합니다.
+3. **파일 업로드**: 이미지는 로컬 스토리지에 저장됩니다. 업로드된 파일의 저장 경로와 접근 권한을 확인하세요.
 
-4. **인증 필수**: 인증 생성 및 업로드 URL 발급은 JWT 토큰이 필요합니다.
+4. **인증 필수**: 득템/체크인 인증 생성은 JWT 토큰이 필요합니다.
+
+5. **DTO 위치**: 모든 DTO는 `packages/types`에 위치하며, `CertificationInput` 및 `CertificationResult` namespace를 사용합니다.
 
 ## 📝 다음 단계
 
-- [ ] AWS S3 SDK 설치 및 실제 Presigned URL 구현
 - [ ] 프론트엔드 페이지 구현
 - [ ] E2E 테스트 작성
 - [ ] 성능 최적화 (캐싱, 인덱스)
+- [ ] 이미지 최적화 및 썸네일 생성
 
 ## 🐛 트러블슈팅
 
@@ -299,8 +306,8 @@ curl -X POST "http://localhost:3000/v1/certifications/loot" \
 ### 문제: 외래키 제약 위반
 **해결**: 부모 테이블(`certifications`, `loot_tags` 등)이 먼저 생성되었는지 확인하세요.
 
-### 문제: S3 업로드 실패
-**해결**: `uploads.service.ts`의 TODO 주석을 확인하고 AWS SDK를 설치하세요.
+### 문제: 파일 업로드 실패
+**해결**: 업로드 디렉토리의 쓰기 권한을 확인하고, Multer 설정을 검토하세요.
 
 ## 📞 문의
 

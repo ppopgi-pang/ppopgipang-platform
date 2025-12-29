@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CommonsController } from './commons.controller';
-import { UploadsService } from './uploads.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { join } from 'path';
@@ -33,6 +32,5 @@ import { v4 } from "uuid";
     })
   ],
   controllers: [CommonsController],
-  providers: [UploadsService],
 })
 export class CommonsModule { }

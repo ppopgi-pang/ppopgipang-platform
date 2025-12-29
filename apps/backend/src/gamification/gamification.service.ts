@@ -8,7 +8,7 @@ import { Achievement } from './entities/achievement.entity';
 import { UserAchievement } from './entities/user-achievement.entity';
 import { UserStoreStats } from 'src/stores/entities/user-store-stats.entity';
 import { Certification } from 'src/certifications/entities/certification.entity';
-import { NewBadgeDto, NewStampDto, RewardsDto } from 'src/certifications/dto/certification-rewards.dto';
+import { CertificationResult } from '@ppopgipang/types';
 import { Store } from 'src/stores/entities/store.entity';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class GamificationService {
         storeId: number,
         type: 'loot' | 'checkin',
         expAmount: number
-    ): Promise<RewardsDto> {
+    ): Promise<CertificationResult.RewardsDto> {
         return await this.dataSource.transaction(async manager => {
             // 1. EXP 추가 & 레벨업 체크
             let userProgress = await manager.findOne(UserProgress, { where: { userId } });
@@ -82,7 +82,7 @@ export class GamificationService {
             // 6. 다음 레벨까지 필요한 EXP 계산
             const expToNextLevel = (newLevel * 100) - newExp;
 
-            return new RewardsDto(
+            return new CertificationResult.RewardsDto(
                 expAmount,
                 newExp,
                 newLevel,
@@ -149,7 +149,7 @@ export class GamificationService {
         manager: any,
         userId: number,
         storeId: number
-    ): Promise<NewStampDto | undefined> {
+    ): Promise<CertificationResult.NewStampDto | undefined> {
         // 해당 가게의 이전 인증 횟수 확인
         const previousCertCount = await manager.count(Certification, {
             where: { userId, storeId }
@@ -187,7 +187,7 @@ export class GamificationService {
         });
         await manager.save(UserStamp, userStamp);
 
-        return new NewStampDto(
+        return new CertificationResult.NewStampDto(
             stamp.id,
             stamp.imageName,
             stamp.store.name
@@ -201,8 +201,8 @@ export class GamificationService {
         manager: any,
         userId: number,
         type: 'loot' | 'checkin'
-    ): Promise<NewBadgeDto[]> {
-        const newBadges: NewBadgeDto[] = [];
+    ): Promise<CertificationResult.NewBadgeDto[]> {
+        const newBadges: CertificationResult.NewBadgeDto[] = [];
 
         // 이미 획득한 배지 목록
         const userAchievements = await manager.find(UserAchievement, { where: { userId } });
@@ -276,7 +276,7 @@ export class GamificationService {
                 });
                 await manager.save(UserAchievement, userAchievement);
 
-                newBadges.push(new NewBadgeDto(
+                newBadges.push(new CertificationResult.NewBadgeDto(
                     achievement.id,
                     achievement.code,
                     achievement.name,
