@@ -1,7 +1,7 @@
 import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileResult } from '@ppopgipang/types';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags, ApiOkResponse } from '@nestjs/swagger';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 
 @ApiTags('[Common] 공통 기능')
@@ -23,6 +23,7 @@ export class CommonsController {
       }
     }
   })
+  @ApiOkResponse({ type: FileResult.UploadDto, description: '파일 업로드 성공' })
   @UseInterceptors(FileInterceptor('file', {
     limits: {
       fileSize: 25 * 1024 * 1024
