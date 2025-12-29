@@ -17,6 +17,8 @@ import { ProposalInput } from './dto/proposal/proposal-input.dto';
 import { ProposalResult } from './dto/proposal/proposal-result.dto';
 import { CertificationInput } from './dto/certification/certification-input.dto';
 import { CertificationResult } from './dto/certification/certification-result.dto';
+import { CareerInput } from './dto/career/career-input.dto';
+import { CareerResult } from './dto/career/career-result.dto';
 
 export {
     AdminStoreInput,
@@ -37,5 +39,7 @@ export {
     ProposalInput,
     ProposalResult,
     CertificationInput,
-    CertificationResult
+    CertificationResult,
+    CareerInput,
+    CareerResult
 };
