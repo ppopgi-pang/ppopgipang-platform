@@ -3,8 +3,8 @@ import { TradesService } from './trades.service';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { TradeChatInput, TradeInput } from '@ppopgipang/types';
-import { JwtOptionalAuthGuard } from 'src/auth/guards/jwt-optional.guard';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
+import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
 
 @ApiTags('[Trade] 중고거래')
 @Controller('v1/trades')
@@ -125,8 +125,7 @@ export class TradesController {
    */
 
   @Get(':id')
-  @IgnoreJwtGuard()
-  @UseGuards(JwtOptionalAuthGuard)
+  @OptionalAccess()
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 상세 조회' })
   @ApiParam({ name: 'id', description: '게시글 ID' })
   findOneTrade(
@@ -167,4 +166,3 @@ export class TradesController {
     return this.tradesService.deleteTrade(id, req.user.userId);
   }
 }
-

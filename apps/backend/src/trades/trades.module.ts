@@ -6,7 +6,6 @@ import { TradeChatMessage } from './entities/trade-chat-message.entity';
 import { TradeChatRoom } from './entities/trade-chat-room.entity';
 import { Trade } from './entities/trade.entity';
 import { User } from 'src/users/entities/user.entity';
-import { JwtOptionalAuthGuard } from 'src/auth/guards/jwt-optional.guard';
 
 @Module({
   imports: [
@@ -15,6 +14,6 @@ import { JwtOptionalAuthGuard } from 'src/auth/guards/jwt-optional.guard';
     ])
   ],
   controllers: [TradesController],
-  providers: [TradesService, JwtOptionalAuthGuard],
+  providers: [TradesService],
 })
 export class TradesModule { }
