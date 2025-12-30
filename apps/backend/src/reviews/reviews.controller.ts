@@ -3,7 +3,7 @@ import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { ReviewsService } from './reviews.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ReviewInput, ReviewResult } from '@ppopgipang/types';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 
 @ApiTags('[Review] 리뷰(후기)')
 @Controller('v1/reviews')
@@ -36,7 +36,6 @@ export class ReviewsController {
   }
 
   @Post()
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '(사용자) 리뷰 생성'
@@ -51,7 +50,6 @@ export class ReviewsController {
   }
 
   @Get('my')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '(사용자) 내 리뷰 목록 조회'

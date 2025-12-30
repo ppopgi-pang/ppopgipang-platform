@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards, Delete, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiOperation, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { UserResult, UserSearchHistory } from '@ppopgipang/types';
 
@@ -13,7 +13,6 @@ export class UsersController {
   @ApiOperation({
     summary: '(사용자) 사용자 정보 조회'
   })
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({ type: UserResult.UserInfo, description: '사용자 정보 조회 성공' })
   getUserInfo(@Req() req: any) {
@@ -24,7 +23,6 @@ export class UsersController {
   @ApiOperation({
     summary: '(사용자) 내 최근 검색어 조회'
   })
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({ type: [UserSearchHistory.SearchHistoryDto], description: '내 최근 검색어 조회 성공' })
   getSearchHistory(@Req() req: any) {
@@ -35,7 +33,6 @@ export class UsersController {
   @ApiOperation({
     summary: '(사용자) 특정 검색 기록 삭제'
   })
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({ description: '특정 검색 기록 삭제 성공' })
   deleteSearchHistory(
@@ -49,7 +46,6 @@ export class UsersController {
   @ApiOperation({
     summary: '(사용자) 검색 기록 전체 삭제'
   })
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOkResponse({ description: '검색 기록 전체 삭제 성공' })
   deleteAllSearchHistory(@Req() req: any) {

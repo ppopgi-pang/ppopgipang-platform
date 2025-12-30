@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nest
 import { AuthGuard } from '@nestjs/passport';
 import { StoresService } from './stores.service';
 import { AdminStoreInput, StoreTypeInput, UserStoreResult, StoreTypeResult } from '@ppopgipang/types';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { IsAdmin } from 'src/auth/decorators/is-admin.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
@@ -189,7 +189,6 @@ export class StoresController {
 
   @Post(':id/scrap')
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '(사용자) 가게 스크랩 토글'
   })
