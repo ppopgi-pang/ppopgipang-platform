@@ -10,9 +10,11 @@
 
 import { Route as rootRouteImport } from './../../../pages/__root'
 import { Route as ToastRouteImport } from './../../../pages/toast'
+import { Route as AboutUsRouteImport } from './../../../pages/about-us'
 import { Route as AboutRouteImport } from './../../../pages/about'
 import { Route as MobileRouteRouteImport } from './../../../pages/_mobile/route'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
+import { Route as CareersJobPostingIdRouteImport } from './../../../pages/careers/$jobPostingId'
 import { Route as MobileLoginRouteImport } from './../../../pages/_mobile/login'
 import { Route as MobileHeader_layoutRouteRouteImport } from './../../../pages/_mobile/_header_layout/route'
 import { Route as MobileAdminIndexRouteImport } from './../../../pages/_mobile/admin/index'
@@ -37,6 +39,11 @@ const ToastRoute = ToastRouteImport.update({
   path: '/toast',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutUsRoute = AboutUsRouteImport.update({
+  id: '/about-us',
+  path: '/about-us',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -49,6 +56,11 @@ const MobileRouteRoute = MobileRouteRouteImport.update({
 const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   id: '/stores/$storeId',
   path: '/stores/$storeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersJobPostingIdRoute = CareersJobPostingIdRouteImport.update({
+  id: '/careers/$jobPostingId',
+  path: '/careers/$jobPostingId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MobileLoginRoute = MobileLoginRouteImport.update({
@@ -158,8 +170,10 @@ const MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute =
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/toast': typeof ToastRoute
   '/login': typeof MobileLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/collection': typeof MobileHeader_layoutCollectionRouteRoute
   '/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
@@ -180,8 +194,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/toast': typeof ToastRoute
   '/login': typeof MobileLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/collection': typeof MobileHeader_layoutCollectionRouteRoute
   '/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
@@ -204,9 +220,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_mobile': typeof MobileRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/about-us': typeof AboutUsRoute
   '/toast': typeof ToastRoute
   '/_mobile/_header_layout': typeof MobileHeader_layoutRouteRouteWithChildren
   '/_mobile/login': typeof MobileLoginRoute
+  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
   '/_mobile/_header_layout/collection': typeof MobileHeader_layoutCollectionRouteRoute
   '/_mobile/_header_layout/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
@@ -229,8 +247,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/about-us'
     | '/toast'
     | '/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/collection'
     | '/my-reviews'
@@ -251,8 +271,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/about-us'
     | '/toast'
     | '/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/collection'
     | '/my-reviews'
@@ -274,9 +296,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_mobile'
     | '/about'
+    | '/about-us'
     | '/toast'
     | '/_mobile/_header_layout'
     | '/_mobile/login'
+    | '/careers/$jobPostingId'
     | '/stores/$storeId'
     | '/_mobile/_header_layout/collection'
     | '/_mobile/_header_layout/my-reviews'
@@ -299,7 +323,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   MobileRouteRoute: typeof MobileRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AboutUsRoute: typeof AboutUsRoute
   ToastRoute: typeof ToastRoute
+  CareersJobPostingIdRoute: typeof CareersJobPostingIdRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
 }
 
@@ -310,6 +336,13 @@ declare module '@tanstack/react-router' {
       path: '/toast'
       fullPath: '/toast'
       preLoaderRoute: typeof ToastRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-us': {
+      id: '/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof AboutUsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -331,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/stores/$storeId'
       fullPath: '/stores/$storeId'
       preLoaderRoute: typeof StoresStoreIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/$jobPostingId': {
+      id: '/careers/$jobPostingId'
+      path: '/careers/$jobPostingId'
+      fullPath: '/careers/$jobPostingId'
+      preLoaderRoute: typeof CareersJobPostingIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_mobile/login': {
@@ -528,7 +568,9 @@ const MobileRouteRouteWithChildren = MobileRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   MobileRouteRoute: MobileRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AboutUsRoute: AboutUsRoute,
   ToastRoute: ToastRoute,
+  CareersJobPostingIdRoute: CareersJobPostingIdRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -2,8 +2,7 @@ import axios, { type AxiosInstance, type AxiosRequestConfig } from "axios";
 
 const DEFAULT_API_ORIGIN = import.meta.env.PROD
   ? "https://ppopgi.me"
-  : "https://ppopgi.me";
-//   : "http://localhost:3000";
+  : "http://localhost:3000";
 
 const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || DEFAULT_API_ORIGIN;
 

@@ -7,7 +7,7 @@ interface User {
   id: number;
   email: string;
   nickname: string;
-  profileImageUrl?: string;
+  profileImage?: string;
 }
 
 interface AuthStore {

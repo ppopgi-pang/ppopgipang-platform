@@ -4,10 +4,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID ?? "";
 
-// 백엔드 API 서버 URL (카카오 콜백은 백엔드로 가야 함)
 const API_SERVER_URL = import.meta.env.PROD
   ? "https://ppopgi.me"
-  : "http://localhost:3000"; // 로컬 백엔드 서버 사용 시
+  : "http://localhost:3000";
 
 const getKakaoLoginUrl = () => {
   if (!KAKAO_CLIENT_ID) {
