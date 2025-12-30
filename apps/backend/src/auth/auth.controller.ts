@@ -54,12 +54,13 @@ export class AuthController {
     @UseGuards(AuthGuard('jwt'))
     @IsAdmin(true)
     @ApiOperation({ summary: '관리자 계정 생성' })
-    @ApiOkResponse({ description: '관리자 계정 생성 성공' })
+    @ApiOkResponse({ type: Boolean, description: '관리자 계정 생성 성공' })
     async createAdminUser(
         @Req() req: any,
         @Body() adminUserDto: AuthInput.CreateAdminUserDto
     ) {
         await this.authService.createAdminUser(req.user.userId, adminUserDto);
+        return true;
     }
 
     @Post('admin-login')

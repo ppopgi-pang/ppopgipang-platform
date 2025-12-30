@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiOperation, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { OptionalAccess } from 'src/auth/decorators/optional-access.decorator';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
 import { CertificationsService } from './certifications.service';
 import { CertificationInput, CertificationResult } from '@ppopgipang/types';
+import { TransactionInterceptor } from 'src/commons/interceptors/transaction.interceptor';
+import { InjectQueryRunner } from 'src/commons/decorators/query-runner-decorator';
+import { QueryRunner } from 'typeorm';
 
 @ApiTags('[Certification] 득템/체크인 인증')
 @Controller('v1/certifications')
@@ -44,6 +47,7 @@ export class CertificationsController {
     }
 
     @Post('loot')
+    @UseInterceptors(TransactionInterceptor)
     @UseGuards(AuthGuard('jwt'))
     @ApiOperation({
         summary: '(사용자) 득템 인증 생성',
@@ -53,13 +57,16 @@ export class CertificationsController {
     @ApiCreatedResponse({ type: CertificationResult.CertificationResponseDto, description: '득템 인증 생성 성공' })
     createLoot(
         @Body() dto: CertificationInput.CreateLootDto,
-        @Req() req: any
+        @Req() req: any,
+        @InjectQueryRunner() queryRunner: QueryRunner,
     ) {
         const userId = req.user.userId;
-        return this.certificationsService.createLootCertification(userId, dto);
+        console.log(userId)
+        return this.certificationsService.createLootCertification(userId, queryRunner, dto);
     }
 
     @Post('checkin')
+    @UseInterceptors(TransactionInterceptor)
     @UseGuards(AuthGuard('jwt'))
     @ApiOperation({
         summary: '(사용자) 체크인 인증 생성',
@@ -69,9 +76,10 @@ export class CertificationsController {
     @ApiCreatedResponse({ type: CertificationResult.CertificationResponseDto, description: '체크인 인증 생성 성공' })
     createCheckin(
         @Body() dto: CertificationInput.CreateCheckinDto,
-        @Req() req: any
+        @Req() req: any,
+        @InjectQueryRunner() queryRunner: QueryRunner,
     ) {
         const userId = req.user.userId;
-        return this.certificationsService.createCheckinCertification(userId, dto);
+        return this.certificationsService.createCheckinCertification(userId, queryRunner, dto);
     }
 }

@@ -9,15 +9,7 @@ import {
     ApiBody,
 } from '@nestjs/swagger';
 import { CollectionsService } from './collections.service';
-import { CollectionResult } from '@ppopgipang/types';
-import { IsInt, IsOptional } from 'class-validator';
-
-// Request DTO (validation용, Controller 내부에만 존재)
-class SetFeaturedBadgeRequestDto {
-    @IsOptional()
-    @IsInt()
-    achievementId?: number | null;
-}
+import { CollectionInput, CollectionResult } from '@ppopgipang/types';
 
 @ApiTags('[Gamification] 수집(Collection)')
 @Controller('v1/gamification/collections')
@@ -126,14 +118,14 @@ export class CollectionsController {
         summary: '(사용자) 대표 배지 설정/해제',
         description: '대표 배지를 설정하거나 해제합니다. achievementId를 null로 보내면 해제됩니다.'
     })
-    @ApiBody({ type: SetFeaturedBadgeRequestDto })
+    @ApiBody({ type: CollectionInput.SetFeaturedBadgeRequestDto })
     @ApiOkResponse({
         type: CollectionResult.SetFeaturedBadgeDto,
         description: '대표 배지 설정 성공'
     })
     setFeaturedBadge(
         @Req() req: any,
-        @Body() dto: SetFeaturedBadgeRequestDto
+        @Body() dto: CollectionInput.SetFeaturedBadgeRequestDto
     ) {
         return this.collectionsService.setFeaturedBadge(req.user.userId, dto.achievementId || null);
     }
