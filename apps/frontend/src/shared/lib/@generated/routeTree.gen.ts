@@ -9,28 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../../../pages/__root'
-import { Route as AboutUsRouteImport } from './../../../pages/about-us'
+import { Route as ToastRouteImport } from './../../../pages/toast'
 import { Route as AboutRouteImport } from './../../../pages/about'
-import { Route as Header_layoutRouteRouteImport } from './../../../pages/_header_layout/route'
-import { Route as LoginIndexRouteImport } from './../../../pages/login/index'
-import { Route as AdminIndexRouteImport } from './../../../pages/admin/index'
+import { Route as MobileRouteRouteImport } from './../../../pages/_mobile/route'
 import { Route as StoresStoreIdRouteImport } from './../../../pages/stores/$storeId'
-import { Route as CareersJobPostingIdRouteImport } from './../../../pages/careers/$jobPostingId'
-import { Route as AdminLoginRouteImport } from './../../../pages/admin/login'
-import { Route as Header_layoutMyReviewsRouteImport } from './../../../pages/_header_layout/my-reviews'
-import { Route as Header_layoutTradesIndexRouteImport } from './../../../pages/_header_layout/trades/index'
-import { Route as Header_layoutProfileIndexRouteImport } from './../../../pages/_header_layout/profile/index'
-import { Route as Header_layoutmapIndexRouteImport } from './../../../pages/_header_layout/(map)/index'
-import { Route as Header_layoutTradesNewRouteImport } from './../../../pages/_header_layout/trades/new'
-import { Route as AuthKakaoCallbackIndexRouteImport } from './../../../pages/auth/kakao/callback/index'
-import { Route as Header_layoutTradesChatsIndexRouteImport } from './../../../pages/_header_layout/trades/chats/index'
-import { Route as Header_layoutTradesTradeIdIndexRouteImport } from './../../../pages/_header_layout/trades/$tradeId/index'
-import { Route as Header_layoutTradesTradeIdEditRouteImport } from './../../../pages/_header_layout/trades/$tradeId/edit'
-import { Route as Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport } from './../../../pages/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
+import { Route as MobileLoginRouteImport } from './../../../pages/_mobile/login'
+import { Route as MobileHeader_layoutRouteRouteImport } from './../../../pages/_mobile/_header_layout/route'
+import { Route as MobileAdminIndexRouteImport } from './../../../pages/_mobile/admin/index'
+import { Route as MobileHeader_layoutIndexRouteImport } from './../../../pages/_mobile/_header_layout/index'
+import { Route as MobileAdminLoginRouteImport } from './../../../pages/_mobile/admin/login'
+import { Route as MobileHeader_layoutMyReviewsRouteImport } from './../../../pages/_mobile/_header_layout/my-reviews'
+import { Route as MobileHeader_layoutCollectionRouteRouteImport } from './../../../pages/_mobile/_header_layout/collection/route'
+import { Route as MobileHeader_layoutTradesIndexRouteImport } from './../../../pages/_mobile/_header_layout/trades/index'
+import { Route as MobileHeader_layoutProfileIndexRouteImport } from './../../../pages/_mobile/_header_layout/profile/index'
+import { Route as MobileHeader_layoutMyIndexRouteImport } from './../../../pages/_mobile/_header_layout/my/index'
+import { Route as MobileHeader_layoutMapsIndexRouteImport } from './../../../pages/_mobile/_header_layout/maps/index'
+import { Route as MobileHeader_layoutTradesNewRouteImport } from './../../../pages/_mobile/_header_layout/trades/new'
+import { Route as MobileHeader_layoutMapsSearchRouteImport } from './../../../pages/_mobile/_header_layout/maps/search'
+import { Route as MobileAuthKakaoCallbackIndexRouteImport } from './../../../pages/_mobile/auth/kakao/callback/index'
+import { Route as MobileHeader_layoutTradesChatsIndexRouteImport } from './../../../pages/_mobile/_header_layout/trades/chats/index'
+import { Route as MobileHeader_layoutTradesTradeIdIndexRouteImport } from './../../../pages/_mobile/_header_layout/trades/$tradeId/index'
+import { Route as MobileHeader_layoutTradesTradeIdEditRouteImport } from './../../../pages/_mobile/_header_layout/trades/$tradeId/edit'
+import { Route as MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRouteImport } from './../../../pages/_mobile/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
 
-const AboutUsRoute = AboutUsRouteImport.update({
-  id: '/about-us',
-  path: '/about-us',
+const ToastRoute = ToastRouteImport.update({
+  id: '/toast',
+  path: '/toast',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -38,18 +42,8 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Header_layoutRouteRoute = Header_layoutRouteRouteImport.update({
-  id: '/_header_layout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginIndexRoute = LoginIndexRouteImport.update({
-  id: '/login/',
-  path: '/login/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
+const MobileRouteRoute = MobileRouteRouteImport.update({
+  id: '/_mobile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
@@ -57,145 +51,196 @@ const StoresStoreIdRoute = StoresStoreIdRouteImport.update({
   path: '/stores/$storeId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CareersJobPostingIdRoute = CareersJobPostingIdRouteImport.update({
-  id: '/careers/$jobPostingId',
-  path: '/careers/$jobPostingId',
-  getParentRoute: () => rootRouteImport,
+const MobileLoginRoute = MobileLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => MobileRouteRoute,
 } as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
+const MobileHeader_layoutRouteRoute =
+  MobileHeader_layoutRouteRouteImport.update({
+    id: '/_header_layout',
+    getParentRoute: () => MobileRouteRoute,
+  } as any)
+const MobileAdminIndexRoute = MobileAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => MobileRouteRoute,
+} as any)
+const MobileHeader_layoutIndexRoute =
+  MobileHeader_layoutIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileAdminLoginRoute = MobileAdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => MobileRouteRoute,
 } as any)
-const Header_layoutMyReviewsRoute = Header_layoutMyReviewsRouteImport.update({
-  id: '/my-reviews',
-  path: '/my-reviews',
-  getParentRoute: () => Header_layoutRouteRoute,
-} as any)
-const Header_layoutTradesIndexRoute =
-  Header_layoutTradesIndexRouteImport.update({
+const MobileHeader_layoutMyReviewsRoute =
+  MobileHeader_layoutMyReviewsRouteImport.update({
+    id: '/my-reviews',
+    path: '/my-reviews',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileHeader_layoutCollectionRouteRoute =
+  MobileHeader_layoutCollectionRouteRouteImport.update({
+    id: '/collection',
+    path: '/collection',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileHeader_layoutTradesIndexRoute =
+  MobileHeader_layoutTradesIndexRouteImport.update({
     id: '/trades/',
     path: '/trades/',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
-const Header_layoutProfileIndexRoute =
-  Header_layoutProfileIndexRouteImport.update({
+const MobileHeader_layoutProfileIndexRoute =
+  MobileHeader_layoutProfileIndexRouteImport.update({
     id: '/profile/',
     path: '/profile/',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
-const Header_layoutmapIndexRoute = Header_layoutmapIndexRouteImport.update({
-  id: '/(map)/',
-  path: '/',
-  getParentRoute: () => Header_layoutRouteRoute,
-} as any)
-const Header_layoutTradesNewRoute = Header_layoutTradesNewRouteImport.update({
-  id: '/trades/new',
-  path: '/trades/new',
-  getParentRoute: () => Header_layoutRouteRoute,
-} as any)
-const AuthKakaoCallbackIndexRoute = AuthKakaoCallbackIndexRouteImport.update({
-  id: '/auth/kakao/callback/',
-  path: '/auth/kakao/callback/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Header_layoutTradesChatsIndexRoute =
-  Header_layoutTradesChatsIndexRouteImport.update({
+const MobileHeader_layoutMyIndexRoute =
+  MobileHeader_layoutMyIndexRouteImport.update({
+    id: '/my/',
+    path: '/my/',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileHeader_layoutMapsIndexRoute =
+  MobileHeader_layoutMapsIndexRouteImport.update({
+    id: '/maps/',
+    path: '/maps/',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileHeader_layoutTradesNewRoute =
+  MobileHeader_layoutTradesNewRouteImport.update({
+    id: '/trades/new',
+    path: '/trades/new',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileHeader_layoutMapsSearchRoute =
+  MobileHeader_layoutMapsSearchRouteImport.update({
+    id: '/maps/search',
+    path: '/maps/search',
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
+  } as any)
+const MobileAuthKakaoCallbackIndexRoute =
+  MobileAuthKakaoCallbackIndexRouteImport.update({
+    id: '/auth/kakao/callback/',
+    path: '/auth/kakao/callback/',
+    getParentRoute: () => MobileRouteRoute,
+  } as any)
+const MobileHeader_layoutTradesChatsIndexRoute =
+  MobileHeader_layoutTradesChatsIndexRouteImport.update({
     id: '/trades/chats/',
     path: '/trades/chats/',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
-const Header_layoutTradesTradeIdIndexRoute =
-  Header_layoutTradesTradeIdIndexRouteImport.update({
+const MobileHeader_layoutTradesTradeIdIndexRoute =
+  MobileHeader_layoutTradesTradeIdIndexRouteImport.update({
     id: '/trades/$tradeId/',
     path: '/trades/$tradeId/',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
-const Header_layoutTradesTradeIdEditRoute =
-  Header_layoutTradesTradeIdEditRouteImport.update({
+const MobileHeader_layoutTradesTradeIdEditRoute =
+  MobileHeader_layoutTradesTradeIdEditRouteImport.update({
     id: '/trades/$tradeId/edit',
     path: '/trades/$tradeId/edit',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
-const Header_layoutTradesTradeIdChatRoomChatRoomIdRoute =
-  Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport.update({
+const MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute =
+  MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRouteImport.update({
     id: '/trades/$tradeId/chat-room/$chatRoomId',
     path: '/trades/$tradeId/chat-room/$chatRoomId',
-    getParentRoute: () => Header_layoutRouteRoute,
+    getParentRoute: () => MobileHeader_layoutRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
-  '/about-us': typeof AboutUsRoute
-  '/my-reviews': typeof Header_layoutMyReviewsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
+  '/toast': typeof ToastRoute
+  '/login': typeof MobileLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
-  '/admin': typeof AdminIndexRoute
-  '/login': typeof LoginIndexRoute
-  '/trades/new': typeof Header_layoutTradesNewRoute
-  '/': typeof Header_layoutmapIndexRoute
-  '/profile': typeof Header_layoutProfileIndexRoute
-  '/trades': typeof Header_layoutTradesIndexRoute
-  '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
-  '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
-  '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
-  '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
+  '/collection': typeof MobileHeader_layoutCollectionRouteRoute
+  '/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
+  '/admin/login': typeof MobileAdminLoginRoute
+  '/': typeof MobileHeader_layoutIndexRoute
+  '/admin': typeof MobileAdminIndexRoute
+  '/maps/search': typeof MobileHeader_layoutMapsSearchRoute
+  '/trades/new': typeof MobileHeader_layoutTradesNewRoute
+  '/maps': typeof MobileHeader_layoutMapsIndexRoute
+  '/my': typeof MobileHeader_layoutMyIndexRoute
+  '/profile': typeof MobileHeader_layoutProfileIndexRoute
+  '/trades': typeof MobileHeader_layoutTradesIndexRoute
+  '/trades/$tradeId/edit': typeof MobileHeader_layoutTradesTradeIdEditRoute
+  '/trades/$tradeId': typeof MobileHeader_layoutTradesTradeIdIndexRoute
+  '/trades/chats': typeof MobileHeader_layoutTradesChatsIndexRoute
+  '/auth/kakao/callback': typeof MobileAuthKakaoCallbackIndexRoute
+  '/trades/$tradeId/chat-room/$chatRoomId': typeof MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute
-  '/about-us': typeof AboutUsRoute
-  '/my-reviews': typeof Header_layoutMyReviewsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
+  '/toast': typeof ToastRoute
+  '/login': typeof MobileLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
-  '/admin': typeof AdminIndexRoute
-  '/login': typeof LoginIndexRoute
-  '/trades/new': typeof Header_layoutTradesNewRoute
-  '/': typeof Header_layoutmapIndexRoute
-  '/profile': typeof Header_layoutProfileIndexRoute
-  '/trades': typeof Header_layoutTradesIndexRoute
-  '/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
-  '/trades/$tradeId': typeof Header_layoutTradesTradeIdIndexRoute
-  '/trades/chats': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback': typeof AuthKakaoCallbackIndexRoute
-  '/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
+  '/collection': typeof MobileHeader_layoutCollectionRouteRoute
+  '/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
+  '/admin/login': typeof MobileAdminLoginRoute
+  '/': typeof MobileHeader_layoutIndexRoute
+  '/admin': typeof MobileAdminIndexRoute
+  '/maps/search': typeof MobileHeader_layoutMapsSearchRoute
+  '/trades/new': typeof MobileHeader_layoutTradesNewRoute
+  '/maps': typeof MobileHeader_layoutMapsIndexRoute
+  '/my': typeof MobileHeader_layoutMyIndexRoute
+  '/profile': typeof MobileHeader_layoutProfileIndexRoute
+  '/trades': typeof MobileHeader_layoutTradesIndexRoute
+  '/trades/$tradeId/edit': typeof MobileHeader_layoutTradesTradeIdEditRoute
+  '/trades/$tradeId': typeof MobileHeader_layoutTradesTradeIdIndexRoute
+  '/trades/chats': typeof MobileHeader_layoutTradesChatsIndexRoute
+  '/auth/kakao/callback': typeof MobileAuthKakaoCallbackIndexRoute
+  '/trades/$tradeId/chat-room/$chatRoomId': typeof MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_header_layout': typeof Header_layoutRouteRouteWithChildren
+  '/_mobile': typeof MobileRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/about-us': typeof AboutUsRoute
-  '/_header_layout/my-reviews': typeof Header_layoutMyReviewsRoute
-  '/admin/login': typeof AdminLoginRoute
-  '/careers/$jobPostingId': typeof CareersJobPostingIdRoute
+  '/toast': typeof ToastRoute
+  '/_mobile/_header_layout': typeof MobileHeader_layoutRouteRouteWithChildren
+  '/_mobile/login': typeof MobileLoginRoute
   '/stores/$storeId': typeof StoresStoreIdRoute
-  '/admin/': typeof AdminIndexRoute
-  '/login/': typeof LoginIndexRoute
-  '/_header_layout/trades/new': typeof Header_layoutTradesNewRoute
-  '/_header_layout/(map)/': typeof Header_layoutmapIndexRoute
-  '/_header_layout/profile/': typeof Header_layoutProfileIndexRoute
-  '/_header_layout/trades/': typeof Header_layoutTradesIndexRoute
-  '/_header_layout/trades/$tradeId/edit': typeof Header_layoutTradesTradeIdEditRoute
-  '/_header_layout/trades/$tradeId/': typeof Header_layoutTradesTradeIdIndexRoute
-  '/_header_layout/trades/chats/': typeof Header_layoutTradesChatsIndexRoute
-  '/auth/kakao/callback/': typeof AuthKakaoCallbackIndexRoute
-  '/_header_layout/trades/$tradeId/chat-room/$chatRoomId': typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
+  '/_mobile/_header_layout/collection': typeof MobileHeader_layoutCollectionRouteRoute
+  '/_mobile/_header_layout/my-reviews': typeof MobileHeader_layoutMyReviewsRoute
+  '/_mobile/admin/login': typeof MobileAdminLoginRoute
+  '/_mobile/_header_layout/': typeof MobileHeader_layoutIndexRoute
+  '/_mobile/admin/': typeof MobileAdminIndexRoute
+  '/_mobile/_header_layout/maps/search': typeof MobileHeader_layoutMapsSearchRoute
+  '/_mobile/_header_layout/trades/new': typeof MobileHeader_layoutTradesNewRoute
+  '/_mobile/_header_layout/maps/': typeof MobileHeader_layoutMapsIndexRoute
+  '/_mobile/_header_layout/my/': typeof MobileHeader_layoutMyIndexRoute
+  '/_mobile/_header_layout/profile/': typeof MobileHeader_layoutProfileIndexRoute
+  '/_mobile/_header_layout/trades/': typeof MobileHeader_layoutTradesIndexRoute
+  '/_mobile/_header_layout/trades/$tradeId/edit': typeof MobileHeader_layoutTradesTradeIdEditRoute
+  '/_mobile/_header_layout/trades/$tradeId/': typeof MobileHeader_layoutTradesTradeIdIndexRoute
+  '/_mobile/_header_layout/trades/chats/': typeof MobileHeader_layoutTradesChatsIndexRoute
+  '/_mobile/auth/kakao/callback/': typeof MobileAuthKakaoCallbackIndexRoute
+  '/_mobile/_header_layout/trades/$tradeId/chat-room/$chatRoomId': typeof MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
-    | '/about-us'
+    | '/toast'
+    | '/login'
+    | '/stores/$storeId'
+    | '/collection'
     | '/my-reviews'
     | '/admin/login'
-    | '/careers/$jobPostingId'
-    | '/stores/$storeId'
-    | '/admin'
-    | '/login'
-    | '/trades/new'
     | '/'
+    | '/admin'
+    | '/maps/search'
+    | '/trades/new'
+    | '/maps'
+    | '/my'
     | '/profile'
     | '/trades'
     | '/trades/$tradeId/edit'
@@ -206,15 +251,18 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
-    | '/about-us'
+    | '/toast'
+    | '/login'
+    | '/stores/$storeId'
+    | '/collection'
     | '/my-reviews'
     | '/admin/login'
-    | '/careers/$jobPostingId'
-    | '/stores/$storeId'
-    | '/admin'
-    | '/login'
-    | '/trades/new'
     | '/'
+    | '/admin'
+    | '/maps/search'
+    | '/trades/new'
+    | '/maps'
+    | '/my'
     | '/profile'
     | '/trades'
     | '/trades/$tradeId/edit'
@@ -224,45 +272,44 @@ export interface FileRouteTypes {
     | '/trades/$tradeId/chat-room/$chatRoomId'
   id:
     | '__root__'
-    | '/_header_layout'
+    | '/_mobile'
     | '/about'
-    | '/about-us'
-    | '/_header_layout/my-reviews'
-    | '/admin/login'
-    | '/careers/$jobPostingId'
+    | '/toast'
+    | '/_mobile/_header_layout'
+    | '/_mobile/login'
     | '/stores/$storeId'
-    | '/admin/'
-    | '/login/'
-    | '/_header_layout/trades/new'
-    | '/_header_layout/(map)/'
-    | '/_header_layout/profile/'
-    | '/_header_layout/trades/'
-    | '/_header_layout/trades/$tradeId/edit'
-    | '/_header_layout/trades/$tradeId/'
-    | '/_header_layout/trades/chats/'
-    | '/auth/kakao/callback/'
-    | '/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
+    | '/_mobile/_header_layout/collection'
+    | '/_mobile/_header_layout/my-reviews'
+    | '/_mobile/admin/login'
+    | '/_mobile/_header_layout/'
+    | '/_mobile/admin/'
+    | '/_mobile/_header_layout/maps/search'
+    | '/_mobile/_header_layout/trades/new'
+    | '/_mobile/_header_layout/maps/'
+    | '/_mobile/_header_layout/my/'
+    | '/_mobile/_header_layout/profile/'
+    | '/_mobile/_header_layout/trades/'
+    | '/_mobile/_header_layout/trades/$tradeId/edit'
+    | '/_mobile/_header_layout/trades/$tradeId/'
+    | '/_mobile/_header_layout/trades/chats/'
+    | '/_mobile/auth/kakao/callback/'
+    | '/_mobile/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  Header_layoutRouteRoute: typeof Header_layoutRouteRouteWithChildren
+  MobileRouteRoute: typeof MobileRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AboutUsRoute: typeof AboutUsRoute
-  AdminLoginRoute: typeof AdminLoginRoute
-  CareersJobPostingIdRoute: typeof CareersJobPostingIdRoute
+  ToastRoute: typeof ToastRoute
   StoresStoreIdRoute: typeof StoresStoreIdRoute
-  AdminIndexRoute: typeof AdminIndexRoute
-  LoginIndexRoute: typeof LoginIndexRoute
-  AuthKakaoCallbackIndexRoute: typeof AuthKakaoCallbackIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/about-us': {
-      id: '/about-us'
-      path: '/about-us'
-      fullPath: '/about-us'
-      preLoaderRoute: typeof AboutUsRouteImport
+    '/toast': {
+      id: '/toast'
+      path: '/toast'
+      fullPath: '/toast'
+      preLoaderRoute: typeof ToastRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -272,25 +319,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_header_layout': {
-      id: '/_header_layout'
+    '/_mobile': {
+      id: '/_mobile'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof Header_layoutRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login/': {
-      id: '/login/'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminIndexRouteImport
+      preLoaderRoute: typeof MobileRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stores/$storeId': {
@@ -300,131 +333,203 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoresStoreIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/careers/$jobPostingId': {
-      id: '/careers/$jobPostingId'
-      path: '/careers/$jobPostingId'
-      fullPath: '/careers/$jobPostingId'
-      preLoaderRoute: typeof CareersJobPostingIdRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_mobile/login': {
+      id: '/_mobile/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof MobileLoginRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_mobile/_header_layout': {
+      id: '/_mobile/_header_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MobileHeader_layoutRouteRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
-    '/_header_layout/my-reviews': {
-      id: '/_header_layout/my-reviews'
-      path: '/my-reviews'
-      fullPath: '/my-reviews'
-      preLoaderRoute: typeof Header_layoutMyReviewsRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+    '/_mobile/admin/': {
+      id: '/_mobile/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof MobileAdminIndexRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
-    '/_header_layout/trades/': {
-      id: '/_header_layout/trades/'
-      path: '/trades'
-      fullPath: '/trades'
-      preLoaderRoute: typeof Header_layoutTradesIndexRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
-    }
-    '/_header_layout/profile/': {
-      id: '/_header_layout/profile/'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof Header_layoutProfileIndexRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
-    }
-    '/_header_layout/(map)/': {
-      id: '/_header_layout/(map)/'
+    '/_mobile/_header_layout/': {
+      id: '/_mobile/_header_layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof Header_layoutmapIndexRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
-    '/_header_layout/trades/new': {
-      id: '/_header_layout/trades/new'
+    '/_mobile/admin/login': {
+      id: '/_mobile/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof MobileAdminLoginRouteImport
+      parentRoute: typeof MobileRouteRoute
+    }
+    '/_mobile/_header_layout/my-reviews': {
+      id: '/_mobile/_header_layout/my-reviews'
+      path: '/my-reviews'
+      fullPath: '/my-reviews'
+      preLoaderRoute: typeof MobileHeader_layoutMyReviewsRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/collection': {
+      id: '/_mobile/_header_layout/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof MobileHeader_layoutCollectionRouteRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/trades/': {
+      id: '/_mobile/_header_layout/trades/'
+      path: '/trades'
+      fullPath: '/trades'
+      preLoaderRoute: typeof MobileHeader_layoutTradesIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/profile/': {
+      id: '/_mobile/_header_layout/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof MobileHeader_layoutProfileIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/my/': {
+      id: '/_mobile/_header_layout/my/'
+      path: '/my'
+      fullPath: '/my'
+      preLoaderRoute: typeof MobileHeader_layoutMyIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/maps/': {
+      id: '/_mobile/_header_layout/maps/'
+      path: '/maps'
+      fullPath: '/maps'
+      preLoaderRoute: typeof MobileHeader_layoutMapsIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/_header_layout/trades/new': {
+      id: '/_mobile/_header_layout/trades/new'
       path: '/trades/new'
       fullPath: '/trades/new'
-      preLoaderRoute: typeof Header_layoutTradesNewRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutTradesNewRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
-    '/auth/kakao/callback/': {
-      id: '/auth/kakao/callback/'
+    '/_mobile/_header_layout/maps/search': {
+      id: '/_mobile/_header_layout/maps/search'
+      path: '/maps/search'
+      fullPath: '/maps/search'
+      preLoaderRoute: typeof MobileHeader_layoutMapsSearchRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
+    }
+    '/_mobile/auth/kakao/callback/': {
+      id: '/_mobile/auth/kakao/callback/'
       path: '/auth/kakao/callback'
       fullPath: '/auth/kakao/callback'
-      preLoaderRoute: typeof AuthKakaoCallbackIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof MobileAuthKakaoCallbackIndexRouteImport
+      parentRoute: typeof MobileRouteRoute
     }
-    '/_header_layout/trades/chats/': {
-      id: '/_header_layout/trades/chats/'
+    '/_mobile/_header_layout/trades/chats/': {
+      id: '/_mobile/_header_layout/trades/chats/'
       path: '/trades/chats'
       fullPath: '/trades/chats'
-      preLoaderRoute: typeof Header_layoutTradesChatsIndexRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutTradesChatsIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
-    '/_header_layout/trades/$tradeId/': {
-      id: '/_header_layout/trades/$tradeId/'
+    '/_mobile/_header_layout/trades/$tradeId/': {
+      id: '/_mobile/_header_layout/trades/$tradeId/'
       path: '/trades/$tradeId'
       fullPath: '/trades/$tradeId'
-      preLoaderRoute: typeof Header_layoutTradesTradeIdIndexRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutTradesTradeIdIndexRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
-    '/_header_layout/trades/$tradeId/edit': {
-      id: '/_header_layout/trades/$tradeId/edit'
+    '/_mobile/_header_layout/trades/$tradeId/edit': {
+      id: '/_mobile/_header_layout/trades/$tradeId/edit'
       path: '/trades/$tradeId/edit'
       fullPath: '/trades/$tradeId/edit'
-      preLoaderRoute: typeof Header_layoutTradesTradeIdEditRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutTradesTradeIdEditRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
-    '/_header_layout/trades/$tradeId/chat-room/$chatRoomId': {
-      id: '/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
+    '/_mobile/_header_layout/trades/$tradeId/chat-room/$chatRoomId': {
+      id: '/_mobile/_header_layout/trades/$tradeId/chat-room/$chatRoomId'
       path: '/trades/$tradeId/chat-room/$chatRoomId'
       fullPath: '/trades/$tradeId/chat-room/$chatRoomId'
-      preLoaderRoute: typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRouteImport
-      parentRoute: typeof Header_layoutRouteRoute
+      preLoaderRoute: typeof MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRouteImport
+      parentRoute: typeof MobileHeader_layoutRouteRoute
     }
   }
 }
 
-interface Header_layoutRouteRouteChildren {
-  Header_layoutMyReviewsRoute: typeof Header_layoutMyReviewsRoute
-  Header_layoutTradesNewRoute: typeof Header_layoutTradesNewRoute
-  Header_layoutmapIndexRoute: typeof Header_layoutmapIndexRoute
-  Header_layoutProfileIndexRoute: typeof Header_layoutProfileIndexRoute
-  Header_layoutTradesIndexRoute: typeof Header_layoutTradesIndexRoute
-  Header_layoutTradesTradeIdEditRoute: typeof Header_layoutTradesTradeIdEditRoute
-  Header_layoutTradesTradeIdIndexRoute: typeof Header_layoutTradesTradeIdIndexRoute
-  Header_layoutTradesChatsIndexRoute: typeof Header_layoutTradesChatsIndexRoute
-  Header_layoutTradesTradeIdChatRoomChatRoomIdRoute: typeof Header_layoutTradesTradeIdChatRoomChatRoomIdRoute
+interface MobileHeader_layoutRouteRouteChildren {
+  MobileHeader_layoutCollectionRouteRoute: typeof MobileHeader_layoutCollectionRouteRoute
+  MobileHeader_layoutMyReviewsRoute: typeof MobileHeader_layoutMyReviewsRoute
+  MobileHeader_layoutIndexRoute: typeof MobileHeader_layoutIndexRoute
+  MobileHeader_layoutMapsSearchRoute: typeof MobileHeader_layoutMapsSearchRoute
+  MobileHeader_layoutTradesNewRoute: typeof MobileHeader_layoutTradesNewRoute
+  MobileHeader_layoutMapsIndexRoute: typeof MobileHeader_layoutMapsIndexRoute
+  MobileHeader_layoutMyIndexRoute: typeof MobileHeader_layoutMyIndexRoute
+  MobileHeader_layoutProfileIndexRoute: typeof MobileHeader_layoutProfileIndexRoute
+  MobileHeader_layoutTradesIndexRoute: typeof MobileHeader_layoutTradesIndexRoute
+  MobileHeader_layoutTradesTradeIdEditRoute: typeof MobileHeader_layoutTradesTradeIdEditRoute
+  MobileHeader_layoutTradesTradeIdIndexRoute: typeof MobileHeader_layoutTradesTradeIdIndexRoute
+  MobileHeader_layoutTradesChatsIndexRoute: typeof MobileHeader_layoutTradesChatsIndexRoute
+  MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute: typeof MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute
 }
 
-const Header_layoutRouteRouteChildren: Header_layoutRouteRouteChildren = {
-  Header_layoutMyReviewsRoute: Header_layoutMyReviewsRoute,
-  Header_layoutTradesNewRoute: Header_layoutTradesNewRoute,
-  Header_layoutmapIndexRoute: Header_layoutmapIndexRoute,
-  Header_layoutProfileIndexRoute: Header_layoutProfileIndexRoute,
-  Header_layoutTradesIndexRoute: Header_layoutTradesIndexRoute,
-  Header_layoutTradesTradeIdEditRoute: Header_layoutTradesTradeIdEditRoute,
-  Header_layoutTradesTradeIdIndexRoute: Header_layoutTradesTradeIdIndexRoute,
-  Header_layoutTradesChatsIndexRoute: Header_layoutTradesChatsIndexRoute,
-  Header_layoutTradesTradeIdChatRoomChatRoomIdRoute:
-    Header_layoutTradesTradeIdChatRoomChatRoomIdRoute,
+const MobileHeader_layoutRouteRouteChildren: MobileHeader_layoutRouteRouteChildren =
+  {
+    MobileHeader_layoutCollectionRouteRoute:
+      MobileHeader_layoutCollectionRouteRoute,
+    MobileHeader_layoutMyReviewsRoute: MobileHeader_layoutMyReviewsRoute,
+    MobileHeader_layoutIndexRoute: MobileHeader_layoutIndexRoute,
+    MobileHeader_layoutMapsSearchRoute: MobileHeader_layoutMapsSearchRoute,
+    MobileHeader_layoutTradesNewRoute: MobileHeader_layoutTradesNewRoute,
+    MobileHeader_layoutMapsIndexRoute: MobileHeader_layoutMapsIndexRoute,
+    MobileHeader_layoutMyIndexRoute: MobileHeader_layoutMyIndexRoute,
+    MobileHeader_layoutProfileIndexRoute: MobileHeader_layoutProfileIndexRoute,
+    MobileHeader_layoutTradesIndexRoute: MobileHeader_layoutTradesIndexRoute,
+    MobileHeader_layoutTradesTradeIdEditRoute:
+      MobileHeader_layoutTradesTradeIdEditRoute,
+    MobileHeader_layoutTradesTradeIdIndexRoute:
+      MobileHeader_layoutTradesTradeIdIndexRoute,
+    MobileHeader_layoutTradesChatsIndexRoute:
+      MobileHeader_layoutTradesChatsIndexRoute,
+    MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute:
+      MobileHeader_layoutTradesTradeIdChatRoomChatRoomIdRoute,
+  }
+
+const MobileHeader_layoutRouteRouteWithChildren =
+  MobileHeader_layoutRouteRoute._addFileChildren(
+    MobileHeader_layoutRouteRouteChildren,
+  )
+
+interface MobileRouteRouteChildren {
+  MobileHeader_layoutRouteRoute: typeof MobileHeader_layoutRouteRouteWithChildren
+  MobileLoginRoute: typeof MobileLoginRoute
+  MobileAdminLoginRoute: typeof MobileAdminLoginRoute
+  MobileAdminIndexRoute: typeof MobileAdminIndexRoute
+  MobileAuthKakaoCallbackIndexRoute: typeof MobileAuthKakaoCallbackIndexRoute
 }
 
-const Header_layoutRouteRouteWithChildren =
-  Header_layoutRouteRoute._addFileChildren(Header_layoutRouteRouteChildren)
+const MobileRouteRouteChildren: MobileRouteRouteChildren = {
+  MobileHeader_layoutRouteRoute: MobileHeader_layoutRouteRouteWithChildren,
+  MobileLoginRoute: MobileLoginRoute,
+  MobileAdminLoginRoute: MobileAdminLoginRoute,
+  MobileAdminIndexRoute: MobileAdminIndexRoute,
+  MobileAuthKakaoCallbackIndexRoute: MobileAuthKakaoCallbackIndexRoute,
+}
+
+const MobileRouteRouteWithChildren = MobileRouteRoute._addFileChildren(
+  MobileRouteRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
-  Header_layoutRouteRoute: Header_layoutRouteRouteWithChildren,
+  MobileRouteRoute: MobileRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AboutUsRoute: AboutUsRoute,
-  AdminLoginRoute: AdminLoginRoute,
-  CareersJobPostingIdRoute: CareersJobPostingIdRoute,
+  ToastRoute: ToastRoute,
   StoresStoreIdRoute: StoresStoreIdRoute,
-  AdminIndexRoute: AdminIndexRoute,
-  LoginIndexRoute: LoginIndexRoute,
-  AuthKakaoCallbackIndexRoute: AuthKakaoCallbackIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

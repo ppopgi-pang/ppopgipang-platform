@@ -1,27 +1,25 @@
-interface SearchBarProps {
-    value?: string;
-    onChange?: (value: string) => void;
-    onSearch?: () => void;
-}
-
-export default function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
-    return (
-        <div className="flex items-center w-full h-12 glass-panel glass-pill px-4 gap-3 animate-fade-up focus-within:ring-2 focus-within:ring-sky-200/70">
-            <input
-                className="flex-1 bg-transparent text-base text-slate-800 placeholder:text-slate-400 focus:outline-none"
-                key="random1"
-                maxLength={60}
-                placeholder="뽑기방 검색"
-                type="search"
-                aria-label="뽑기방 검색"
-                value={value}
-                onChange={(e) => onChange?.(e.target.value)}
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                        onSearch?.();
-                    }
-                }}
-            />
-        </div>
-    )
+export default function SearchBarButton({
+  onClick,
+  searchedPlace,
+}: {
+  onClick: () => void;
+  searchedPlace: string | undefined;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center w-full px-3 bg-white rounded-full h-12 gap-3 shadow-lg border-2 border-transparent cursor-pointer"
+    >
+      {searchedPlace ? (
+        <span>{searchedPlace}</span>
+      ) : (
+        <>
+          <span className="flex flex-1 text-gray-500 items-center">
+            지역명, 가게명 검색
+          </span>
+          <img src="/icons/ic-search.svg" className="w-5 h-5" alt="" />
+        </>
+      )}
+    </button>
+  );
 }

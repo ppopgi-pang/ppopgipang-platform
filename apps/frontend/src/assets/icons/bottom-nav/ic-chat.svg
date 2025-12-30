@@ -1,0 +1,18 @@
+<svg
+    width="24" height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <circle cx="8" cy="10" r="1" fill="currentColor"/>
+    <circle cx="12" cy="10" r="1" fill="currentColor"/>
+    <circle cx="16" cy="10" r="1" fill="currentColor"/>
+    
+    <path
+        d="M3 10.74C3 9.39809 3.48797 8.10426 4.36983 7.10721C5.25169 6.11016 6.46397 5.48 7.75 5.48H16.25C17.536 5.48 18.7483 6.11016 19.6302 7.10721C20.512 8.10426 21 9.39809 21 10.74C21 12.0819 20.512 13.3757 19.6302 14.3728C18.7483 15.3698 17.536 16 16.25 16H8.6L5 19.6V16C3.885 16 3 14.83 3 13.63V10.74Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+    />
+</svg>
