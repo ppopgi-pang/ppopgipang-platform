@@ -7,7 +7,6 @@ import {
     ApiQuery,
     ApiParam,
     ApiBody,
-    ApiBearerAuth
 } from '@nestjs/swagger';
 import { CollectionsService } from './collections.service';
 import { CollectionResult } from '@ppopgipang/types';
@@ -27,7 +26,6 @@ export class CollectionsController {
 
     @Get('passport')
     @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth('access-token')
     @ApiOperation({
         summary: '(사용자) 여권 메인 조회',
         description: '사용자의 방문 기록, 스탬프, 지역별 정복률, 통계를 조회합니다.'
@@ -52,7 +50,6 @@ export class CollectionsController {
 
     @Get('loots')
     @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth('access-token')
     @ApiOperation({
         summary: '(사용자) 득템 갤러리 조회',
         description: '사용자가 획득한 득템(성공 인증) 이미지 갤러리를 조회합니다.'
@@ -83,7 +80,6 @@ export class CollectionsController {
 
     @Get('loots/:certificationId')
     @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth('access-token')
     @ApiOperation({
         summary: '(사용자) 득템 상세 조회',
         description: '특정 득템의 상세 정보를 조회합니다.'
@@ -102,7 +98,6 @@ export class CollectionsController {
 
     @Get('achievements')
     @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth('access-token')
     @ApiOperation({
         summary: '(사용자) 업적/배지 현황 조회',
         description: '사용자의 업적 및 배지 현황을 조회합니다.'
@@ -127,7 +122,6 @@ export class CollectionsController {
 
     @Patch('achievements/featured')
     @UseGuards(AuthGuard('jwt'))
-    @ApiBearerAuth('access-token')
     @ApiOperation({
         summary: '(사용자) 대표 배지 설정/해제',
         description: '대표 배지를 설정하거나 해제합니다. achievementId를 null로 보내면 해제됩니다.'

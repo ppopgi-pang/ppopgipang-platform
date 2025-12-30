@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ProposalsService } from './proposals.service';
 import { ProposalInput, ProposalResult } from '@ppopgipang/types';
 
@@ -12,7 +12,6 @@ export class ProposalsController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '(사용자) 신규 제보 생성'
   })
@@ -26,7 +25,6 @@ export class ProposalsController {
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth('access-token')
   @ApiOperation({
     summary: '(사용자) 내 제보 내역 조회'
   })

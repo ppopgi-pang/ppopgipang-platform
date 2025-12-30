@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags, ApiOkResponse } from "@nestjs/swagger";
+import { ApiOperation, ApiTags, ApiOkResponse } from "@nestjs/swagger";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { CookieOptions, Response } from "express";
@@ -51,7 +51,6 @@ export class AuthController {
     }
 
     @Post('create-admin-user')
-    @ApiBearerAuth('access-token')
     @UseGuards(AuthGuard('jwt'))
     @IsAdmin(true)
     @ApiOperation({ summary: '관리자 계정 생성' })

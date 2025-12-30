@@ -1,5 +1,4 @@
 export namespace CollectionResult {
-    // ===== 여권 (Passport) =====
     export class ProfileSummaryDto {
         userId: number;
         nickname: string;
@@ -310,8 +309,7 @@ export namespace CollectionResult {
             this.tradePost = tradePost;
         }
     }
-
-    // ===== 업적/배지 =====
+    
     export class AchievementConditionDto {
         type: string;
         target: number;

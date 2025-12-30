@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { TradesService } from './trades.service';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { TradeChatInput, TradeInput, TradeResult, TradeChatResult } from '@ppopgipang/types';
 import { IgnoreJwtGuard } from 'src/auth/decorators/ignore-jwt-guard.decorator';
@@ -15,7 +15,6 @@ export class TradesController {
    * (사용자) 중고거래 게시글 생성
    */
   @Post()
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 생성' })
   @ApiBody({ type: TradeInput.CreateTradeDto })
@@ -49,7 +48,6 @@ export class TradesController {
    * (사용자) 채팅방 생성
    */
   @Post('chat-room')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 채팅방 생성' })
   @ApiBody({ type: TradeChatInput.CreateTradeChatRoomDto })
@@ -65,7 +63,6 @@ export class TradesController {
    * (사용자) 내 채팅방 목록 조회
    */
   @Get('chat-room')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 내 채팅방 목록 조회' })
   @ApiOkResponse({ type: TradeChatResult.TradeChatRoomListDto, description: '내 채팅방 목록 조회 성공' })
@@ -79,7 +76,6 @@ export class TradesController {
    * (사용자) 채팅방 나가기
    */
   @Delete('chat-room/:id')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 채팅방 나가기' })
   @ApiParam({ name: 'id', description: '채팅방 ID' })
@@ -95,7 +91,6 @@ export class TradesController {
    * (사용자) 채팅 메시지 전송
    */
   @Post('chat-room/message')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 채팅 메시지 전송' })
   @ApiBody({ type: TradeChatInput.CreateTradeChatMessageDto })
@@ -111,7 +106,6 @@ export class TradesController {
    * (사용자) 채팅 메시지 목록 조회
    */
   @Get('chat-room/:chatRoomId/messages')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 채팅 메시지 목록 조회' })
   @ApiParam({ name: 'chatRoomId', description: '채팅방 ID' })
@@ -147,7 +141,6 @@ export class TradesController {
    * (사용자) 중고거래 게시글 수정
    */
   @Patch(':id')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 수정' })
   @ApiParam({ name: 'id', description: '게시글 ID' })
@@ -164,7 +157,6 @@ export class TradesController {
    * (사용자) 중고거래 게시글 삭제
    */
   @Delete(':id')
-  @ApiBearerAuth('access-token')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 삭제' })
   @ApiParam({ name: 'id', description: '게시글 ID' })

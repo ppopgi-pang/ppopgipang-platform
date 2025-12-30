@@ -480,7 +480,7 @@ export class CollectionsService {
         });
 
         const earnedMap = new Map(
-            userAchievements.map(ua => [ua.achievementId, ua.acquiredAt])
+            userAchievements.map(ua => [ua.achievementId, ua.earnedAt])
         );
 
         // 업적 DTO 생성

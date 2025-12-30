@@ -19,6 +19,7 @@ import { CertificationInput } from './dto/certification/certification-input.dto'
 import { CertificationResult } from './dto/certification/certification-result.dto';
 import { CareerInput } from './dto/career/career-input.dto';
 import { CareerResult } from './dto/career/career-result.dto';
+import { CollectionResult } from './dto/gamification/collection-result.dto'
 
 export {
     AdminStoreInput,
@@ -41,5 +42,6 @@ export {
     CertificationInput,
     CertificationResult,
     CareerInput,
-    CareerResult
+    CareerResult,
+    CollectionResult,
 };
