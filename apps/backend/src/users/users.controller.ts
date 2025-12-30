@@ -34,7 +34,7 @@ export class UsersController {
     summary: '(사용자) 특정 검색 기록 삭제'
   })
   @UseGuards(AuthGuard('jwt'))
-  @ApiOkResponse({ description: '특정 검색 기록 삭제 성공' })
+  @ApiOkResponse({ type: Boolean, description: '특정 검색 기록 삭제 성공' })
   deleteSearchHistory(
     @Req() req: any,
     @Param('id') id: number
@@ -47,7 +47,7 @@ export class UsersController {
     summary: '(사용자) 검색 기록 전체 삭제'
   })
   @UseGuards(AuthGuard('jwt'))
-  @ApiOkResponse({ description: '검색 기록 전체 삭제 성공' })
+  @ApiOkResponse({ type: Boolean, description: '검색 기록 전체 삭제 성공' })
   deleteAllSearchHistory(@Req() req: any) {
     return this.usersService.deleteAllSearchHistory(req.user.userId);
   }

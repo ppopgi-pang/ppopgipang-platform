@@ -232,7 +232,7 @@ export class StoresController {
     summary: '(어드민) 가게 타입(카테고리) 생성 API'
   })
   @ApiBody({ type: StoreTypeInput.CreateStoreTypeDto })
-  @ApiCreatedResponse({ description: '가게 타입 생성 성공' })
+  @ApiCreatedResponse({ type: StoreTypeResult.StoreTypeDto, description: '가게 타입 생성 성공' })
   createStoreType(
     @Body() dto: StoreTypeInput.CreateStoreTypeDto
   ) {
@@ -248,7 +248,7 @@ export class StoresController {
   @ApiOperation({
     summary: '(어드민) 가게 타입(카테고리) 목록 조회 API'
   })
-  @ApiOkResponse({ description: '가게 타입 목록 조회 성공' })
+  @ApiOkResponse({ type: StoreTypeResult.ListTypeDto, description: '가게 타입 목록 조회 성공' })
   findStoreTypes() {
     return this.storesService.findStoreTypes();
   }

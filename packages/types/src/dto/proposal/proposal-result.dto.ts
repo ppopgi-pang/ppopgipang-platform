@@ -1,6 +1,10 @@
+import { ApiProperty } from "@nestjs/swagger";
+
 export namespace ProposalResult {
     export class StoreInfoDto {
+        @ApiProperty({ type: Number, example: 1 })
         id: number;
+        @ApiProperty({ type: String, example: 'Sample Name' })
         name: string;
 
         constructor(id: number, name: string) {
@@ -10,13 +14,21 @@ export namespace ProposalResult {
     }
 
     export class ProposalDto {
+        @ApiProperty({ type: Number, example: 1 })
         id: number;
+        @ApiProperty({ type: String, example: 'Sample Name' })
         name: string;
+        @ApiProperty({ type: String, example: 'Seoul, Korea' })
         address: string;
+        @ApiProperty({ type: Number, example: 37.5665 })
         latitude: number;
+        @ApiProperty({ type: Number, example: 126.978 })
         longitude: number;
+        @ApiProperty({ type: String, enum: ['pending', 'approved', 'rejected'], example: 'pending' })
         status: 'pending' | 'approved' | 'rejected';
+        @ApiProperty({ type: String, format: 'date-time', example: '2024-01-01T00:00:00.000Z' })
         createdAt: Date;
+        @ApiProperty({ type: () => StoreInfoDto, example: { id: 1, name: 'Sample Name' }, required: false, nullable: true })
         store?: StoreInfoDto | null;
 
         constructor(
@@ -41,9 +53,13 @@ export namespace ProposalResult {
     }
 
     export class MyProposalsDto {
+        @ApiProperty({ type: () => [ProposalDto], example: [{ id: 1, name: 'Sample Name', address: 'Seoul, Korea', latitude: 37.5665, longitude: 126.978, status: 'pending', createdAt: '2024-01-01T00:00:00.000Z', store: { id: 1, name: 'Sample Name' } }] })
         items: ProposalDto[];
+        @ApiProperty({ type: Number, example: 20 })
         total: number;
+        @ApiProperty({ type: Number, example: 1 })
         page: number;
+        @ApiProperty({ type: Number, example: 10 })
         size: number;
 
         constructor(items: ProposalDto[], total: number, page: number, size: number) {
@@ -55,8 +71,11 @@ export namespace ProposalResult {
     }
 
     export class CreateProposalResultDto {
+        @ApiProperty({ type: Number, example: 1 })
         id: number;
+        @ApiProperty({ type: String, enum: ['pending'], example: 'pending' })
         status: 'pending';
+        @ApiProperty({ type: Number, example: 50 })
         expGained: number;
 
         constructor(id: number, status: 'pending', expGained: number) {

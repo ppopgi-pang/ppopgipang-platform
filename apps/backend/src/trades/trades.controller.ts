@@ -79,12 +79,13 @@ export class TradesController {
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 채팅방 나가기' })
   @ApiParam({ name: 'id', description: '채팅방 ID' })
-  @ApiOkResponse({ description: '채팅방 나가기 성공' })
-  leaveChatRoom(
+  @ApiOkResponse({ type: Boolean, description: '채팅방 나가기 성공' })
+  async leaveChatRoom(
     @Req() req: any,
     @Param('id') id: number
   ) {
-    return this.tradesService.leaveChatRoom(id, req.user.userId);
+    await this.tradesService.leaveChatRoom(id, req.user.userId);
+    return true;
   }
 
   /**
@@ -160,11 +161,12 @@ export class TradesController {
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '(사용자) 중고거래 게시글 삭제' })
   @ApiParam({ name: 'id', description: '게시글 ID' })
-  @ApiOkResponse({ description: '중고거래 게시글 삭제 성공' })
-  deleteTrade(
+  @ApiOkResponse({ type: Boolean, description: '중고거래 게시글 삭제 성공' })
+  async deleteTrade(
     @Req() req: any,
     @Param('id') id: number
   ) {
-    return this.tradesService.deleteTrade(id, req.user.userId);
+    await this.tradesService.deleteTrade(id, req.user.userId);
+    return true;
   }
 }
