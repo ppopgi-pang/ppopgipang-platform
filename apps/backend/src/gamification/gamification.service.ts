@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { EntityManager, QueryRunner } from 'typeorm';
 import { UserProgress } from './entities/user-progress.entity';
 import { UserStamp } from './entities/user-stamp.entity';
 import { Stamp } from './entities/stamp.entity';
@@ -9,29 +8,10 @@ import { UserAchievement } from './entities/user-achievement.entity';
 import { UserStoreStats } from 'src/stores/entities/user-store-stats.entity';
 import { Certification } from 'src/certifications/entities/certification.entity';
 import { CertificationResult } from '@ppopgipang/types';
-import { Store } from 'src/stores/entities/store.entity';
 
 @Injectable()
 export class GamificationService {
-    constructor(
-        @InjectRepository(UserProgress)
-        private readonly userProgressRepository: Repository<UserProgress>,
-        @InjectRepository(UserStamp)
-        private readonly userStampRepository: Repository<UserStamp>,
-        @InjectRepository(Stamp)
-        private readonly stampRepository: Repository<Stamp>,
-        @InjectRepository(Achievement)
-        private readonly achievementRepository: Repository<Achievement>,
-        @InjectRepository(UserAchievement)
-        private readonly userAchievementRepository: Repository<UserAchievement>,
-        @InjectRepository(UserStoreStats)
-        private readonly userStoreStatsRepository: Repository<UserStoreStats>,
-        @InjectRepository(Certification)
-        private readonly certificationRepository: Repository<Certification>,
-        @InjectRepository(Store)
-        private readonly storeRepository: Repository<Store>,
-        private readonly dataSource: DataSource
-    ) { }
+    constructor() { }
 
     /**
      * 인증 완료 후 보상 처리
@@ -40,59 +20,58 @@ export class GamificationService {
         userId: number,
         storeId: number,
         type: 'loot' | 'checkin',
-        expAmount: number
+        expAmount: number,
+        queryRunner: QueryRunner
     ): Promise<CertificationResult.RewardsDto> {
-        return await this.dataSource.transaction(async manager => {
-            // 1. EXP 추가 & 레벨업 체크
-            let userProgress = await manager.findOne(UserProgress, { where: { userId } });
+        // 1. EXP 추가 & 레벨업 체크
+        let userProgress = await queryRunner.manager.findOne(UserProgress, { where: { userId } });
 
-            if (!userProgress) {
-                userProgress = manager.create(UserProgress, {
-                    userId,
-                    exp: 0,
-                    level: 1,
-                    streakDays: 0
-                });
-            }
+        if (!userProgress) {
+            userProgress = queryRunner.manager.create(UserProgress, {
+                userId,
+                exp: 0,
+                level: 1,
+                streakDays: 0
+            });
+        }
 
-            const oldLevel = userProgress.level;
-            const oldExp = userProgress.exp;
-            const newExp = oldExp + expAmount;
-            const newLevel = this.calculateLevel(newExp);
-            const levelUp = newLevel > oldLevel;
+        const oldLevel = userProgress.level;
+        const oldExp = userProgress.exp;
+        const newExp = oldExp + expAmount;
+        const newLevel = this.calculateLevel(newExp);
+        const levelUp = newLevel > oldLevel;
 
-            userProgress.exp = newExp;
-            userProgress.level = newLevel;
-            userProgress.lastActivityAt = new Date();
+        userProgress.exp = newExp;
+        userProgress.level = newLevel;
+        userProgress.lastActivityAt = new Date();
 
-            await manager.save(UserProgress, userProgress);
+        await queryRunner.manager.save(UserProgress, userProgress);
 
-            // 2. user_store_stats 업데이트
-            await this.updateStoreStats(manager, userId, storeId, type);
+        // 2. user_store_stats 업데이트
+        await this.updateStoreStats(queryRunner.manager, userId, storeId, type);
 
-            // 3. 스탬프 지급 (첫 방문 시)
-            const newStamp = await this.checkAndGrantStamp(manager, userId, storeId);
+        // 3. 스탬프 지급 (첫 방문 시)
+        const newStamp = await this.checkAndGrantStamp(queryRunner.manager, userId, storeId);
 
-            // 4. 배지 체크 & 지급
-            const newBadges = await this.checkAndGrantBadges(manager, userId, type);
+        // 4. 배지 체크 & 지급
+        const newBadges = await this.checkAndGrantBadges(queryRunner.manager, userId, type);
 
-            // 5. 연속 방문일 업데이트 (간단 구현)
-            await this.updateStreak(manager, userProgress);
+        // 5. 연속 방문일 업데이트 (간단 구현)
+        await this.updateStreak(queryRunner.manager, userProgress);
 
-            // 6. 다음 레벨까지 필요한 EXP 계산
-            const expToNextLevel = (newLevel * 100) - newExp;
+        // 6. 다음 레벨까지 필요한 EXP 계산
+        const expToNextLevel = (newLevel * 100) - newExp;
 
-            return new CertificationResult.RewardsDto(
-                expAmount,
-                newExp,
-                newLevel,
-                levelUp,
-                expToNextLevel,
-                levelUp ? newLevel : undefined,
-                newStamp,
-                newBadges
-            );
-        });
+        return new CertificationResult.RewardsDto(
+            expAmount,
+            newExp,
+            newLevel,
+            levelUp,
+            expToNextLevel,
+            levelUp ? newLevel : undefined,
+            newStamp,
+            newBadges
+        );
     }
 
     /**
@@ -107,7 +86,7 @@ export class GamificationService {
      * user_store_stats 업데이트
      */
     private async updateStoreStats(
-        manager: any,
+        manager: EntityManager,
         userId: number,
         storeId: number,
         type: 'loot' | 'checkin'
@@ -146,13 +125,13 @@ export class GamificationService {
      * 스탬프 지급 체크 (첫 방문 시)
      */
     private async checkAndGrantStamp(
-        manager: any,
+        manager: EntityManager,
         userId: number,
         storeId: number
     ): Promise<CertificationResult.NewStampDto | undefined> {
         // 해당 가게의 이전 인증 횟수 확인
         const previousCertCount = await manager.count(Certification, {
-            where: { userId, storeId }
+            where: { user: { id : userId }, store: { id: storeId } }
         });
 
         // 첫 방문이 아니면 스탬프 지급 안함
@@ -162,7 +141,7 @@ export class GamificationService {
 
         // 해당 가게의 스탬프 찾기
         const stamp = await manager.findOne(Stamp, {
-            where: { storeId },
+            where: { store: { id: storeId } },
             relations: ['store']
         });
 
@@ -232,7 +211,7 @@ export class GamificationService {
                     if (type === 'loot') {
                         const lootCount = await manager.count(Certification, {
                             where: { user: { id: userId }, type: 'loot' },
-                            relations: ['User']
+                            relations: ['user']
                         });
                         shouldGrant = lootCount === 1;
                     }
@@ -242,7 +221,7 @@ export class GamificationService {
                     if (type === 'checkin') {
                         const checkinCount = await manager.count(Certification, {
                             where: { user: { id: userId }, type: 'checkin' },
-                            relations: ['User']
+                            relations: ['user']
                         });
                         shouldGrant = checkinCount === 1;
                     }
@@ -251,7 +230,7 @@ export class GamificationService {
                 case 'LOOT_10':
                     const lootCount = await manager.count(Certification, {
                         where: { user: { id : userId }, type: 'loot' },
-                        relations: ['User']
+                        relations: ['user']
                     });
                     shouldGrant = lootCount >= 10;
                     break;
@@ -295,7 +274,7 @@ export class GamificationService {
     /**
      * 연속 방문일 업데이트
      */
-    private async updateStreak(manager: any, userProgress: UserProgress): Promise<void> {
+    private async updateStreak(manager: EntityManager, userProgress: UserProgress): Promise<void> {
         const now = new Date();
         const lastActivity = userProgress.lastActivityAt;
 

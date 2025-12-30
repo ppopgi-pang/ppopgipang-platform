@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, QueryRunner, Repository } from 'typeorm';
 import { Certification } from './entities/certification.entity';
 import { CertificationPhoto } from './entities/certification-photo.entity';
 import { LootLike } from './entities/loot-like.entity';
@@ -9,6 +9,8 @@ import { LootCommentPreset } from './entities/loot-comment-preset.entity';
 import { CheckinReasonPreset } from './entities/checkin-reason-preset.entity';
 import { CertificationInput, CertificationResult } from '@ppopgipang/types';
 import { GamificationService } from 'src/gamification/gamification.service';
+import { User } from 'src/users/entities/user.entity';
+import { Store } from 'src/stores/entities/store.entity';
 
 @Injectable()
 export class CertificationsService {
@@ -23,6 +25,10 @@ export class CertificationsService {
         private readonly lootTagRepository: Repository<LootTag>,
         @InjectRepository(LootCommentPreset)
         private readonly lootCommentRepository: Repository<LootCommentPreset>,
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+        @InjectRepository(Store)
+        private readonly storeRepository: Repository<Store>,
         @InjectRepository(CheckinReasonPreset)
         private readonly checkinReasonRepository: Repository<CheckinReasonPreset>,
         private readonly gamificationService: GamificationService
@@ -86,11 +92,19 @@ export class CertificationsService {
     /**
      * 득템 인증 생성
      */
-    async createLootCertification(userId: number, dto: CertificationInput.CreateLootDto): Promise<CertificationResult.CertificationResponseDto> {
+    async createLootCertification(userId: number, queryRunner: QueryRunner, dto: CertificationInput.CreateLootDto): Promise<CertificationResult.CertificationResponseDto> {
+        // 0. User 찾기
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) throw new InternalServerErrorException('User가 존재하지 않습니다.');
+        
+        // 0-1. Store 찾기
+        const store = await this.storeRepository.findOneBy({ id: dto.storeId });
+        if (!store) throw new InternalServerErrorException('Store가 존재하지 않습니다.');
+
         // 1. Certification 레코드 생성
         const certification = await this.certificationRepository.save({
-            userId,
-            storeId: dto.storeId,
+            user,
+            store,
             type: 'loot',
             occurredAt: new Date(),
             latitude: dto.latitude,
@@ -114,7 +128,8 @@ export class CertificationsService {
             userId,
             dto.storeId,
             'loot',
-            50
+            50,
+            queryRunner
         );
 
         return new CertificationResult.CertificationResponseDto(certification.id, 'loot', rewards);
@@ -123,11 +138,19 @@ export class CertificationsService {
     /**
      * 체크인 인증 생성
      */
-    async createCheckinCertification(userId: number, dto: CertificationInput.CreateCheckinDto): Promise<CertificationResult.CertificationResponseDto> {
+    async createCheckinCertification(userId: number, queryRunner: QueryRunner, dto: CertificationInput.CreateCheckinDto): Promise<CertificationResult.CertificationResponseDto> {
+         // 0. User 찾기
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) throw new InternalServerErrorException('User가 존재하지 않습니다.');
+        
+        // 0-1. Store 찾기
+        const store = await this.storeRepository.findOneBy({ id: dto.storeId });
+        if (!store) throw new InternalServerErrorException('Store가 존재하지 않습니다.');
+        
         // 1. Certification 레코드 생성
         const certification = await this.certificationRepository.save({
-            userId,
-            storeId: dto.storeId,
+            user,
+            store,
             type: 'checkin',
             occurredAt: new Date(),
             latitude: dto.latitude,
@@ -148,7 +171,8 @@ export class CertificationsService {
             userId,
             dto.storeId,
             'checkin',
-            10
+            10,
+            queryRunner
         );
 
         return new CertificationResult.CertificationResponseDto(certification.id, 'checkin', rewards);
