@@ -37,6 +37,9 @@ export class User {
     @Column({ type: 'decimal', precision: 4, scale: 1, default: 36.5 })
     mannerTemp: number;
 
+    @Column({ type: 'int', nullable: true })
+    featuredBadgeId: number | null;
+
     @CreateDateColumn()
     createdAt: Date;
 
