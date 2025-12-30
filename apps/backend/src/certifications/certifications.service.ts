@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { DataSource, EntityManager, QueryRunner, Repository } from 'typeorm';
 import { Certification } from './entities/certification.entity';
 import { CertificationPhoto } from './entities/certification-photo.entity';
 import { LootLike } from './entities/loot-like.entity';
@@ -93,16 +93,18 @@ export class CertificationsService {
      * 득템 인증 생성
      */
     async createLootCertification(userId: number, queryRunner: QueryRunner, dto: CertificationInput.CreateLootDto): Promise<CertificationResult.CertificationResponseDto> {
+        const manager = queryRunner.manager;
+
         // 0. User 찾기
-        const user = await this.userRepository.findOneBy({ id: userId });
+        const user = await manager.findOne(User, { where: { id: userId } });
         if (!user) throw new InternalServerErrorException('User가 존재하지 않습니다.');
-        
+
         // 0-1. Store 찾기
-        const store = await this.storeRepository.findOneBy({ id: dto.storeId });
+        const store = await manager.findOne(Store, { where: { id: dto.storeId } });
         if (!store) throw new InternalServerErrorException('Store가 존재하지 않습니다.');
 
         // 1. Certification 레코드 생성
-        const certification = await this.certificationRepository.save({
+        const certification = manager.create(Certification, {
             user,
             store,
             type: 'loot',
@@ -112,15 +114,16 @@ export class CertificationsService {
             exp: 50,
             comment: dto.comment,
         });
+        const savedCertification = await manager.save(Certification, certification);
 
         // 2. 사진 저장
-        await this.savePhotos(certification.id, dto.photoFileNames);
+        await this.savePhotosWithManager(manager, savedCertification.id, dto.photoFileNames);
 
         // 3. 태그 연결
         if (dto.tagIds?.length) {
-            const tags = await this.lootTagRepository.findByIds(dto.tagIds);
-            certification.tags = tags;
-            await this.certificationRepository.save(certification);
+            const tags = await manager.findByIds(LootTag, dto.tagIds);
+            savedCertification.tags = tags;
+            await manager.save(Certification, savedCertification);
         }
 
         // 4. 게이미피케이션 처리
@@ -132,23 +135,25 @@ export class CertificationsService {
             queryRunner
         );
 
-        return new CertificationResult.CertificationResponseDto(certification.id, 'loot', rewards);
+        return new CertificationResult.CertificationResponseDto(savedCertification.id, 'loot', rewards);
     }
 
     /**
      * 체크인 인증 생성
      */
     async createCheckinCertification(userId: number, queryRunner: QueryRunner, dto: CertificationInput.CreateCheckinDto): Promise<CertificationResult.CertificationResponseDto> {
-         // 0. User 찾기
-        const user = await this.userRepository.findOneBy({ id: userId });
+        const manager = queryRunner.manager;
+
+        // 0. User 찾기
+        const user = await manager.findOne(User, { where: { id: userId } });
         if (!user) throw new InternalServerErrorException('User가 존재하지 않습니다.');
-        
+
         // 0-1. Store 찾기
-        const store = await this.storeRepository.findOneBy({ id: dto.storeId });
+        const store = await manager.findOne(Store, { where: { id: dto.storeId } });
         if (!store) throw new InternalServerErrorException('Store가 존재하지 않습니다.');
-        
+
         // 1. Certification 레코드 생성
-        const certification = await this.certificationRepository.save({
+        const certification = manager.create(Certification, {
             user,
             store,
             type: 'checkin',
@@ -158,12 +163,13 @@ export class CertificationsService {
             exp: 10,
             rating: dto.rating,
         });
+        const savedCertification = await manager.save(Certification, certification);
 
         // 2. 이유 연결
         if (dto.reasonIds?.length) {
-            const reasons = await this.checkinReasonRepository.findByIds(dto.reasonIds);
-            certification.reasons = reasons;
-            await this.certificationRepository.save(certification);
+            const reasons = await manager.findByIds(CheckinReasonPreset, dto.reasonIds);
+            savedCertification.reasons = reasons;
+            await manager.save(Certification, savedCertification);
         }
 
         // 3. 게이미피케이션 처리
@@ -175,11 +181,12 @@ export class CertificationsService {
             queryRunner
         );
 
-        return new CertificationResult.CertificationResponseDto(certification.id, 'checkin', rewards);
+        return new CertificationResult.CertificationResponseDto(savedCertification.id, 'checkin', rewards);
     }
 
     /**
-     * 사진 저장 헬퍼
+     * 사진 저장 헬퍼 (레거시 - 일반 레포지토리 사용)
+     * @deprecated savePhotosWithManager 사용 권장
      */
     private async savePhotos(certificationId: number, photoFileNames: string[]): Promise<void> {
         const photos = photoFileNames.map((fileName, index) => ({
@@ -189,6 +196,24 @@ export class CertificationsService {
         }));
 
         await this.certificationPhotoRepository.save(photos);
+    }
+
+    /**
+     * 사진 저장 헬퍼 (트랜잭션 지원)
+     */
+    private async savePhotosWithManager(
+        manager: EntityManager,
+        certificationId: number,
+        photoFileNames: string[]
+    ): Promise<void> {
+        const photos = photoFileNames.map((fileName, index) =>
+            manager.create(CertificationPhoto, {
+                certificationId,
+                imageName: fileName,
+                sortOrder: index
+            })
+        );
+        await manager.save(CertificationPhoto, photos);
     }
 
     /**
