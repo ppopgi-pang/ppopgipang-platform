@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { QueryRunner } from 'typeorm';
 import { ProposalsService } from './proposals.service';
 import { ProposalInput, ProposalResult } from '@ppopgipang/types';
+import { TransactionInterceptor } from 'src/commons/interceptors/transaction.interceptor';
+import { InjectQueryRunner } from 'src/commons/decorators/query-runner-decorator';
 
 @Controller('proposals')
 @ApiTags('[Proposal] 제보')
@@ -11,6 +14,7 @@ export class ProposalsController {
   constructor(private readonly proposalsService: ProposalsService) { }
 
   @Post()
+  @UseInterceptors(TransactionInterceptor)
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '(사용자) 신규 제보 생성'
@@ -18,9 +22,10 @@ export class ProposalsController {
   @ApiCreatedResponse({ type: ProposalResult.CreateProposalResultDto, description: '신규 제보 생성 성공' })
   createProposal(
     @Req() req: any,
-    @Body() dto: ProposalInput.CreateProposalDto
+    @Body() dto: ProposalInput.CreateProposalDto,
+    @InjectQueryRunner() queryRunner: QueryRunner
   ) {
-    return this.proposalsService.createProposal(req.user.userId, dto);
+    return this.proposalsService.createProposal(req.user.userId, queryRunner, dto);
   }
 
   @Get('me')
