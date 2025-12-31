@@ -17,18 +17,12 @@ export class CertificationsService {
     constructor(
         @InjectRepository(Certification)
         private readonly certificationRepository: Repository<Certification>,
-        @InjectRepository(CertificationPhoto)
-        private readonly certificationPhotoRepository: Repository<CertificationPhoto>,
         @InjectRepository(LootLike)
         private readonly lootLikeRepository: Repository<LootLike>,
         @InjectRepository(LootTag)
         private readonly lootTagRepository: Repository<LootTag>,
         @InjectRepository(LootCommentPreset)
         private readonly lootCommentRepository: Repository<LootCommentPreset>,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-        @InjectRepository(Store)
-        private readonly storeRepository: Repository<Store>,
         @InjectRepository(CheckinReasonPreset)
         private readonly checkinReasonRepository: Repository<CheckinReasonPreset>,
         private readonly gamificationService: GamificationService
@@ -182,20 +176,6 @@ export class CertificationsService {
         );
 
         return new CertificationResult.CertificationResponseDto(savedCertification.id, 'checkin', rewards);
-    }
-
-    /**
-     * 사진 저장 헬퍼 (레거시 - 일반 레포지토리 사용)
-     * @deprecated savePhotosWithManager 사용 권장
-     */
-    private async savePhotos(certificationId: number, photoFileNames: string[]): Promise<void> {
-        const photos = photoFileNames.map((fileName, index) => ({
-            certificationId,
-            imageName: fileName,
-            sortOrder: index
-        }));
-
-        await this.certificationPhotoRepository.save(photos);
     }
 
     /**
