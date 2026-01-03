@@ -13,12 +13,12 @@ export namespace ProposalInput {
         @IsNotEmpty()
         address: string;
 
-        @ApiProperty({ example: '위도', description: '192.25' })
+        @ApiProperty({ example: 192.16, description: '위도' })
         @IsNumber()
         @IsOptional()
         latitude?: number;
 
-        @ApiProperty({ example: '경도', description: '168.36' })
+        @ApiProperty({ example: 168.26, description: '경도' })
         @IsNumber()
         @IsOptional()
         longitude?: number;
