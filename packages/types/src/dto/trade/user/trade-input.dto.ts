@@ -13,7 +13,7 @@ export namespace TradeInput {
         @IsNotEmpty()
         description: string;
 
-        @ApiProperty({ description: '이미지 URL 목록', example: ['https://example.com/image1.jpg'], required: false })
+        @ApiProperty({ description: '이미지 이름 목록', example: ['image1.jpg'], required: false })
         @IsOptional()
         images?: string[];
 
@@ -39,7 +39,7 @@ export namespace TradeInput {
         @IsOptional()
         description?: string;
 
-        @ApiProperty({ description: '이미지 URL 목록', example: ['https://example.com/image1.jpg'], required: false })
+        @ApiProperty({ description: '이미지 이름 목록', example: ['image1.jpg'], required: false })
         @IsOptional()
         images?: string[];
 

@@ -277,7 +277,7 @@ export class StoresService {
         if (userId && entities.length > 0) {
             const storeIds = entities.map(s => s.id);
             const stats = await this.userStoreStatsRepository.find({
-                where: { userId, storeId: storeIds as any }
+                where: { userId, storeId: In(storeIds) }
             });
             stats.forEach(stat => userStatsMap.set(stat.storeId, stat));
         }
