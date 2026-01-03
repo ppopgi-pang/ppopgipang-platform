@@ -1,11 +1,14 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Proposal } from './entities/proposal.entity';
-import { EntityManager, QueryRunner, Repository } from 'typeorm';
+import { EntityManager, QueryRunner, Repository, Tree } from 'typeorm';
 import { ProposalInput, ProposalResult } from '@ppopgipang/types';
 import { User } from 'src/users/entities/user.entity';
 import { UserProgress } from 'src/gamification/entities/user-progress.entity';
 import { Store } from 'src/stores/entities/store.entity';
+import { join } from 'path';
+import { rename, copyFile, unlink } from 'fs/promises';
+import { existsSync, mkdirSync } from 'fs';
 
 @Injectable()
 export class ProposalsService {
@@ -36,13 +39,40 @@ export class ProposalsService {
 
         // 1. Proposal 생성
         const proposal = manager.create(Proposal, {
-            name: dto.title,
-            address: dto.message,
+            name: dto.storeName,
+            address: dto.address,
             latitude: dto.latitude || 0,
             longitude: dto.longitude || 0,
             status: 'pending',
+            images: dto.images,
             user
         });
+
+        const proposalFolder = join(process.cwd(), 'public', 'proposal');
+        const tempFolder = join(process.cwd(), 'public', 'temp');
+
+        if (dto.images && dto.images.length > 0) {
+            if (!existsSync(proposalFolder)) {
+                mkdirSync(proposalFolder, { recursive: true });
+            }
+
+            for (let name of dto.images) {
+                const sourcePath = join(tempFolder, name);
+                const destPath = join(proposalFolder, name);
+
+                try {
+                    await rename(sourcePath, destPath);
+                } catch(error: any) {
+                    if (error.code === 'EXDEV') {
+                        await copyFile(sourcePath, destPath);
+                        await unlink(sourcePath);
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+
+        }
         const savedProposal = await manager.save(Proposal, proposal);
 
         // 2. 경험치 증가 로직 (제보 당 50 exp)

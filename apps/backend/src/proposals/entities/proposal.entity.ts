@@ -19,6 +19,9 @@ export class Proposal {
     @Column('decimal', { precision: 10, scale: 6 })
     longitude: number;
 
+    @Column({ type: 'json', nullable: true })
+    images: string[];
+
     @Column({ type: 'enum', enum: ['pending', 'approved', 'rejected'], default: 'pending' })
     status: 'pending' | 'approved' | 'rejected';
     

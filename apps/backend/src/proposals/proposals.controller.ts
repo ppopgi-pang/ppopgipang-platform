@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags, ApiCreatedResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { QueryRunner } from 'typeorm';
 import { ProposalsService } from './proposals.service';
 import { ProposalInput, ProposalResult } from '@ppopgipang/types';
@@ -19,6 +19,7 @@ export class ProposalsController {
   @ApiOperation({
     summary: '(사용자) 신규 제보 생성'
   })
+  @ApiBody({ type: ProposalInput.CreateProposalDto })
   @ApiCreatedResponse({ type: ProposalResult.CreateProposalResultDto, description: '신규 제보 생성 성공' })
   createProposal(
     @Req() req: any,
