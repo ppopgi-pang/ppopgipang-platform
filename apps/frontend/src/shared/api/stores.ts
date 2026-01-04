@@ -10,7 +10,7 @@ import { apiClient } from "../lib/axios";
 
 export type Store = UserStoreResult.StoreDto;
 export type Review = ReviewResult.ReviewDto;
-export type StoreDetailResponse = UserStoreResult.StoreDetailDto;
+export type StoreDetailResponse = UserStoreResult.StoreDetailExtendedDto;
 export type StoreResponse = UserStoreResult.InBoundSearchDto | UserStoreResult.FindNearByDto;
 export type SearchResponse = UserStoreResult.SearchDto;
 export type CreateStoreDto = AdminStoreInput.CreateStoreDto;
@@ -113,4 +113,10 @@ export const createReview = async (data: ReviewCreateRequest): Promise<Review> =
 export const getStoreDetail = async (id: number): Promise<StoreDetailResponse> => {
 	const { data } = await apiClient.get<StoreDetailResponse>(`/stores/${id}`);
 	return data;
+};
+
+export type UpdateStoreDto = AdminStoreInput.UpdateStoreDto;
+
+export const updateStore = async (id: number, data: UpdateStoreDto): Promise<void> => {
+	await apiClient.patch(`/stores/${id}`, data);
 };

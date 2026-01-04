@@ -80,7 +80,7 @@ export namespace TradeResult {
     export class SearchDto {
         @ApiProperty({ type: Boolean, example: true })
         success: boolean;
-        @ApiProperty({ type: () => [TradeSummaryDto], example: [{ id: 1, title: 'Sample Title', images: ['https://example.com/image.jpg'], price: 10000, type: 'sale', status: 'active', user: { id: 1, email: 'user@example.com', nickname: 'ppopgi', profileImage: 'https://example.com/profile.jpg', isAdmin: false }, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }] })
+        @ApiProperty({ type: () => [TradeSummaryDto], example: [{ id: 1, title: 'Sample Title', images: ['image.jpg'], price: 10000, type: 'sale', status: 'active', user: { id: 1, email: 'user@example.com', nickname: 'ppopgi', profileImage: 'https://example.com/profile.jpg', isAdmin: false }, createdAt: '2024-01-01T00:00:00.000Z', updatedAt: '2024-01-01T00:00:00.000Z' }] })
         data: TradeSummaryDto[];
         @ApiProperty({ type: Object, example: { count: 3 } })
         metadata: {

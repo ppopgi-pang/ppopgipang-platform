@@ -1,3 +1,4 @@
+import "@/app/styles/globals.css";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
@@ -5,13 +6,6 @@ import ReactDOM from "react-dom/client";
 import { routeTree } from "@/shared/lib/@generated/routeTree.gen";
 import { queryClient } from "@/shared/lib/query-client";
 // import "@/features/auth/api/test-login"; // 개발 환경 테스트 로그인 헬퍼
-
-const isAdminEntry = window.location.pathname.startsWith("/admin");
-if (isAdminEntry) {
-	import("@/app/styles/admin.css");
-} else {
-	import("@/app/styles/globals.css");
-}
 
 // 개발 환경에서 mock auth 설정
 if (import.meta.env.MODE === "development") {

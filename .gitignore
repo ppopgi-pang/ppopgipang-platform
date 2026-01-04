@@ -89,3 +89,5 @@ apps/backend/public/trade/*
 !apps/backend/public/trade/.gitkeep
 apps/backend/public/career/*
 !apps/backend/public/career/.gitkeep
+apps/backend/public/proposal/*
+!apps/backend/public/proposal/.gitkeep
