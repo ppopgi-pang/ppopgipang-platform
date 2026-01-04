@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { StoresService } from './stores.service';
 import { AdminStoreInput, StoreTypeInput, UserStoreResult, StoreTypeResult } from '@ppopgipang/types';
@@ -119,6 +119,26 @@ export class StoresController {
     @Body() dto: AdminStoreInput.CreateStoreDto
   ) {
     return this.storesService.createStore(dto);
+  }
+
+  /**
+   * (어드민) 가게 수정 API
+   * @param id
+   * @param dto
+   * @returns
+   */
+  @Patch(':id')
+  @IsAdmin(true)
+  @ApiOperation({
+    summary: '(어드민) 가게 수정'
+  })
+  @ApiBody({ type: AdminStoreInput.UpdateStoreDto })
+  @ApiOkResponse({ type: UserStoreResult.StoreDto, description: '가게 수정 성공' })
+  updateStore(
+    @Param('id') id: number,
+    @Body() dto: AdminStoreInput.UpdateStoreDto
+  ) {
+    return this.storesService.updateStore(id, dto);
   }
 
   /**

@@ -1,8 +1,10 @@
+import "@/app/styles/admin.css";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import CreateStoreTypeForm from "@/features/admin/create-store-type-form";
-import CreateStoreForm from "@/features/admin/create-store-form";
+import StoreForm from "@/features/admin/store-form";
 import CreateAdminUserForm from "@/features/admin/create-admin-user-form";
+import EditStoreContainer from "@/features/admin/edit-store-container";
 import { useAuth } from "@/shared/lib/use-auth";
 
 export const Route = createFileRoute("/_mobile/admin/")({
@@ -11,7 +13,7 @@ export const Route = createFileRoute("/_mobile/admin/")({
 
 function AdminPage() {
 	const navigate = useNavigate();
-	const [activeTab, setActiveTab] = useState<"store" | "type" | "admin-user">("store");
+	const [activeTab, setActiveTab] = useState<"store" | "store-edit" | "type" | "admin-user">("store");
 	const { isLoggedIn, isLoading, user, checkAuth } = useAuth();
 	const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
 	const hasRequestedCheck = useRef(false);
@@ -78,6 +80,18 @@ function AdminPage() {
 						</p>
 					</button>
 					<button
+						onClick={() => setActiveTab("store-edit")}
+						className={`rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${activeTab === "store-edit"
+							? "border-slate-300 bg-white text-slate-900 shadow-sm"
+							: "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300 hover:bg-white"
+							}`}
+					>
+						Edit Store
+						<p className="mt-1 text-xs font-normal text-slate-400">
+							Search and update existing stores.
+						</p>
+					</button>
+					<button
 						onClick={() => setActiveTab("type")}
 						className={`rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${activeTab === "type"
 							? "border-slate-300 bg-white text-slate-900 shadow-sm"
@@ -104,7 +118,8 @@ function AdminPage() {
 				</aside>
 
 				<div className="flex flex-col gap-6">
-					{activeTab === "store" && <CreateStoreForm />}
+					{activeTab === "store" && <StoreForm mode="create" />}
+					{activeTab === "store-edit" && <EditStoreContainer />}
 					{activeTab === "type" && <CreateStoreTypeForm />}
 					{activeTab === "admin-user" && <CreateAdminUserForm />}
 				</div>

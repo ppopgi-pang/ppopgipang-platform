@@ -92,7 +92,76 @@ export class StoresService {
     async createStore(dto: AdminStoreInput.CreateStoreDto) {
         const storeType = await this.storeTypeRepository.findOneBy({ id: dto.typeId });
         if (!storeType) throw new NotFoundException('존재하지 않는 가게 타입(카테고리)입니다.');
-        return await this.storeRepository.save(dto);
+
+        const { typeId, facilities, openingHours, photos, ...rest } = dto;
+
+        const store = this.storeRepository.create({
+            ...rest,
+            type: storeType,
+            facilities,
+            openingHours,
+            photos
+        });
+
+        return await this.storeRepository.save(store);
+    }
+
+    /**
+     * (어드민) 가게 수정 메서드
+     * - 기본 정보 수정
+     * - facilities, openingHours, photos는 존재 시 기존 데이터 삭제 후 재생성 (Replacement Strategy)
+     * @param id
+     * @param dto
+     * @returns
+     */
+    async updateStore(id: number, dto: AdminStoreInput.UpdateStoreDto) {
+        const store = await this.storeRepository.findOne({
+            where: { id },
+            relations: ['facilities', 'openingHours', 'photos', 'type']
+        });
+
+        if (!store) throw new NotFoundException('존재하지 않는 가게입니다.');
+
+        const { typeId, facilities, openingHours, photos, ...rest } = dto;
+
+        // 1. 기본 정보 업데이트
+        Object.assign(store, rest);
+
+        // 2. 타입 업데이트
+        if (typeId) {
+            const storeType = await this.storeTypeRepository.findOneBy({ id: typeId });
+            if (!storeType) throw new NotFoundException('존재하지 않는 가게 타입(카테고리)입니다.');
+            store.type = storeType;
+        }
+
+        // 3. Facilities 업데이트 (OneToOne cascade)
+        // 기존 facilities가 있으면 내용을 업데이트하거나, 아예 교체
+        if (facilities) {
+            // 기존 facility가 있으면 업데이트, 없으면 생성
+            if (store.facilities) {
+                Object.assign(store.facilities, facilities);
+            } else {
+                store.facilities = this.storeFacilityRepository.create(facilities);
+            }
+        }
+
+        // 4. OpeningHours 업데이트 (OneToMany cascade)
+        if (openingHours) {
+            const newHours = openingHours.map((h: AdminStoreInput.CreateStoreOpeningHoursDto) =>
+                this.storeRepository.manager.create('StoreOpeningHours', h)
+            );
+            store.openingHours = newHours as any;
+        }
+
+        // 5. Photos 업데이트 (OneToMany cascade)
+        if (photos) {
+            const newPhotos = photos.map((p: AdminStoreInput.CreateStorePhotoDto) =>
+                this.storeRepository.manager.create('StorePhoto', p)
+            );
+            store.photos = newPhotos as any;
+        }
+
+        return await this.storeRepository.save(store);
     }
 
     /**
