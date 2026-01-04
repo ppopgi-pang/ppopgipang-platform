@@ -117,17 +117,14 @@ import { Application } from './careers/entities/application.entity';
         ],
         synchronize: true,
         
-        connectTimeout: 10000, // 커넥션 연결 타임아웃 10초 
-        acquireTimeout: 10000, // 커넥션 풀에서 커넥션 획득 타임아웃 10초
+        connectTimeout: 10000, // 커넥션 연결 타임아웃 10초
+        enableQueryTimeout: true,
+        maxQueryExecutionTime: 5000, // 쿼리 제한 5초
 
         extra: {
           connectionLimit: 20, // 커넥션 풀 최대 크기
           waitForConnections: true, // 커넥션 대기
-          queueLimit: 0,
-
-          initCommands: [
-            'SET innodb_lock_wait_timeout = 5',  // 락 대기 최대 5초
-          ]
+          queueLimit: 0
         }
       }),
       inject: [ConfigService]

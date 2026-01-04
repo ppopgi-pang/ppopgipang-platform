@@ -60,10 +60,10 @@ export class Store {
     @OneToOne(() => StoreFacility, (facility) => facility.store, { cascade: true })
     facilities: StoreFacility;
 
-    @OneToMany(() => StorePhoto, (photo) => photo.store)
+    @OneToMany(() => StorePhoto, (photo) => photo.store, { cascade: true })
     photos: StorePhoto[];
 
-    @OneToMany(() => StoreOpeningHours, (hours) => hours.store)
+    @OneToMany(() => StoreOpeningHours, (hours) => hours.store, { cascade: true })
     openingHours: StoreOpeningHours[];
 
     @OneToMany(() => UserStoreStats, (stats) => stats.store)
