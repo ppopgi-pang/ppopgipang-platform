@@ -47,8 +47,8 @@ function AboutUsPage() {
 			lead: true,
 			image: "/team/kim-wonjeong.png",
 			highlights: [
-				"현업 2년차 백엔드 개발 리드",
-				"프로젝트 리드",
+				"현업 2년차 백엔드 개발",
+				"백엔드 인공지능 프로젝트 리더",
 				"인천대학교 컴퓨터공학부",
 				"인천대학교 글로벌앱센터 센터장",
 				"인천대학교 구름톤 유니브 리더",
@@ -68,11 +68,11 @@ function AboutUsPage() {
 		},
 		{
 			name: "채영은",
-			role: "PM 리드",
+			role: "PM",
 			lead: false,
 			image: "/team/chae-yeongeun.png",
 			highlights: [
-				"현업 1년차 PM 리드",
+				"현업 1년차 PM",
 				"인천대학교 컴퓨터공학부",
 				"실제 서비스 출시 및 운영 경험",
 				"플랫폼·SNS 등 다양한 도메인 프로젝트 수행",
