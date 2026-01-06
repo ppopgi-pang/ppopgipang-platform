@@ -43,7 +43,7 @@ function AboutUsPage() {
 	const teamMembers = [
 		{
 			name: "김원정",
-			role: "백엔드 · 개발 리드",
+			role: "백엔드 · 인공지능 · 개발 리드",
 			lead: true,
 			image: "/team/kim-wonjeong.png",
 			highlights: [
@@ -68,7 +68,7 @@ function AboutUsPage() {
 		},
 		{
 			name: "채영은",
-			role: "PM",
+			role: "PM 리드",
 			lead: false,
 			image: "/team/chae-yeongeun.png",
 			highlights: [
