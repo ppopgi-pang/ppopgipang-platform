@@ -367,6 +367,12 @@ function AboutUsPage() {
 								</div>
 								<div className="flex items-center gap-3">
 									<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+										FastAPI
+									</span>
+									<span>Backend</span>
+								</div>
+								<div className="flex items-center gap-3">
+									<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 font-semibold text-slate-700">
 										MySQL
 									</span>
 									<span>DB</span>
@@ -382,6 +388,18 @@ function AboutUsPage() {
 										Turborepo
 									</span>
 									<span>Monorepo</span>
+								</div>
+								<div className="flex items-center gap-3">
+									<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+										YOLOv8
+									</span>
+									<span>AI</span>
+								</div>
+								<div className="flex items-center gap-3">
+									<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+										BERT
+									</span>
+									<span>AI</span>
 								</div>
 							</div>
 						</div>
