@@ -36,7 +36,7 @@ export default function BottomNavigationBar() {
                 },
               }}
             >
-              {({ isActive }) => (
+              {({ isActive }: { isActive: boolean }) => (
                 <>
                   {nav.icon({ active: isActive })}
                   <span>{nav.text}</span>
