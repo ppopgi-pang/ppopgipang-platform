@@ -6,7 +6,14 @@ export default function DevelopmentModal() {
   useEffect(() => {
     // 프로덕션 환경에서만 모달 표시
     if (import.meta.env.PROD) {
-      setIsOpen(true);
+      const currentPath = window.location.pathname;
+      // /about-us와 /admin 경로는 제외
+      const allowedPaths = ["/about-us", "/admin"];
+      const isAllowedPath = allowedPaths.some(path => currentPath.startsWith(path));
+
+      if (!isAllowedPath) {
+        setIsOpen(true);
+      }
     }
   }, []);
 
