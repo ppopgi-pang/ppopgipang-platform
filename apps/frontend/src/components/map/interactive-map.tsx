@@ -14,8 +14,8 @@ interface InteractiveMapProps {
 export function InteractiveMap({
   center,
   userPosition,
-  heading,
-  accuracy,
+  heading: _heading,
+  accuracy: _accuracy,
   onCenterChange,
   level = 3,
 }: InteractiveMapProps) {

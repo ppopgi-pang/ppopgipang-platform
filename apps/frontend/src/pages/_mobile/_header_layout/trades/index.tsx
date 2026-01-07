@@ -2,7 +2,6 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { searchTrades } from '@/shared/api/trades';
-import SearchBar from '@/shared/ui/search-bar/search-bar.ui';
 import TradeCard from '@/features/trades/components/trade-card';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useAuth } from '@/shared/lib/use-auth';
@@ -80,10 +79,12 @@ function TradesPage() {
                         </svg>
                     </Link>
                 </div>
-                <SearchBar
+                <input
+                    type="text"
                     value={keyword}
-                    onChange={setKeyword}
-                    onSearch={() => { }} // Debounce handles it
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="검색어를 입력하세요"
+                    className="w-full px-4 py-2.5 bg-white rounded-full shadow-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
             </div>
 
