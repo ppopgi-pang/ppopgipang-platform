@@ -5,6 +5,7 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { routeTree } from "@/shared/lib/@generated/routeTree.gen";
 import { queryClient } from "@/shared/lib/query-client";
+import DevelopmentModal from "@/components/common/development-modal";
 // import "@/features/auth/api/test-login"; // 개발 환경 테스트 로그인 헬퍼
 
 // 개발 환경에서 mock auth 설정
@@ -32,6 +33,7 @@ if (!rootElement.innerHTML) {
 		<StrictMode>
 			<QueryClientProvider client={queryClient}>
 				<RouterProvider router={router} />
+				<DevelopmentModal />
 			</QueryClientProvider>
 		</StrictMode>,
 	);

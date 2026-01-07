@@ -4,7 +4,7 @@ import type { Coordinates } from "@/hooks/map/use-user-location";
 
 export default function UserLocationMarker({
   position,
-  heading,
+  heading: _heading,
 }: {
   position: Coordinates;
   heading: number | null;

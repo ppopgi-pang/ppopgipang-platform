@@ -39,7 +39,7 @@ export default function StoreFullDetail({ storeId }: StoreFullDetailProps) {
         );
     }
 
-    const { store, reviews } = data;
+    const { store, recentReviews: reviews } = data;
 
     return (
         <div className="min-h-screen bg-slate-50 pb-[var(--page-safe-bottom)]">
@@ -58,13 +58,8 @@ export default function StoreFullDetail({ storeId }: StoreFullDetailProps) {
             <div className="px-5 pt-6 pb-4 bg-white mb-2">
                 <div className="flex items-center gap-2 mb-2">
                     <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md font-medium">
-                        {store.type?.name || '가게'}
+                        {store.category || '가게'}
                     </span>
-                    {store.averageRating && (
-                        <span className="flex items-center text-sm font-bold text-slate-900">
-                            ⭐ {store.averageRating}
-                        </span>
-                    )}
                 </div>
                 <h2 className="text-2xl font-bold text-slate-900 mb-1 leading-tight">{store.name}</h2>
                 <p className="text-slate-500 text-sm">{store.address}</p>

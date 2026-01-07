@@ -1,8 +1,7 @@
 import type { IconProps } from "./icon-props";
 
-export function ProfileIcon({ size = 24, active = false }: IconProps) {
+export function ProfileIcon({ active = false }: IconProps) {
   const color = active ? "#38BDF8" : "#9e9e9e";
-  const opacity = active ? 1 : 0.3;
 
   return (
     <svg

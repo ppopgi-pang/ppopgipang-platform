@@ -22,7 +22,7 @@ function MapPage() {
 
   const [place, setPlace] = useState<string | undefined>(undefined);
 
-  const { loading, coordinates, heading, error, accuracy } = useGeolocation({
+  const { loading, coordinates, heading, error: _error, accuracy } = useGeolocation({
     watch: true, // 실시간 추적 활성화
     enableHighAccuracy: true,
   });
