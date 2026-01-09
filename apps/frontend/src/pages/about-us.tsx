@@ -324,6 +324,94 @@ function AboutUsPage() {
 				</div>
 			</section>
 
+			<section className="w-full bg-white py-20">
+				<div className="mx-auto max-w-6xl px-6 lg:px-10">
+					<div className="text-center">
+						<h2 className="text-3xl font-bold text-slate-900 md:text-4xl">
+							AI로 완성한 뽑기팡의 핵심 엔진
+						</h2>
+						<p className="mx-auto mt-6 max-w-3xl text-lg text-slate-600">
+							<span className="block">뽑기팡은 AI를 '보여주기 위한 기능'이 아니라</span>
+							<span className="block">서비스 루프를 성립시키기 위한 핵심 도구로 사용합니다.</span>
+						</p>
+					</div>
+					<div className="mt-12 grid gap-6 md:grid-cols-2">
+						<div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+							<h3 className="text-xl font-semibold text-slate-900">
+								📸 사진을 올리면, AI가 먼저 이해합니다
+							</h3>
+							<p className="mt-4 text-slate-600">
+								득템 사진 속 물건을 인식해 카테고리와 태그를 자동으로 분류합니다. 유저의 입력은
+								줄이고, 데이터의 일관성은 높였습니다.
+							</p>
+							<div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-600">
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">Vision AI</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Auto Tagging
+								</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">YOLO 기반</span>
+							</div>
+						</div>
+						<div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+							<h3 className="text-xl font-semibold text-slate-900">📊 성공과 실패를 모두 데이터로 봅니다</h3>
+							<p className="mt-4 text-slate-600">
+								성공 후기만 남는 구조를 벗어나 방문과 실패 기록까지 함께 수집합니다. '잘
+								나온다'가 아닌, 지금의 상태를 판단할 근거를 만듭니다.
+							</p>
+							<div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-600">
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Signal 기반
+								</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">패턴 분석</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									누적 데이터
+								</span>
+							</div>
+						</div>
+						<div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+							<h3 className="text-xl font-semibold text-slate-900">
+								💬 위험한 대화는, 시작 단계에서 감지합니다
+							</h3>
+							<p className="mt-4 text-slate-600">
+								채팅 흐름을 분석해 사기 유도, 개인정보 요구, 외부 링크 시도를 감지합니다. 운영자
+								개입 이전에 유저를 보호하는 1차 방어선입니다.
+							</p>
+							<div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-600">
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">NLP</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Fraud Detection
+								</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Real-time Alert
+								</span>
+							</div>
+						</div>
+						<div className="rounded-3xl border border-slate-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+							<h3 className="text-xl font-semibold text-slate-900">🛠️ 모델보다, 문제 정의를 먼저 합니다</h3>
+							<p className="mt-4 text-slate-600">
+								정확도 수치보다 실제 서비스에서 쓰이는지를 기준으로 판단합니다. 비용과 운영을
+								고려한 현실적인 AI만 적용합니다.
+							</p>
+							<div className="mt-6 flex flex-wrap gap-2 text-xs text-slate-600">
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Problem-driven
+								</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Service-first
+								</span>
+								<span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+									Cost-aware
+								</span>
+							</div>
+						</div>
+					</div>
+					<div className="mt-10 rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center text-lg font-semibold text-slate-900">
+						<span className="block">뽑기팡의 AI는</span>
+						<span className="block">눈에 띄는 기능이 아니라, 루프를 굴리는 엔진입니다.</span>
+					</div>
+				</div>
+			</section>
+
 			<section id="team" className="w-full bg-slate-50 py-20">
 				<div className="mx-auto max-w-6xl px-6 lg:px-10">
 					<h2 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">우리는 이런 팀</h2>
