@@ -26,7 +26,7 @@ function AboutUsPage() {
 	useEffect(() => {
 		applyPageMeta({
 			title: "뽑기팡팀 소개 | 뽑기팡",
-			description: "뽑기팡 팀 소개와 서비스 방향, 그리고 현재 진행 중인 채용 공고를 확인해 보세요.",
+			description: "뽑기팡 팀 소개와 서비스 방향, 그리고 현재 진행 중인 모집 공고를 확인해 보세요.",
 			url: "/about-us",
 		});
 
@@ -78,6 +78,18 @@ function AboutUsPage() {
 				"플랫폼·SNS 등 다양한 도메인 프로젝트 수행",
 				"스타트업 곡물:원 초기 운영 팀원",
 				"GDGoC INU 1기 기획 파트장",
+			],
+		},
+		{
+			name: "양서린",
+			role: "디자인",
+			lead: false,
+			image: "/team/yang-seorin.jpeg",
+			highlights: [
+				"인천대학교 산업경영공학과 · 미디어디자인학과 복수전공",
+				"창업 유망팀 300선정 경험",
+				"예비창업패키지 선정 경험",
+				"다수의 사이드 프로젝트 경험",
 			],
 		},
 	];
